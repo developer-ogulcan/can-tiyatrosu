@@ -1,29 +1,40 @@
 @import "tailwindcss";
 
 /* ====================================================================
-   ÇAN TİYATROSU — DESIGN TOKENS
+   ÇAN TİYATROSU — DESIGN TOKENS (v2)
 
-   Palette (from the mark): warm paper ground, ink black, antique gold,
-   oxblood curtain red. Gold is used sparingly — a signal, not a fill.
+   The mark defines the system: black, red, yellow, white. No beige,
+   no coffee tones, no restaurant warmth. Dark surfaces read as the
+   house before curtain-up; red and yellow are used at full strength,
+   like marquee lights and stage velvet, not as muted accents.
    ==================================================================== */
 @theme {
-  --color-paper: #f8f4ea;
-  --color-paper-dim: #f1ebdb;
-  --color-ink: #16130f;
-  --color-ink-soft: #2a251d;
-  --color-gold: #c8a24d;
-  --color-gold-bright: #d9b968;
-  --color-gold-deep: #9c7c33;
-  --color-curtain: #7c1c22;
-  --color-curtain-deep: #591217;
-  --color-stone: #6e6858;
-  --color-stone-light: #a39c89;
-  --color-hairline: #ded4bb;
+  --color-ink: #0e0d0c;
+  --color-ink-soft: #201d1a;
+  --color-ink-line: #38332c;
 
-  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --color-white: #fbf9f4;
+  --color-white-dim: #f0ecE2;
+
+  --color-red: #d62828;
+  --color-red-deep: #a31e1e;
+  --color-red-bright: #ef3f3f;
+
+  --color-yellow: #ffc93c;
+  --color-yellow-deep: #e0a412;
+  --color-yellow-pale: #ffe9ab;
+
+  --color-charcoal: #2a2622;
+  --color-smoke: #756e63;
+  --color-smoke-light: #a49c8d;
+  --color-hairline: #d8d0bf;
+  --color-hairline-dark: #46403a;
+
+  --font-display: "Bricolage Grotesque", "Arial Black", sans-serif;
   --font-body: "Work Sans", system-ui, sans-serif;
 
-  --shadow-card: 0 1px 2px rgba(22, 19, 15, 0.04), 0 12px 32px -16px rgba(22, 19, 15, 0.18);
+  --shadow-card: 0 1px 2px rgba(14, 13, 12, 0.08), 0 20px 40px -20px rgba(14, 13, 12, 0.35);
+  --shadow-ticket: 4px 4px 0 0 var(--color-ink);
 }
 
 @layer base {
@@ -32,7 +43,7 @@
   }
 
   body {
-    background-color: var(--color-paper);
+    background-color: var(--color-white);
     color: var(--color-ink);
     font-family: var(--font-body);
     font-feature-settings: "liga" 1, "kern" 1;
@@ -41,19 +52,18 @@
 
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-weight: 480;
-    letter-spacing: -0.01em;
-    line-height: 1.08;
-    color: var(--color-ink);
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    line-height: 0.98;
   }
 
   ::selection {
-    background: var(--color-gold);
+    background: var(--color-yellow);
     color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-curtain);
+    outline: 3px solid var(--color-red);
     outline-offset: 3px;
   }
 
@@ -68,33 +78,50 @@
 }
 
 @layer components {
-  /* The "perde" mark — a small theatrical flourish used as the site's
-     recurring divider signature, referencing a drawn stage curtain fold. */
-  .perde-mark {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: var(--color-gold-deep);
-  }
-
   .eyebrow {
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-curtain);
   }
 
   .prose-editorial p {
     margin-bottom: 1.25em;
     max-width: 62ch;
   }
+
+  /* Perforated ticket-stub shape used by <TicketButton /> */
+  .ticket-stub {
+    position: relative;
+    clip-path: polygon(
+      0% 0%, 100% 0%, 100% 100%, 0% 100%
+    );
+  }
+  .ticket-stub::before,
+  .ticket-stub::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    background: var(--stub-bg, var(--color-white));
+    border-radius: 999px;
+    transform: translateY(-50%);
+  }
+  .ticket-stub::before { left: -7px; }
+  .ticket-stub::after { right: -7px; }
 }
 
 @utility container-editorial {
   width: 100%;
-  max-width: 78rem;
+  max-width: 80rem;
   margin-inline: auto;
   padding-inline: clamp(1.5rem, 4vw, 2.5rem);
 }
+
+@utility spotlight-glow {
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--color-yellow) 22%, transparent), transparent 70%);
+}
+EOF
+echo done
