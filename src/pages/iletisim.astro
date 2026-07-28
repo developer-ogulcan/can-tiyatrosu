@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import FormField from '../components/FormField.astro';
+import Button from '../components/Button.astro';
+import { SITE } from '../lib/site';
+---
+
+<Layout title="İletişim" description="Çan Tiyatrosu iletişim bilgileri, adres ve çalışma saatleri.">
+  <PageHero
+    eyebrow="Bize Ulaşın"
+    title="İletişim"
+    lede="Sorularınız, gösterim talepleriniz ve iş birliği önerileriniz için bize ulaşabilirsiniz."
+  />
+
+  <Section tone="paper">
+    <Container>
+      <div class="grid md:grid-cols-3 gap-6 mb-16">
+        <div class="border-t-2 border-gold-deep pt-5">
+          <p class="eyebrow mb-3">Adres</p>
+          <p class="text-stone leading-relaxed">{SITE.address}</p>
+        </div>
+        <div class="border-t-2 border-gold-deep pt-5">
+          <p class="eyebrow mb-3">İletişim</p>
+          <p class="text-stone leading-relaxed">{SITE.phone}<br />{SITE.email}</p>
+        </div>
+        <div class="border-t-2 border-gold-deep pt-5">
+          <p class="eyebrow mb-3">Çalışma Saatleri</p>
+          <ul class="text-stone leading-relaxed">
+            {SITE.hours.map((h) => (
+              <li class="flex justify-between gap-4"><span>{h.label}</span><span>{h.value}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <p class="eyebrow mb-5">Konum</p>
+          <div class="aspect-[4/3] bg-ink-soft rounded-[2px] flex items-center justify-center">
+            <span class="text-paper/30 text-xs uppercase tracking-widest">Harita Alanı</span>
+          </div>
+          <div class="mt-6 flex gap-4">
+            {SITE.social.map((s) => (
+              <a href={s.href} class="text-sm font-semibold text-curtain hover:underline underline-offset-4">{s.label}</a>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p class="eyebrow mb-5">Mesaj Gönderin</p>
+          <form class="grid gap-6" method="post" action="#">
+            <FormField label="Adınız Soyadınız" name="ad-soyad" required />
+            <FormField label="E-posta" name="email" type="email" required />
+            <FormField label="Konu" name="konu" />
+            <FormField label="Mesajınız" name="mesaj" type="textarea" required />
+            <div>
+              <Button type="submit" variant="primary">Mesajı Gönder</Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Container>
+  </Section>
+</Layout>

@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Card from '../../components/Card.astro';
+
+const downloads = [
+  { title: 'Logo Paketi (PNG / SVG)', description: 'Açık ve koyu zemin üzerinde kullanım için logo varyasyonları.' },
+  { title: 'Kurumsal Tanıtım Metni', description: 'Kurum hakkında kısa ve uzun tanıtım metinleri.' },
+  { title: 'Basın Fotoğrafları', description: 'Yüksek çözünürlüklü sahne ve kurum fotoğrafları.' },
+  { title: 'Marka Kullanım Kılavuzu', description: 'Renk paleti, tipografi ve logo kullanım kuralları.' },
+];
+---
+
+<Layout title="Basın Kiti" description="Çan Tiyatrosu logo, marka varlıkları ve basın için indirilebilir materyaller.">
+  <PageHero
+    eyebrow="Basın"
+    title="Basın Kiti"
+    lede="Gazeteciler ve kurumsal iş birlikleri için Çan Tiyatrosu'na ait logo, fotoğraf ve tanıtım materyalleri."
+  />
+
+  <Section tone="paper">
+    <Container>
+      <div class="grid md:grid-cols-2 gap-6">
+        {downloads.map((d) => (
+          <Card>
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 class="text-xl mb-2">{d.title}</h2>
+                <p class="text-stone leading-relaxed">{d.description}</p>
+              </div>
+              <span class="shrink-0 text-xs uppercase tracking-wide text-stone-light border border-hairline rounded-full px-3 py-1">
+                Yakında
+              </span>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </Container>
+  </Section>
+
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <p class="eyebrow mb-5">Kurumsal Tanıtım Metni</p>
+      <p class="max-w-2xl text-lg text-stone leading-relaxed">
+        [Basın kullanımı için hazırlanmış, kurumun tarihini ve kimliğini kısaca özetleyen resmi tanıtım metni buraya eklenecektir.]
+      </p>
+    </Container>
+  </Section>
+
+  <Section tone="paper">
+    <Container>
+      <p class="eyebrow mb-5">Basın İletişimi</p>
+      <p class="max-w-xl text-stone leading-relaxed">
+        Röportaj, fotoğraf ve basın talepleri için doğrudan bizimle iletişime geçebilirsiniz.
+      </p>
+      <a href="/iletisim" class="inline-flex items-center gap-2 mt-4 text-sm font-semibold text-curtain hover:underline underline-offset-4">
+        İletişim bilgilerini görün →
+      </a>
+    </Container>
+  </Section>
+</Layout>

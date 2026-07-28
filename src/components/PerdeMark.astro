@@ -1,0 +1,28 @@
+---
+interface Props {
+  align?: 'left' | 'center';
+  tone?: 'gold' | 'paper';
+  class?: string;
+}
+const { align = 'left', tone = 'gold', class: className = '' } = Astro.props;
+const color = tone === 'gold' ? 'var(--color-gold-deep)' : 'var(--color-paper-dim)';
+---
+<!--
+  The "perde" (curtain fold) mark: a hairline with a small drawn diamond,
+  standing in for a stage curtain's central fold. Used wherever a section
+  needs a quiet full-stop rather than a heavy rule.
+-->
+<div
+  class:list={[
+    'perde-mark not-prose select-none',
+    align === 'center' ? 'justify-center w-full' : '',
+    className,
+  ]}
+  aria-hidden="true"
+>
+  <span class="h-px w-8 md:w-12" style={`background:${color}; opacity:0.55;`}></span>
+  <svg width="10" height="10" viewBox="0 0 10 10" style={`color:${color}`}>
+    <path d="M5 0 L10 5 L5 10 L0 5 Z" fill="currentColor" opacity="0.85" />
+  </svg>
+  <span class="h-px w-8 md:w-12" style={`background:${color}; opacity:0.55;`}></span>
+</div>

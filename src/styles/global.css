@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/* ====================================================================
+   ÇAN TİYATROSU — DESIGN TOKENS
+
+   Palette (from the mark): warm paper ground, ink black, antique gold,
+   oxblood curtain red. Gold is used sparingly — a signal, not a fill.
+   ==================================================================== */
+@theme {
+  --color-paper: #f8f4ea;
+  --color-paper-dim: #f1ebdb;
+  --color-ink: #16130f;
+  --color-ink-soft: #2a251d;
+  --color-gold: #c8a24d;
+  --color-gold-bright: #d9b968;
+  --color-gold-deep: #9c7c33;
+  --color-curtain: #7c1c22;
+  --color-curtain-deep: #591217;
+  --color-stone: #6e6858;
+  --color-stone-light: #a39c89;
+  --color-hairline: #ded4bb;
+
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body: "Work Sans", system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(22, 19, 15, 0.04), 0 12px 32px -16px rgba(22, 19, 15, 0.18);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-feature-settings: "liga" 1, "kern" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 480;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    color: var(--color-ink);
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-curtain);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* The "perde" mark — a small theatrical flourish used as the site's
+     recurring divider signature, referencing a drawn stage curtain fold. */
+  .perde-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--color-gold-deep);
+  }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-curtain);
+  }
+
+  .prose-editorial p {
+    margin-bottom: 1.25em;
+    max-width: 62ch;
+  }
+}
+
+@utility container-editorial {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+}

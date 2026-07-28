@@ -1,0 +1,82 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Gallery from '../../components/Gallery.astro';
+import Accordion from '../../components/Accordion.astro';
+import FormField from '../../components/FormField.astro';
+import Button from '../../components/Button.astro';
+
+const benefits = [
+  { title: 'Okul ve Kurum Odaklı Planlama', description: 'Gösterim tarihleri, mekân ve seyirci kapasitesi kurumunuzun ihtiyacına göre planlanır.' },
+  { title: 'Repertuvardan Seçim', description: 'Yaş grubuna ve etkinlik amacına uygun oyun, repertuvarımızdan birlikte belirlenir.' },
+  { title: 'Profesyonel Teknik Ekip', description: 'Sahne kurulumu, ışık ve ses teknik ekibimiz tarafından eksiksiz sağlanır.' },
+];
+
+const faq = [
+  { question: 'Gösterim için ne kadar önceden başvurmalıyız?', answer: '[Yanıt buraya eklenecektir.]' },
+  { question: 'Mekân bizim tarafımızdan mı sağlanmalı?', answer: '[Yanıt buraya eklenecektir.]' },
+  { question: 'Gösterim ücretlendirmesi nasıl belirleniyor?', answer: '[Yanıt buraya eklenecektir.]' },
+];
+---
+
+<Layout title="Kurumsal Gösterimler" description="Okullar, belediyeler ve kurumlar için özel planlanan sahne gösterimleri.">
+  <PageHero
+    eyebrow="Hizmet"
+    title="Kurumsal Gösterimler"
+    lede="Okulunuz, kurumunuz veya belediyeniz için repertuvarımızdan seçilen bir oyunu, sizin mekânınıza veya anlaştığımız bir sahneye taşıyoruz."
+  />
+
+  <Section tone="paper">
+    <Container>
+      <p class="eyebrow mb-5">Neden Bizimle Çalışmalısınız</p>
+      <div class="grid md:grid-cols-3 gap-8">
+        {benefits.map((b) => (
+          <div class="border-t-2 border-gold-deep pt-5">
+            <h3 class="text-xl mb-2">{b.title}</h3>
+            <p class="text-stone leading-relaxed">{b.description}</p>
+          </div>
+        ))}
+      </div>
+    </Container>
+  </Section>
+
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <Gallery count={6} caption="Kurumsal gösterim" />
+    </Container>
+  </Section>
+
+  <Section tone="paper">
+    <Container>
+      <p class="eyebrow mb-5">Sıkça Sorulan Sorular</p>
+      <Accordion items={faq} />
+    </Container>
+  </Section>
+
+  <Section tone="dim">
+    <Container narrow>
+      <p class="eyebrow mb-5">Talep Formu</p>
+      <h2 class="text-3xl md:text-4xl mb-8">Kurumsal gösterim talebinizi iletin</h2>
+      <form class="grid gap-6" method="post" action="#">
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Kurum Adı" name="kurum-adi" required />
+          <FormField label="Yetkili Kişi" name="yetkili" required />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="E-posta" name="email" type="email" required />
+          <FormField label="Telefon" name="telefon" type="tel" required />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Tercih Edilen Tarih" name="tarih" type="date" />
+          <FormField label="Tahmini Seyirci Sayısı" name="seyirci-sayisi" />
+        </div>
+        <FormField label="Notlarınız" name="mesaj" type="textarea" placeholder="Talep ettiğiniz oyun, mekân bilgisi ve diğer detaylar" />
+        <div>
+          <Button type="submit" variant="primary">Talebi Gönder</Button>
+        </div>
+      </form>
+    </Container>
+  </Section>
+</Layout>

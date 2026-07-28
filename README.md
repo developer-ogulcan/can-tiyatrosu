@@ -1,43 +1,39 @@
-# Astro Starter Kit: Minimal
+# Çan Tiyatrosu — Resmî Web Sitesi
 
-```sh
-npm create astro@latest -- --template minimal
+Astro 7 + Tailwind CSS 4 ile inşa edilmiş, prodüksiyona hazır kurumsal tiyatro web sitesi.
+
+## Kurulum
+
+```bash
+npm install
+npm run dev       # http://localhost:4321
+npm run build     # dist/ klasörüne production build
+npm run preview   # production build'i yerelde önizle
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Mimari
 
-## 🚀 Project Structure
+- `src/content.config.ts` — İçerik koleksiyonları şeması: `plays`, `announcements`, `news`
+- `src/content/plays/*.md` — Her oyun bir markdown dosyası. **Yeni oyun eklemek için kod değişikliği gerekmez**, sadece yeni bir `.md` dosyası ekleyin (şablon için mevcut dosyalara bakın).
+- `src/components/` — Yeniden kullanılabilir bileşen kütüphanesi (Navbar, Footer, PlayCard, Timeline, Accordion, FormField, vb.)
+- `src/layouts/Layout.astro` — Ortak sayfa iskeleti (SEO, fontlar, Navbar, Footer)
+- `src/lib/site.ts` — Navigasyon yapısı, iletişim bilgileri ve site geneli sabitler
+- `src/styles/global.css` — Tasarım tokenleri (renk, tipografi, gölge) — Tailwind 4 `@theme` ile tanımlı
 
-Inside of your Astro project, you'll see the following folders and files:
+## Tasarım Sistemi
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+- **Renkler:** Sıcak kağıt beyazı (`--color-paper`), mürekkep siyahı (`--color-ink`), antika altın (`--color-gold`), perde kırmızısı (`--color-curtain`)
+- **Tipografi:** Başlıklar için Fraunces (serif), gövde metni için Work Sans
+- **İmza öğesi:** "Perde" işareti (`PerdeMark.astro`) — çizilmiş bir perde kıvrımını temsil eden, bölümler arasında kullanılan ayraç
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## İçerik Güncelleme
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Tüm `[köşeli parantez]` içindeki metinler yer tutucudur ve gerçek kurumsal içerikle değiştirilmelidir. Hiçbir tarihsel bilgi uydurulmamıştır.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Cloudflare Pages'e Dağıtım
 
-## 🧞 Commands
+- Build komutu: `npm run build`
+- Çıktı klasörü: `dist`
+- Node sürümü: 22+
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Repo doğrudan Cloudflare Pages'e bağlanabilir; ek bir yapılandırma gerekmez.

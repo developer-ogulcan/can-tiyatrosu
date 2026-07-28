@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/Container.astro';
+import PerdeMark from '../components/PerdeMark.astro';
+---
+<Layout title="Sayfa Bulunamadı">
+  <section class="min-h-[70vh] flex items-center pt-32 pb-24">
+    <Container narrow class="text-center">
+      <p class="eyebrow mb-6">404</p>
+      <h1 class="text-4xl md:text-6xl mb-6">Perde bu sayfada kapalı</h1>
+      <p class="text-lg text-stone leading-relaxed mb-8">
+        Aradığınız sayfa taşınmış ya da hiç var olmamış olabilir. Anasayfaya dönerek repertuvarımıza göz atabilirsiniz.
+      </p>
+      <PerdeMark align="center" class="mb-8" />
+      <a href="/" class="inline-flex items-center justify-center rounded-[2px] bg-ink text-paper px-7 py-3.5 text-sm font-semibold hover:bg-curtain-deep transition-colors">
+        Anasayfaya Dön
+      </a>
+    </Container>
+  </section>
+</Layout>

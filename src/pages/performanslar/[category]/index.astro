@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import Container from '../../../components/Container.astro';
+import Section from '../../../components/Section.astro';
+import PlayCard from '../../../components/PlayCard.astro';
+
+export async function getStaticPaths() {
+  return [
+    { params: { category: 'cocuk-oyunlari' }, props: { category: 'cocuk' as const, label: 'Çocuk Oyunları' } },
+    { params: { category: 'yetiskin-oyunlari' }, props: { category: 'yetiskin' as const, label: 'Yetişkin Oyunları' } },
+  ];
+}
+
+const { category, label } = Astro.props;
+const plays = (await getCollection('plays'))
+  .filter((p) => p.data.category === category)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const lede =
+  category === 'cocuk'
+    ? 'Çocuk ve gençlik seyircisine yönelik, pedagojik yaklaşımla hazırlanan yapımlarımız.'
+    : 'Yetişkin seyirci için sahnelenen, farklı bir dramaturjik dil taşıyan yapımlarımız.';
+---
+
+<Layout title={label} description={lede}>
+  <PageHero eyebrow="Repertuvar" title={label} lede={lede} />
+
+  <Section tone="paper">
+    <Container>
+      {plays.length > 0 ? (
+        <div>
+          {plays.map((play) => (
+            <PlayCard
+              title={play.data.title}
+              slug={play.id}
+              category={play.data.category}
+              status={play.data.status}
+              synopsis={play.data.synopsis}
+              ageRange={play.data.ageRange}
+              duration={play.data.duration}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-stone">[Bu kategoriye ait oyunlar yakında eklenecektir.]</p>
+      )}
+    </Container>
+  </Section>
+</Layout>

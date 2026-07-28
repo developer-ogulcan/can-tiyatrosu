@@ -1,0 +1,24 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  source: string;
+  summary: string;
+  externalUrl?: string;
+}
+const { title, date, source, summary, externalUrl } = Astro.props;
+const formatted = date.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<article class="border border-hairline rounded-[3px] p-7 bg-paper">
+  <div class="flex items-center justify-between text-xs uppercase tracking-wide text-stone-light mb-3">
+    <span>{source}</span>
+    <span>{formatted}</span>
+  </div>
+  <h3 class="text-xl md:text-2xl mb-2">{title}</h3>
+  <p class="text-stone leading-relaxed mb-4">{summary}</p>
+  {externalUrl && (
+    <a href={externalUrl} class="text-sm font-semibold text-curtain hover:underline underline-offset-4" target="_blank" rel="noopener noreferrer">
+      Haberi görüntüle ↗
+    </a>
+  )}
+</article>

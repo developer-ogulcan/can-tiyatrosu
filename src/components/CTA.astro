@@ -1,0 +1,34 @@
+---
+import Container from './Container.astro';
+import Button from './Button.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+const { eyebrow, title, description, primaryLabel, primaryHref, secondaryLabel, secondaryHref } = Astro.props;
+---
+<section class="bg-ink text-paper py-20 md:py-28">
+  <Container>
+    <div class="max-w-2xl">
+      {eyebrow && <p class="eyebrow mb-5 !text-gold-bright">{eyebrow}</p>}
+      <h2 class="text-3xl md:text-5xl text-paper">{title}</h2>
+      {description && <p class="mt-6 text-lg text-paper/70 max-w-xl">{description}</p>}
+      <div class="mt-9 flex flex-wrap items-center gap-4">
+        <Button href={primaryHref} variant="primary" class="!bg-gold !text-ink hover:!bg-gold-bright">
+          {primaryLabel}
+        </Button>
+        {secondaryLabel && secondaryHref && (
+          <Button href={secondaryHref} variant="ghost" class="!text-paper decoration-gold/60">
+            {secondaryLabel}
+          </Button>
+        )}
+      </div>
+    </div>
+  </Container>
+</section>

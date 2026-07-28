@@ -1,0 +1,45 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import FormField from '../../components/FormField.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Layout title="Kurumsal Gösterim Talebi" description="Okulunuz veya kurumunuz için sahne gösterimi talep formu.">
+  <PageHero
+    eyebrow="Başvuru"
+    title="Kurumsal Gösterim Talebi"
+    lede="Formu doldurarak kurumunuz için bir gösterim talebi oluşturun. Ekibimiz en kısa sürede sizinle iletişime geçecektir."
+  />
+
+  <Section tone="paper">
+    <Container narrow>
+      <form class="grid gap-6" method="post" action="#">
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Kurum Adı" name="kurum-adi" required />
+          <FormField label="Kurum Türü" name="kurum-turu" type="select" options={['Okul', 'Anaokulu / Kreş', 'Belediye', 'Kültür Merkezi', 'Diğer']} required />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Yetkili Kişi" name="yetkili" required />
+          <FormField label="Görevi" name="gorev" />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="E-posta" name="email" type="email" required />
+          <FormField label="Telefon" name="telefon" type="tel" required />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Tercih Edilen Tarih" name="tarih" type="date" />
+          <FormField label="Tahmini Seyirci Sayısı" name="seyirci-sayisi" />
+        </div>
+        <FormField label="İlgilendiğiniz Oyun" name="oyun" placeholder="Belirli bir oyun düşünüyorsanız belirtin" />
+        <FormField label="Mekân Bilgisi" name="mekan" type="textarea" rows={3} placeholder="Gösterimin yapılacağı salon veya alan hakkında bilgi" />
+        <FormField label="Ek Notlar" name="notlar" type="textarea" />
+        <div>
+          <Button type="submit" variant="primary">Talebi Gönder</Button>
+        </div>
+      </form>
+    </Container>
+  </Section>
+</Layout>

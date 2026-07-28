@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import NewsCard from '../../components/NewsCard.astro';
+
+const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Layout title="Basında Çan Tiyatrosu" description="Çan Tiyatrosu hakkında yayınlanan haber ve röportajlar.">
+  <PageHero
+    eyebrow="Basın"
+    title="Basında Çan Tiyatrosu"
+    lede="Kurumumuz hakkında yayınlanan haberler, röportajlar ve kültür sanat yazıları."
+  />
+
+  <Section tone="paper">
+    <Container>
+      {news.length > 0 ? (
+        <div class="grid md:grid-cols-2 gap-6">
+          {news.map((item) => (
+            <NewsCard
+              title={item.data.title}
+              date={item.data.date}
+              source={item.data.source}
+              summary={item.data.summary}
+              externalUrl={item.data.externalUrl}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-stone">[Basın haberleri yakında eklenecektir.]</p>
+      )}
+    </Container>
+  </Section>
+</Layout>

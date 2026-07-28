@@ -1,0 +1,16 @@
+---
+interface Props {
+  count?: number;
+  caption?: string;
+}
+const { count = 6, caption = 'Sahne fotoğrafı' } = Astro.props;
+const items = Array.from({ length: count });
+---
+<div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+  {items.map((_, i) => (
+    <div class="aspect-[4/5] bg-ink-soft/90 flex items-center justify-center relative overflow-hidden rounded-[2px]">
+      <div class="absolute inset-0 opacity-[0.06] bg-[radial-gradient(circle_at_30%_20%,var(--color-gold)_0,transparent_60%)]"></div>
+      <span class="text-paper/40 text-xs uppercase tracking-widest">{caption} {i + 1}</span>
+    </div>
+  ))}
+</div>

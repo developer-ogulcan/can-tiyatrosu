@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cantiyatrosu.com/sitemap-index.xml

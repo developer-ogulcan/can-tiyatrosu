@@ -1,0 +1,20 @@
+---
+interface Props {
+  tone?: 'paper' | 'dim' | 'ink';
+  spacing?: 'default' | 'tight';
+  class?: string;
+  id?: string;
+}
+const { tone = 'paper', spacing = 'default', class: className = '', id } = Astro.props;
+
+const tones: Record<string, string> = {
+  paper: 'bg-paper text-ink',
+  dim: 'bg-paper-dim text-ink',
+  ink: 'bg-ink text-paper',
+};
+
+const pad = spacing === 'tight' ? 'py-14 md:py-20' : 'py-20 md:py-32';
+---
+<section id={id} class:list={[tones[tone], pad, className]}>
+  <slot />
+</section>

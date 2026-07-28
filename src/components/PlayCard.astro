@@ -1,0 +1,39 @@
+---
+import Badge from './Badge.astro';
+
+interface Props {
+  title: string;
+  slug: string;
+  category: 'cocuk' | 'yetiskin';
+  status: 'repertuvarda' | 'yakinda' | 'arsiv';
+  synopsis: string;
+  ageRange?: string;
+  duration?: string;
+}
+const { title, slug, category, status, synopsis, ageRange, duration } = Astro.props;
+
+const statusLabel: Record<string, string> = {
+  repertuvarda: 'Repertuvarda',
+  yakinda: 'Yakında',
+  arsiv: 'Arşiv',
+};
+const statusTone: Record<string, 'gold' | 'curtain' | 'stone'> = {
+  repertuvarda: 'curtain',
+  yakinda: 'gold',
+  arsiv: 'stone',
+};
+---
+<a
+  href={`/performanslar/${category === 'cocuk' ? 'cocuk-oyunlari' : 'yetiskin-oyunlari'}/${slug}`}
+  class="group block border-t border-hairline py-8 md:py-10 first:border-t-0"
+>
+  <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-3">
+    <h3 class="text-2xl md:text-3xl transition-colors group-hover:text-curtain">{title}</h3>
+    <div class="flex items-center gap-2 shrink-0">
+      <Badge tone={statusTone[status]}>{statusLabel[status]}</Badge>
+      {ageRange && <span class="text-sm text-stone">{ageRange}</span>}
+    </div>
+  </div>
+  <p class="mt-3 max-w-2xl text-stone leading-relaxed">{synopsis}</p>
+  {duration && <p class="mt-3 text-xs uppercase tracking-wide text-stone-light">{duration}</p>}
+</a>

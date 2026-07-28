@@ -1,17 +1,231 @@
 ---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import PerdeMark from '../components/PerdeMark.astro';
+import Statistic from '../components/Statistic.astro';
+import Card from '../components/Card.astro';
+import Badge from '../components/Badge.astro';
+import PlayCard from '../components/PlayCard.astro';
+import AnnouncementCard from '../components/AnnouncementCard.astro';
+import CTA from '../components/CTA.astro';
+import Quote from '../components/Quote.astro';
+import { SITE } from '../lib/site';
 
+const plays = (await getCollection('plays'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+const announcements = (await getCollection('announcements'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const services = [
+  {
+    title: 'Kurumsal Gösterimler',
+    href: '/hizmetler/kurumsal-gosterimler',
+    description: 'Kurumlar, belediyeler ve okullar için özel olarak planlanan sahne gösterimleri.',
+  },
+  {
+    title: 'Animasyon ve Etkinlik',
+    href: '/hizmetler/animasyon-etkinlik',
+    description: 'Etkinliklere yönelik yaratıcı animasyon programları ve sahne performansları.',
+  },
+  {
+    title: 'Maskot Kiralama',
+    href: '/hizmetler/maskot-kiralama',
+    description: 'Kurumsal ve özel etkinlikler için profesyonel maskot performansı ve kiralama hizmeti.',
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title={SITE.name} description={SITE.description}>
+  <!-- Hero -->
+  <section class="relative pt-40 pb-24 md:pt-52 md:pb-32 bg-paper overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none opacity-[0.05]" style="background: radial-gradient(circle at 85% 15%, var(--color-curtain) 0%, transparent 45%);"></div>
+    <Container class="relative">
+      <p class="eyebrow mb-7">1984'ten Bu Yana Sahnede</p>
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.98] max-w-5xl">
+        Türkiye'nin yaşayan
+        <span class="italic text-curtain">en eski</span>
+        çocuk ve gençlik tiyatrosu.
+      </h1>
+      <p class="mt-8 text-lg md:text-xl text-stone max-w-2xl leading-relaxed">
+        {SITE.description}
+      </p>
+      <div class="mt-10 flex flex-wrap items-center gap-4">
+        <a href="/performanslar" class="inline-flex items-center justify-center rounded-[2px] bg-ink text-paper px-7 py-3.5 text-sm font-semibold tracking-wide hover:bg-curtain-deep transition-colors">
+          Sahnelenenleri Gör
+        </a>
+        <a href="/hakkimizda" class="inline-flex items-center justify-center rounded-[2px] border border-ink/25 text-ink px-7 py-3.5 text-sm font-semibold tracking-wide hover:border-curtain hover:text-curtain transition-colors">
+          Kurumu Tanıyın
+        </a>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Identity statement / stats -->
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <div class="grid md:grid-cols-3 gap-10 md:gap-8">
+        <Statistic value="43" label="Yıllık Kesintisiz Üretim" />
+        <Statistic value="2" label="Sahne — Kenan Halis ve Murat Celal" />
+        <Statistic value="Ankara" label="Merkez Yerleşke" />
+      </div>
+    </Container>
+  </Section>
+
+  <!-- About preview -->
+  <Section tone="paper">
+    <Container>
+      <div class="grid md:grid-cols-12 gap-10 md:gap-16 items-start">
+        <div class="md:col-span-5">
+          <p class="eyebrow mb-5">Kurum</p>
+          <h2 class="text-4xl md:text-5xl">Kırk üç yıllık bir zanaatın izinde</h2>
+        </div>
+        <div class="md:col-span-7">
+          <p class="text-lg text-stone leading-relaxed max-w-xl prose-editorial">
+            Çan Tiyatrosu, 1984 yılından bu yana aralıksız üretim yapan bir sahne sanatları kuruluşudur. Çocuk ve
+            gençlik tiyatrosu kimliğinin yanı sıra, yetişkin seyirciye yönelik yapımlar, eğitim programları ve
+            kurumsal projelerle geniş bir yelpazede sanat üretir.
+          </p>
+          <a href="/hakkimizda" class="inline-flex items-center gap-2 mt-2 text-sm font-semibold text-curtain hover:underline underline-offset-4">
+            Tarihçemizi okuyun →
+          </a>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <PerdeMark align="center" class="!py-4" />
+
+  <!-- Current / featured productions -->
+  {plays.length > 0 && (
+    <Section tone="paper" spacing="tight">
+      <Container>
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+          <div>
+            <p class="eyebrow mb-5">Repertuvar</p>
+            <h2 class="text-4xl md:text-5xl">Bu sezon sahnede</h2>
+          </div>
+          <a href="/performanslar" class="text-sm font-semibold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
+            Tüm oyunları gör →
+          </a>
+        </div>
+        <div>
+          {plays.map((play) => (
+            <PlayCard
+              title={play.data.title}
+              slug={play.id}
+              category={play.data.category}
+              status={play.data.status}
+              synopsis={play.data.synopsis}
+              ageRange={play.data.ageRange}
+              duration={play.data.duration}
+            />
+          ))}
+        </div>
+      </Container>
+    </Section>
+  )}
+
+  <!-- Why Çan Theatre -->
+  <Section tone="ink">
+    <Container>
+      <p class="eyebrow !text-gold-bright mb-5">Neden Çan Tiyatrosu</p>
+      <h2 class="text-4xl md:text-5xl text-paper max-w-2xl mb-14">Bir kurumun devamlılığı, verdiği sözle ölçülür</h2>
+      <div class="grid md:grid-cols-3 gap-10 md:gap-8">
+        <div>
+          <p class="font-display text-2xl text-gold-bright mb-3">01</p>
+          <h3 class="text-xl text-paper mb-2">Kesintisiz Deneyim</h3>
+          <p class="text-paper/60 leading-relaxed">43 yıldır aynı disiplinle üretim yapan, kurumsallaşmış bir sanat anlayışı.</p>
+        </div>
+        <div>
+          <p class="font-display text-2xl text-gold-bright mb-3">02</p>
+          <h3 class="text-xl text-paper mb-2">Pedagojik Yaklaşım</h3>
+          <p class="text-paper/60 leading-relaxed">Çocuk ve gençlik seyircisine özel olarak geliştirilen, alanında uzman bir sahneleme dili.</p>
+        </div>
+        <div>
+          <p class="font-display text-2xl text-gold-bright mb-3">03</p>
+          <h3 class="text-xl text-paper mb-2">Kurumsal Güvenilirlik</h3>
+          <p class="text-paper/60 leading-relaxed">Okullar, belediyeler ve kurumlarla uzun soluklu, profesyonel iş birlikleri.</p>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- Services -->
+  <Section tone="paper">
+    <Container>
+      <p class="eyebrow mb-5">Hizmetlerimiz</p>
+      <h2 class="text-4xl md:text-5xl max-w-2xl mb-14">Sahnenin ötesinde bir üretim kapasitesi</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        {services.map((s) => (
+          <Card href={s.href}>
+            <h3 class="text-xl mb-3 group-hover:text-curtain transition-colors">{s.title}</h3>
+            <p class="text-stone leading-relaxed mb-5">{s.description}</p>
+            <span class="text-sm font-semibold text-curtain">Detayları gör →</span>
+          </Card>
+        ))}
+      </div>
+    </Container>
+  </Section>
+
+  <!-- Quote -->
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <Quote attribution="[İsim eklenecek]" role="Kurucu Sanat Yönetmeni">
+        [Kurumun sanat anlayışını yansıtan bir alıntı buraya eklenecektir.]
+      </Quote>
+    </Container>
+  </Section>
+
+  <!-- Announcements -->
+  {announcements.length > 0 && (
+    <Section tone="paper" spacing="tight">
+      <Container>
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
+          <div>
+            <p class="eyebrow mb-5">Duyurular</p>
+            <h2 class="text-4xl md:text-5xl">Güncel</h2>
+          </div>
+          <a href="/basin/basinda-biz" class="text-sm font-semibold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
+            Tüm haberler →
+          </a>
+        </div>
+        <div>
+          {announcements.map((a) => (
+            <AnnouncementCard title={a.data.title} date={a.data.date} summary={a.data.summary} href={a.data.href} />
+          ))}
+        </div>
+      </Container>
+    </Section>
+  )}
+
+  <!-- Institutional collaborations -->
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <p class="eyebrow mb-5">Kurumsal İş Birlikleri</p>
+      <h2 class="text-3xl md:text-4xl max-w-xl mb-10">Okullar, belediyeler ve kültür kurumlarıyla birlikte</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 items-center opacity-70">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div class="h-14 border border-hairline rounded-[2px] flex items-center justify-center text-xs uppercase tracking-wide text-stone-light">
+            Logo {i + 1}
+          </div>
+        ))}
+      </div>
+    </Container>
+  </Section>
+
+  <CTA
+    eyebrow="Kurumunuz İçin"
+    title="Okulunuz veya kurumunuz için bir gösterim planlayalım"
+    description="Kurumsal gösterim taleplerinizi ileterek, repertuvarımızdaki oyunlardan sizin için en uygun olanı birlikte belirleyelim."
+    primaryLabel="Gösterim Talebi Oluştur"
+    primaryHref="/basvurular/kurumsal-gosterim-talebi"
+    secondaryLabel="Hizmetleri İnceleyin"
+    secondaryHref="/hizmetler"
+  />
+</Layout>

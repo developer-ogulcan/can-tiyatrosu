@@ -1,0 +1,57 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Card from '../../components/Card.astro';
+import PlayCard from '../../components/PlayCard.astro';
+
+const allPlays = (await getCollection('plays')).sort((a, b) => a.data.order - b.data.order);
+const childrenCount = allPlays.filter((p) => p.data.category === 'cocuk').length;
+const adultCount = allPlays.filter((p) => p.data.category === 'yetiskin').length;
+---
+
+<Layout title="Sahnelenenler" description="Çan Tiyatrosu repertuvarındaki çocuk ve yetişkin oyunları.">
+  <PageHero
+    eyebrow="Repertuvar"
+    title="Sahnelenenler"
+    lede="Çocuk ve gençlik seyircisine yönelik yapımların yanı sıra, yetişkin seyirci için de sahneye çıkan Çan Tiyatrosu repertuvarı."
+  />
+
+  <Section tone="paper">
+    <Container>
+      <div class="grid md:grid-cols-2 gap-6">
+        <Card href="/performanslar/cocuk-oyunlari">
+          <p class="eyebrow mb-3">{childrenCount} Oyun</p>
+          <h2 class="text-3xl mb-3 group-hover:text-curtain transition-colors">Çocuk Oyunları</h2>
+          <p class="text-stone leading-relaxed">Genç seyirciye yönelik, pedagojik yaklaşımla sahnelenen yapımlar.</p>
+        </Card>
+        <Card href="/performanslar/yetiskin-oyunlari">
+          <p class="eyebrow mb-3">{adultCount} Oyun</p>
+          <h2 class="text-3xl mb-3 group-hover:text-curtain transition-colors">Yetişkin Oyunları</h2>
+          <p class="text-stone leading-relaxed">Yetişkin seyirci için sahnelenen, farklı bir dramaturjik dil taşıyan yapımlar.</p>
+        </Card>
+      </div>
+    </Container>
+  </Section>
+
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <p class="eyebrow mb-5">Tüm Repertuvar</p>
+      <div>
+        {allPlays.map((play) => (
+          <PlayCard
+            title={play.data.title}
+            slug={play.id}
+            category={play.data.category}
+            status={play.data.status}
+            synopsis={play.data.synopsis}
+            ageRange={play.data.ageRange}
+            duration={play.data.duration}
+          />
+        ))}
+      </div>
+    </Container>
+  </Section>
+</Layout>

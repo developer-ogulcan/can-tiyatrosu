@@ -1,0 +1,47 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Card from '../../components/Card.astro';
+
+const items = [
+  {
+    title: 'Kurumsal Gösterim Talebi',
+    href: '/basvurular/kurumsal-gosterim-talebi',
+    description: 'Okulunuz veya kurumunuz için bir sahne gösterimi planlamak üzere talep oluşturun.',
+  },
+  {
+    title: 'Çan Akademi',
+    href: '/basvurular/can-akademi',
+    description: 'Çocuklar ve gençler için oyunculuk ve sahne sanatları eğitim programımıza başvurun.',
+  },
+  {
+    title: 'Oyunculuk Başvurusu',
+    href: '/basvurular/oyunculuk-basvurusu',
+    description: 'Kadromuza katılmak isteyen oyuncu adayları için başvuru formu.',
+  },
+];
+---
+
+<Layout title="Başvurular" description="Kurumsal gösterim, Çan Akademi ve oyunculuk başvuru formları.">
+  <PageHero
+    eyebrow="Katılım"
+    title="Başvurular"
+    lede="Kurumsal gösterim talebinden oyunculuk başvurusuna, Çan Tiyatrosu ile çalışmanın farklı yolları."
+  />
+
+  <Section tone="paper">
+    <Container>
+      <div class="grid md:grid-cols-3 gap-6">
+        {items.map((item) => (
+          <Card href={item.href}>
+            <h2 class="text-2xl mb-3 group-hover:text-curtain transition-colors">{item.title}</h2>
+            <p class="text-stone leading-relaxed mb-6">{item.description}</p>
+            <span class="text-sm font-semibold text-curtain">Başvuru formuna git →</span>
+          </Card>
+        ))}
+      </div>
+    </Container>
+  </Section>
+</Layout>
