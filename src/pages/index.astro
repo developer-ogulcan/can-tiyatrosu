@@ -4,7 +4,6 @@ import Layout from '../layouts/Layout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import PerdeMark from '../components/PerdeMark.astro';
-import HeroMain from '../components/HeroMain.astro';
 import Statistic from '../components/Statistic.astro';
 import Card from '../components/Card.astro';
 import Badge from '../components/Badge.astro';
@@ -44,7 +43,28 @@ const services = [
 
 <Layout title={SITE.name} description={SITE.description}>
   <!-- Hero -->
-  <HeroMain eyebrow={"1984'ten Bu Yana Sahnede"} title={SITE.name + ' — ' + SITE.tagline} lede={SITE.description} />
+  <section class="relative pt-40 pb-24 md:pt-52 md:pb-32 bg-paper overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none opacity-[0.05]" style="background: radial-gradient(circle at 85% 15%, var(--color-curtain) 0%, transparent 45%);"></div>
+    <Container class="relative">
+      <p class="eyebrow mb-7">1984'ten Bu Yana Sahnede</p>
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.98] max-w-5xl">
+        Türkiye'nin yaşayan
+        <span class="italic text-curtain">en eski</span>
+        çocuk ve gençlik tiyatrosu.
+      </h1>
+      <p class="mt-8 text-lg md:text-xl text-stone max-w-2xl leading-relaxed">
+        {SITE.description}
+      </p>
+      <div class="mt-10 flex flex-wrap items-center gap-4">
+        <a href="/performanslar" class="inline-flex items-center justify-center rounded-[2px] bg-ink text-paper px-7 py-3.5 text-sm font-semibold tracking-wide hover:bg-curtain-deep transition-colors">
+          Sahnelenenleri Gör
+        </a>
+        <a href="/hakkimizda" class="inline-flex items-center justify-center rounded-[2px] border border-ink/25 text-ink px-7 py-3.5 text-sm font-semibold tracking-wide hover:border-curtain hover:text-curtain transition-colors">
+          Kurumu Tanıyın
+        </a>
+      </div>
+    </Container>
+  </section>
 
   <!-- Identity statement / stats -->
   <Section tone="dim" spacing="tight">
