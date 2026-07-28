@@ -38,12 +38,17 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
       ))}
     </nav>
 
-    <a
-      href="/basvurular/kurumsal-gosterim-talebi"
-      class="hidden lg:inline-flex items-center rounded-[2px] bg-ink text-paper px-5 py-2.5 text-sm font-semibold hover:bg-curtain-deep transition-colors"
-    >
-      Gösterim Talebi
-    </a>
+    <div class="hidden lg:flex items-center gap-3">
+      <a href="/bilet" class="inline-flex items-center rounded-[3px] bg-curtain text-paper px-5 py-2.5 text-sm font-semibold hover:bg-curtain-deep transition-colors">
+        Bilet Al
+      </a>
+      <a
+        href="/basvurular/kurumsal-gosterim-talebi"
+        class="hidden xl:inline-flex items-center rounded-[2px] bg-ink text-paper px-5 py-2.5 text-sm font-semibold hover:bg-curtain-deep transition-colors"
+      >
+        Gösterim Talebi
+      </a>
+    </div>
 
     <button
       id="menu-toggle"
@@ -72,8 +77,8 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
           )}
         </div>
       ))}
-      <a href="/basvurular/kurumsal-gosterim-talebi" class="mt-4 inline-flex items-center justify-center rounded-[2px] bg-ink text-paper px-5 py-3 text-sm font-semibold">
-        Gösterim Talebi
+      <a href="/bilet" class="mt-4 inline-flex items-center justify-center rounded-[3px] bg-curtain text-paper px-5 py-3 text-sm font-semibold">
+        Bilet Al
       </a>
     </nav>
   </div>

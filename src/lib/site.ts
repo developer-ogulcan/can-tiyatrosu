@@ -24,14 +24,20 @@ export type NavChild = { label: string; href: string; description?: string };
 export type NavItem = { label: string; href: string; children?: NavChild[] };
 
 export const NAV: NavItem[] = [
-  { label: 'Anasayfa', href: '/' },
-  { label: 'Hakkımızda', href: '/hakkimizda' },
-  { label: 'Kurucular', href: '/kurucular' },
+  { label: 'Home', href: '/' },
   {
-    label: 'Sahnelenenler',
+    label: 'Kurumsal',
+    href: '/kurumsal',
+    children: [
+      { label: 'Hakkımızda', href: '/hakkimizda' },
+      { label: 'Kurucular', href: '/kurucular' },
+      { label: 'Basında Çan', href: '/basin/basinda-biz' },
+    ],
+  },
+  {
+    label: 'Oyunlar',
     href: '/performanslar',
     children: [
-      { label: 'Tüm Oyunlar', href: '/performanslar' },
       { label: 'Çocuk Oyunları', href: '/performanslar/cocuk-oyunlari' },
       { label: 'Yetişkin Oyunları', href: '/performanslar/yetiskin-oyunlari' },
     ],
@@ -40,29 +46,22 @@ export const NAV: NavItem[] = [
     label: 'Hizmetler',
     href: '/hizmetler',
     children: [
-      { label: 'Tüm Hizmetler', href: '/hizmetler' },
-      { label: 'Kurumsal Gösterimler', href: '/hizmetler/kurumsal-gosterimler' },
-      { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-etkinlik' },
+      { label: 'Sahne Gösterileri', href: '/hizmetler/kurumsal-gosterimler' },
+      { label: 'Animasyon', href: '/hizmetler/animasyon-etkinlik' },
       { label: 'Maskot Kiralama', href: '/hizmetler/maskot-kiralama' },
     ],
   },
+  { label: 'Çan Akademi', href: '/basvurular/can-akademi' },
+  { label: 'Atölyeler', href: '/atolyeler' },
   {
     label: 'Başvurular',
     href: '/basvurular',
     children: [
-      { label: 'Kurumsal Gösterim Talebi', href: '/basvurular/kurumsal-gosterim-talebi' },
-      { label: 'Çan Akademi', href: '/basvurular/can-akademi' },
-      { label: 'Oyunculuk Başvurusu', href: '/basvurular/oyunculuk-basvurusu' },
+      { label: 'Ekip Başvurusu', href: '/basvurular/ekip-basvurusu' },
+      { label: 'Gösteri Talebi', href: '/basvurular/kurumsal-gosterim-talebi' },
     ],
   },
-  {
-    label: 'Basın',
-    href: '/basin/basin-kiti',
-    children: [
-      { label: 'Basın Kiti', href: '/basin/basin-kiti' },
-      { label: 'Basında Çan Tiyatrosu', href: '/basin/basinda-biz' },
-    ],
-  },
+  { label: 'Duyurular', href: '/duyurular' },
   { label: 'İletişim', href: '/iletisim' },
 ];
 

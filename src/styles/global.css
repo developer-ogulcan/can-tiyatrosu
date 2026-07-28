@@ -8,8 +8,8 @@
    house before curtain-up; red and yellow are used at full strength,
    like marquee lights and stage velvet, not as muted accents.
    ==================================================================== */
-@theme {
-  --color-ink: #0e0d0c;
+:root {
+  --color-ink: #0b0a09;
   --color-ink-soft: #201d1a;
   --color-ink-line: #38332c;
 
@@ -19,6 +19,15 @@
   --color-red: #d62828;
   --color-red-deep: #a31e1e;
   --color-red-bright: #ef3f3f;
+
+  /* Brand aliases used throughout the codebase */
+  --color-paper: var(--color-white);
+  --color-paper-dim: #f7f5f0;
+  --color-curtain: var(--color-red);
+  --color-curtain-deep: var(--color-red-deep);
+  --color-gold: var(--color-yellow);
+  --color-gold-deep: var(--color-yellow-deep);
+  --color-stone: #9a958b;
 
   --color-yellow: #ffc93c;
   --color-yellow-deep: #e0a412;
@@ -30,8 +39,8 @@
   --color-hairline: #d8d0bf;
   --color-hairline-dark: #46403a;
 
-  --font-display: "Bricolage Grotesque", "Arial Black", sans-serif;
-  --font-body: "Work Sans", system-ui, sans-serif;
+  --font-display: "Cinzel", "Cinzel Decorative", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 
   --shadow-card: 0 1px 2px rgba(14, 13, 12, 0.08), 0 20px 40px -20px rgba(14, 13, 12, 0.35);
   --shadow-ticket: 4px 4px 0 0 var(--color-ink);
@@ -113,15 +122,15 @@
   .ticket-stub::after { right: -7px; }
 }
 
-@utility container-editorial {
-  width: 100%;
-  max-width: 80rem;
-  margin-inline: auto;
-  padding-inline: clamp(1.5rem, 4vw, 2.5rem);
-}
+@layer utilities {
+  .container-editorial {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+  }
 
-@utility spotlight-glow {
-  background: radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--color-yellow) 22%, transparent), transparent 70%);
+  .spotlight-glow {
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in srgb, var(--color-yellow) 22%, transparent), transparent 70%);
+  }
 }
-EOF
-echo done
