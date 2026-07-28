@@ -9,20 +9,30 @@
    like marquee lights and stage velvet, not as muted accents.
    ==================================================================== */
 :root {
-  --color-ink: #0b0a09;
+  /* Core brand palette (strictly only these colors) */
+  --color-ct-yellow: #F6C21E; /* primary CTA */
+  --color-ct-red: #B61E2E; /* accent / curtain */
+  --color-ct-black: #111111; /* text / deep */
+  --color-ct-bg: #FFF9F1; /* broken white background */
+  --color-ct-bg-light: #F2EEE7; /* light surfaces */
+
+  --color-ink: var(--color-ct-black);
   --color-ink-soft: #201d1a;
   --color-ink-line: #38332c;
 
-  --color-white: #fbf9f4;
-  --color-white-dim: #f0ecE2;
+  --color-white: var(--color-ct-bg);
+  --color-white-dim: var(--color-ct-bg-light);
 
-  --color-red: #d62828;
-  --color-red-deep: #a31e1e;
-  --color-red-bright: #ef3f3f;
+  --color-red: var(--color-ct-red);
+  --color-red-deep: #90151f;
+  --color-red-bright: #ff3b3b;
 
-  /* Brand aliases used throughout the codebase */
+  --color-yellow: var(--color-ct-yellow);
+  --color-yellow-deep: #e0a412;
+  --color-yellow-pale: #ffe9ab;
+
   --color-paper: var(--color-white);
-  --color-paper-dim: #f7f5f0;
+  --color-paper-dim: var(--color-white-dim);
   --color-curtain: var(--color-red);
   --color-curtain-deep: var(--color-red-deep);
   --color-gold: var(--color-yellow);
@@ -39,7 +49,7 @@
   --color-hairline: #d8d0bf;
   --color-hairline-dark: #46403a;
 
-  --font-display: "Cinzel", "Cinzel Decorative", serif;
+  --font-display: "Luckiest Guy", "Bangers", "Fredoka One", sans-serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 
   --shadow-card: 0 1px 2px rgba(14, 13, 12, 0.08), 0 20px 40px -20px rgba(14, 13, 12, 0.35);
