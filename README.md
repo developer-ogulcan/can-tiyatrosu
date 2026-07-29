@@ -23,7 +23,8 @@ npm run preview   # production build'i yerelde önizle
 ## Tasarım Sistemi
 
 - **Renkler:** Sıcak kağıt beyazı (`--color-paper`), mürekkep siyahı (`--color-ink`), antika altın (`--color-gold`), perde kırmızısı (`--color-curtain`)
-- **Tipografi:** Başlıklar için Fraunces (serif), gövde metni için Work Sans
+- **Tipografi:** Başlıklar için `Comfortaa`, gövde metni için `Nunito Sans`
+- **Logo:** Navbar'da `public/images/logo.png` kullanılıyor; mevcut tasarımda metinli başlık yerine logo gösteriliyor.
 - **İmza öğesi:** "Perde" işareti (`PerdeMark.astro`) — çizilmiş bir perde kıvrımını temsil eden, bölümler arasında kullanılan ayraç
 
 ## İçerik Güncelleme
