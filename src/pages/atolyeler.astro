@@ -1,61 +1,40 @@
 ---
+import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Accordion from '../components/Accordion.astro';
 
-const workshops = [
-  {
-    title: 'Yaratıcı Drama Atölyesi',
-    age: '7–12 yaş',
-    duration: '8 hafta',
-    description: 'Çocukların hayal gücünü, ifade becerisini ve grup çalışmasını geliştiren yaratıcı drama programı.',
-  },
-  {
-    title: 'Genç Sahne Atölyesi',
-    age: '13–17 yaş',
-    duration: '10 hafta',
-    description: 'Gençler için oyunculuk temelleri, sahne duruşu ve kısa sahne çalışmaları.',
-  },
-  {
-    title: 'Okul Tatili Tiyatro Kampı',
-    age: '8–14 yaş',
-    duration: '1 hafta',
-    description: 'Yoğunlaştırılmış tiyatro kampı — kısa sürede sahne deneyimi kazanma fırsatı.',
-  },
-];
-
-const faqs = [
-  {
-    question: 'Atölyeler ile Çan Akademi arasındaki fark nedir?',
-    answer: 'Atölyeler, belirli yaş gruplarına yönelik dönemsel eğitim programlarıdır. Çan Akademi ise yetişkinlerin hobi olarak kendi oyunlarını ürettiği özgür bir alandır — atölye değildir.',
-  },
-  {
-    question: 'Atölyelere kimler katılabilir?',
-    answer: 'Her atölyenin yaş aralığı program kartında belirtilmiştir. Kayıt için veli onayı gereklidir.',
-  },
-  {
-    question: 'Nasıl kayıt olabilirim?',
-    answer: 'Aktif atölye dönemleri için iletişim formumuzdan veya telefon ile bize ulaşabilirsiniz.',
-  },
-];
+const workshopsCollection = await getCollection('workshops');
+const workshopsEntry =
+  workshopsCollection.find(
+    (entry) => entry.id === 'workshops.md' || entry.id === 'workshops' || entry.slug === 'workshops',
+  ) ?? workshopsCollection[0];
+if (!workshopsEntry) {
+  throw new Error('Workshops page content not found');
+}
+const workshopsData = workshopsEntry.data;
 ---
 
-<Layout title="Atölyeler" description="Çocuklar ve gençler için dönemsel oyunculuk, yaratıcı drama ve sahne atölyeleri.">
+<Layout title={workshopsData.title} description={workshopsData.description || 'Çocuklar ve gençler için dönemsel oyunculuk, yaratıcı drama ve sahne atölyeleri.'}>
   <PageHero
-    eyebrow="Eğitim"
-    title="Atölyeler"
-    lede="Çocuklar ve gençler için dönemsel oyunculuk, yaratıcı drama ve sahne atölyeleri. Çan Akademi'den farklı olarak yapılandırılmış eğitim programlarıdır."
+    eyebrow={workshopsData.eyebrow}
+    title={workshopsData.title}
+    lede={workshopsData.lede}
+    eyebrowField={tinaField(workshopsData, 'eyebrow')}
+    titleField={tinaField(workshopsData, 'title')}
+    ledeField={tinaField(workshopsData, 'lede')}
   />
 
   <Section tone="paper">
     <Container>
-      <p class="text-stone text-lg max-w-2xl mb-12 leading-relaxed">
-        Atölyeler, velilerin çocukları için aradığı yapılandırılmış eğitim programlarıdır. Çan Akademi ile karıştırılmamalıdır — orası yetişkinlerin hobi olarak tiyatro ürettiği bir alandır.
+      <p class="text-stone text-lg max-w-2xl mb-12 leading-relaxed" data-tina-field={tinaField(workshopsData, 'description')}>
+        {workshopsData.description}
       </p>
-      <div class="grid md:grid-cols-3 gap-6">
-        {workshops.map((w) => (
+      <div class="grid md:grid-cols-3 gap-6" data-tina-field={tinaField(workshopsData, 'workshops')}>
+        {workshopsData.workshops.map((w) => (
           <article class="rounded-xl border-2 border-hairline bg-paper p-6 hover:border-curtain/30 transition-colors">
             <p class="eyebrow mb-3">{w.age}</p>
             <h2 class="text-2xl mb-3">{w.title}</h2>
@@ -70,18 +49,20 @@ const faqs = [
   <Section tone="dim" spacing="tight">
     <Container narrow>
       <h2 class="text-3xl mb-8">Sık Sorulan Sorular</h2>
-      <Accordion items={faqs} />
+      <Accordion items={workshopsData.faqs} />
     </Container>
   </Section>
 
   <Section tone="ink">
     <Container>
       <div class="max-w-2xl mx-auto text-center">
-        <h2 class="text-3xl text-paper mb-6">Atölye kaydı ve bilgi</h2>
-        <p class="text-paper/70 text-lg mb-8 leading-relaxed">
-          Aktif dönemler ve kontenjan bilgisi için bizimle iletişime geçin.
+        <h2 class="text-3xl text-paper mb-6">{workshopsData.ctaTitle}</h2>
+        <p class="text-paper/70 text-lg mb-8 leading-relaxed" data-tina-field={tinaField(workshopsData, 'ctaDescription')}>
+          {workshopsData.ctaDescription}
         </p>
-        <a href="/iletisim" class="btn-primary">İletişime Geç</a>
+        <a href={workshopsData.ctaButton?.href ?? '/iletisim'} class="btn-primary" data-tina-field={tinaField(workshopsData, 'ctaButton')}>
+          {workshopsData.ctaButton?.label ?? 'İletişime Geç'}
+        </a>
       </div>
     </Container>
   </Section>

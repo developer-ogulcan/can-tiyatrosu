@@ -6,15 +6,25 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "set \"NODE_OPTIONS=--max-old-space-size=8192\" && tinacms dev -p 4002 --datalayer-port 9001 -c \"astro dev --host 127.0.0.1 --port 4321\"",
+    "build": "set \"NODE_OPTIONS=--max-old-space-size=8192\" && tinacms build -p 4002 --local --skip-cloud-checks --skip-indexing --skip-search-index --datalayer-port 9001 && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^11.0.3",
     "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.3.3",
+    "@tinacms/astro": "^0.6.1",
+    "@tinacms/cli": "^2.5.6",
+    "@tinacms/datalayer": "^2.0.29",
     "astro": "^7.1.4",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "tinacms": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

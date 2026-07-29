@@ -1,4 +1,6 @@
 ---
+import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
@@ -8,26 +10,24 @@ import Statistic from '../components/Statistic.astro';
 import PerdeMark from '../components/PerdeMark.astro';
 import CTA from '../components/CTA.astro';
 
-const timeline = [
-  { perde: 'Perde I', year: '1984', title: 'Kuruluş', description: '[Kuruluş yılına ait tarihsel bilgi buraya eklenecektir.]' },
-  { perde: 'Perde II', year: '199X', title: 'Genişleme', description: '[Kurumun genişleme dönemine ait bilgi buraya eklenecektir.]' },
-  { perde: 'Perde III', year: '200X', title: 'Yeni Yerleşke', description: '[Yerleşke ve sahne düzenlemelerine dair bilgi buraya eklenecektir.]' },
-  { perde: 'Perde IV', year: 'Bugün', title: 'Kesintisiz Üretim', description: '[Kurumun günümüzdeki faaliyet alanına dair bilgi buraya eklenecektir.]' },
-];
-
-const values = [
-  { title: 'Zanaat', description: '[Değer açıklaması buraya eklenecektir.]' },
-  { title: 'Süreklilik', description: '[Değer açıklaması buraya eklenecektir.]' },
-  { title: 'Pedagoji', description: '[Değer açıklaması buraya eklenecektir.]' },
-  { title: 'Dürüstlük', description: '[Değer açıklaması buraya eklenecektir.]' },
-];
+const aboutCollection = await getCollection('about');
+const aboutEntry =
+  aboutCollection.find((entry) => entry.id === 'about.md' || entry.id === 'about' || entry.slug === 'about') ??
+  aboutCollection[0];
+if (!aboutEntry) {
+  throw new Error('About page content not found');
+}
+const about = aboutEntry.data;
 ---
 
 <Layout title="Hakkımızda" description="Çan Tiyatrosu'nun tarihi, misyonu, vizyonu ve değerleri.">
   <PageHero
-    eyebrow="Kurum"
-    title="Kırk üç yıllık bir zanaatın izinde"
-    lede="Çan Tiyatrosu, 1984'ten bu yana kesintisiz olarak sahnede olan, Türkiye'nin yaşayan en eski çocuk ve gençlik tiyatrosudur."
+    eyebrow={about.eyebrow}
+    title={about.title}
+    lede={about.lede}
+    eyebrowField={tinaField(about, 'eyebrow')}
+    titleField={tinaField(about, 'title')}
+    ledeField={tinaField(about, 'lede')}
   />
 
   <Section tone="paper">
@@ -35,10 +35,12 @@ const values = [
       <div class="grid md:grid-cols-12 gap-12">
         <div class="md:col-span-4">
           <p class="eyebrow mb-5">Misyon</p>
-          <h2 class="text-3xl mb-4">Sahneyi bir eğitim ve zanaat alanı olarak korumak</h2>
+          <h2 class="text-3xl mb-4" data-tina-field={tinaField(about, 'missionTitle')}>
+            {about.missionTitle}
+          </h2>
         </div>
-        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed">
-          <p>[Kurumun misyon metni buraya eklenecektir. Bu bölüm, Çan Tiyatrosu'nun neden var olduğunu ve hangi sanatsal sorumluluğu taşıdığını iki ila üç paragrafla anlatacaktır.]</p>
+        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed" data-tina-field={tinaField(about, 'missionBody')}>
+          <p>{about.missionBody}</p>
         </div>
       </div>
     </Container>
@@ -51,10 +53,12 @@ const values = [
       <div class="grid md:grid-cols-12 gap-12">
         <div class="md:col-span-4">
           <p class="eyebrow mb-5">Vizyon</p>
-          <h2 class="text-3xl mb-4">Gelecek kuşaklara aktarılan bir sahne dili</h2>
+          <h2 class="text-3xl mb-4" data-tina-field={tinaField(about, 'visionTitle')}>
+            {about.visionTitle}
+          </h2>
         </div>
-        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed">
-          <p>[Kurumun vizyon metni buraya eklenecektir.]</p>
+        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed" data-tina-field={tinaField(about, 'visionBody')}>
+          <p>{about.visionBody}</p>
         </div>
       </div>
     </Container>
@@ -63,8 +67,8 @@ const values = [
   <Section tone="dim">
     <Container>
       <p class="eyebrow mb-5">Değerlerimiz</p>
-      <div class="grid md:grid-cols-4 gap-8 mt-10">
-        {values.map((v) => (
+      <div class="grid md:grid-cols-4 gap-8 mt-10" data-tina-field={tinaField(about, 'values')}>
+        {about.values.map((v) => (
           <div class="border-t-2 border-gold-deep pt-5">
             <h3 class="text-xl mb-2">{v.title}</h3>
             <p class="text-stone leading-relaxed">{v.description}</p>
@@ -78,17 +82,19 @@ const values = [
     <Container>
       <p class="eyebrow mb-5">Tarihçe</p>
       <h2 class="text-4xl md:text-5xl mb-14 max-w-2xl">Sahneler değişti, disiplin hiç değişmedi</h2>
-      <Timeline entries={timeline} />
+      <div data-tina-field={tinaField(about, 'timeline')}>
+        <Timeline entries={about.timeline} />
+      </div>
     </Container>
   </Section>
 
   <Section tone="ink" spacing="tight">
     <Container>
       <p class="eyebrow !text-gold-bright mb-5">Kazanımlar</p>
-      <div class="grid md:grid-cols-3 gap-10">
-        <Statistic value="43" label="Sanat Yılı" />
-        <Statistic value="[X]" label="Ödül ve Onur Belgesi" />
-        <Statistic value="[X]+" label="Sahnelenen Yapım" />
+      <div class="grid md:grid-cols-3 gap-10" data-tina-field={tinaField(about, 'stats')}>
+        {about.stats.map((stat) => (
+          <Statistic value={stat.value} label={stat.label} />
+        ))}
       </div>
       <p class="mt-10 max-w-2xl text-paper/60 leading-relaxed">
         [Kurumun aldığı ödüller, onur belgeleri ve kurumsal başarılar buraya eklenecektir.]

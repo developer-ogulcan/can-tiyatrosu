@@ -1,4 +1,6 @@
 ---
+import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
@@ -6,20 +8,20 @@ import Section from '../components/Section.astro';
 import PerdeMark from '../components/PerdeMark.astro';
 import Quote from '../components/Quote.astro';
 
-const founders = [
-  { name: '[Kurucu İsim 1]', title: 'Kurucu Sanat Yönetmeni' },
-  { name: '[Kurucu İsim 2]', title: 'Kurucu Ortak' },
-];
+const foundersCollection = await getCollection('founders');
+const foundersEntry =
+  foundersCollection.find((entry) => entry.id === 'founders.md' || entry.id === 'founders' || entry.slug === 'founders') ??
+  foundersCollection[0];
+if (!foundersEntry) {
+  throw new Error('Founders page content not found');
+}
+const foundersData = foundersEntry.data;
 ---
 
 <Layout title="Kurucular" description="Çan Tiyatrosu'nu 1984'te kuran iki isim ve bıraktıkları miras.">
-  <PageHero
-    eyebrow="Miras"
-    title="Kurucular"
-    lede="Çan Tiyatrosu, 1984 yılında iki ismin ortak vizyonuyla kuruldu. Kurumun bugün taşıdığı sahne kültürü, onların bıraktığı zeminin üzerine inşa edildi."
-  />
+  <PageHero eyebrow={foundersData.eyebrow} title={foundersData.title} lede={foundersData.lede} />
 
-  {founders.map((founder, i) => (
+  {foundersData.founders.map((founder, i) => (
     <Section tone={i % 2 === 0 ? 'paper' : 'dim'}>
       <Container>
         <div class="grid md:grid-cols-12 gap-10 md:gap-16 items-start">
@@ -31,9 +33,8 @@ const founders = [
           <div class="md:col-span-8 order-2">
             <p class="eyebrow mb-4">{founder.title}</p>
             <h2 class="text-4xl md:text-5xl mb-6">{founder.name}</h2>
-            <div class="prose-editorial text-lg text-stone leading-relaxed max-w-2xl">
-              <p>[Bu kurucunun biyografisi buraya eklenecektir. Sahne kariyeri, kuruma katkıları ve kurumun bugünkü kimliğine olan etkisi anlatılacaktır. Gerçek dışı hiçbir bilgi eklenmeyecek, yalnızca doğrulanmış bilgiler yer alacaktır.]</p>
-              <p>[Gerekirse ikinci paragraf buraya eklenecektir.]</p>
+            <div class="prose-editorial text-lg text-stone leading-relaxed max-w-2xl" data-tina-field={tinaField(foundersData, 'founders')}>
+              <p>{founder.bio}</p>
             </div>
           </div>
         </div>
@@ -47,8 +48,8 @@ const founders = [
     <Container>
       <p class="eyebrow mb-5">Miras</p>
       <h2 class="text-3xl md:text-4xl max-w-2xl mb-10">Bugüne taşınan bir sahne anlayışı</h2>
-      <Quote attribution="[İsim eklenecek]" role="Kurucu">
-        [Kurucuların sahne anlayışını yansıtan bir alıntı buraya eklenecektir.]
+      <Quote attribution={foundersData.quoteAttribution} role={foundersData.quoteRole}>
+        {foundersData.quote}
       </Quote>
     </Container>
   </Section>

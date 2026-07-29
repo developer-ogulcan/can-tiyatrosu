@@ -1,0 +1,40 @@
+---
+copyright: "© 2026 Çan Tiyatrosu. Tüm hakları saklıdır."
+links:
+  - group: "Seyirci"
+    items:
+      - label: "Oyunlar"
+        href: "/performanslar"
+      - label: "Bilet Al"
+        href: "/bilet"
+      - label: "Çocuk Oyunları"
+        href: "/performanslar/cocuk-oyunlari"
+      - label: "Yetişkin Oyunları"
+        href: "/performanslar/yetiskin-oyunlari"
+  - group: "Katıl"
+    items:
+      - label: "Ekip Başvurusu"
+        href: "/basvurular/ekip-basvurusu"
+      - label: "Çan Akademi"
+        href: "/can-akademi"
+      - label: "Atölyeler"
+        href: "/atolyeler"
+  - group: "Kurum"
+    items:
+      - label: "Hakkımızda"
+        href: "/hakkimizda"
+      - label: "Kurucular"
+        href: "/kurucular"
+      - label: "Basın Kiti"
+        href: "/basin/basin-kiti"
+      - label: "Basında Çan Tiyatrosu"
+        href: "/basin/basinda-biz"
+  - group: "Hizmet"
+    items:
+      - label: "Kurumsal Gösterimler"
+        href: "/hizmetler/kurumsal-gosterimler"
+      - label: "Animasyon ve Etkinlik"
+        href: "/hizmetler/animasyon-etkinlik"
+      - label: "Maskot Kiralama"
+        href: "/hizmetler/maskot-kiralama"
+---

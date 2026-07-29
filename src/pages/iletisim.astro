@@ -1,4 +1,6 @@
 ---
+import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
@@ -6,13 +8,24 @@ import Section from '../components/Section.astro';
 import FormField from '../components/FormField.astro';
 import Button from '../components/Button.astro';
 import { SITE } from '../lib/site';
+
+const contactCollection = await getCollection('contact');
+const contactEntry =
+  contactCollection.find((entry) => entry.id === 'contact.md' || entry.id === 'contact' || entry.slug === 'contact') ??
+  contactCollection[0];
+
+if (!contactEntry) {
+  throw new Error('Contact page content not found');
+}
+
+const contact = contactEntry.data;
 ---
 
-<Layout title="İletişim" description="Çan Tiyatrosu iletişim bilgileri, adres ve çalışma saatleri.">
+<Layout title={contact.title} description={contact.lede}>
   <PageHero
-    eyebrow="Bize Ulaşın"
-    title="İletişim"
-    lede="Sorularınız, gösterim talepleriniz ve iş birliği önerileriniz için bize ulaşabilirsiniz."
+    eyebrow={contact.eyebrow}
+    title={contact.title}
+    lede={contact.lede}
   />
 
   <Section tone="paper">
@@ -20,47 +33,118 @@ import { SITE } from '../lib/site';
       <div class="grid md:grid-cols-3 gap-6 mb-16">
         <div class="border-t-2 border-gold-deep pt-5">
           <p class="eyebrow mb-3">Adres</p>
-          <p class="text-stone leading-relaxed">{SITE.address}</p>
+          <p class="text-stone leading-relaxed">
+            {SITE.address}
+          </p>
         </div>
+
         <div class="border-t-2 border-gold-deep pt-5">
           <p class="eyebrow mb-3">İletişim</p>
-          <p class="text-stone leading-relaxed">{SITE.phone}<br />{SITE.email}</p>
+          <p class="text-stone leading-relaxed">
+            {SITE.phone}<br />
+            {SITE.email}
+          </p>
         </div>
+
         <div class="border-t-2 border-gold-deep pt-5">
           <p class="eyebrow mb-3">Çalışma Saatleri</p>
           <ul class="text-stone leading-relaxed">
             {SITE.hours.map((h) => (
-              <li class="flex justify-between gap-4"><span>{h.label}</span><span>{h.value}</span></li>
+              <li class="flex justify-between gap-4">
+                <span>{h.label}</span>
+                <span>{h.value}</span>
+              </li>
             ))}
           </ul>
         </div>
       </div>
 
       <div class="grid md:grid-cols-2 gap-12">
+
+        <!-- Harita -->
         <div>
-          <p class="eyebrow mb-5">Konum</p>
-          <div class="aspect-[4/3] bg-ink-soft rounded-[2px] flex items-center justify-center">
-            <span class="text-paper/30 text-xs uppercase tracking-widest">Harita Alanı</span>
+          <p class="eyebrow mb-5">
+            {contact.mapLabel}
+          </p>
+
+          <div class="overflow-hidden rounded-lg shadow-lg border border-stone-200">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3059.696128154287!2d32.855435711422636!3d39.92581597140402!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14d34e5734f69e17%3A0x9a5fad7f1d63ad4d!2zw4dBTiBUxLBZQVRST1NV!5e0!3m2!1str!2str!4v1785331010993!5m2!1str!2str"
+              class="w-full aspect-[4/3]"
+              style="border:0;"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="strict-origin-when-cross-origin">
+            </iframe>
           </div>
-          <div class="mt-6 flex gap-4">
+
+          <div class="mt-6 flex flex-wrap gap-4">
             {SITE.social.map((s) => (
-              <a href={s.href} class="text-sm font-semibold text-curtain hover:underline underline-offset-4">{s.label}</a>
+              <a
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm font-semibold text-curtain hover:underline underline-offset-4"
+              >
+                {s.label}
+              </a>
             ))}
           </div>
         </div>
 
+        <!-- Form -->
         <div>
-          <p class="eyebrow mb-5">Mesaj Gönderin</p>
+          <p
+            class="eyebrow mb-5"
+            data-tina-field={tinaField(contact, 'formTitle')}
+          >
+            {contact.formTitle}
+          </p>
+
+          <p
+            class="text-stone leading-relaxed mb-6"
+            data-tina-field={tinaField(contact, 'formDescription')}
+          >
+            {contact.formDescription}
+          </p>
+
           <form class="grid gap-6" method="post" action="#">
-            <FormField label="Adınız Soyadınız" name="ad-soyad" required />
-            <FormField label="E-posta" name="email" type="email" required />
-            <FormField label="Konu" name="konu" />
-            <FormField label="Mesajınız" name="mesaj" type="textarea" required />
+            <FormField
+              label="Adınız Soyadınız"
+              name="ad-soyad"
+              required
+            />
+
+            <FormField
+              label="E-posta"
+              name="email"
+              type="email"
+              required
+            />
+
+            <FormField
+              label="Konu"
+              name="konu"
+            />
+
+            <FormField
+              label="Mesajınız"
+              name="mesaj"
+              type="textarea"
+              required
+            />
+
             <div>
-              <Button type="submit" variant="primary">Mesajı Gönder</Button>
+              <Button
+                type="submit"
+                variant="primary"
+              >
+                Mesajı Gönder
+              </Button>
             </div>
           </form>
         </div>
+
       </div>
     </Container>
   </Section>

@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
 import Layout from '../layouts/Layout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
@@ -10,6 +11,17 @@ import PlayCard from '../components/PlayCard.astro';
 import AnnouncementCard from '../components/AnnouncementCard.astro';
 import { SITE } from '../lib/site';
 
+const homepageCollection = await getCollection('homepage');
+const homepageEntry =
+  homepageCollection.find((entry) => entry.id === 'homepage.md') ??
+  homepageCollection.find((entry) => entry.id === 'homepage') ??
+  homepageCollection.find((entry) => entry.slug === 'homepage') ??
+  homepageCollection[0];
+if (!homepageEntry) {
+  throw new Error('Homepage content not found');
+}
+const homepage = homepageEntry.data;
+
 const plays = (await getCollection('plays'))
   .filter((p) => p.data.featured)
   .sort((a, b) => a.data.order - b.data.order)
@@ -19,32 +31,6 @@ const announcements = (await getCollection('announcements'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const audiencePaths = [
-  {
-    title: 'Seyirci misiniz?',
-    description: 'Repertuvarımızdaki oyunları keşfedin, bilet alın veya okul grubunuzla gelmek için bilgi edinin.',
-    href: '/bilet',
-    cta: 'Bilet Al',
-  },
-  {
-    title: 'Ekibe katılmak mı istiyorsunuz?',
-    description: 'Oyuncu, yönetmen, yazar, teknik ekip — tiyatro bünyesinde görev almak isteyen herkes başvurabilir.',
-    href: '/basvurular/ekip-basvurusu',
-    cta: 'Ekip Başvurusu',
-  },
-  {
-    title: 'Hobi olarak tiyatro mu yapmak istiyorsunuz?',
-    description: 'Çan Akademi, ana ekibe dahil olmadan yazıp yönetip oynayabileceğiniz özgür bir üretim alanıdır.',
-    href: '/can-akademi',
-    cta: 'Çan Akademi',
-  },
-  {
-    title: 'Çocuğunuz için atölye mi arıyorsunuz?',
-    description: 'Dönemsel oyunculuk, yaratıcı drama ve sahne atölyelerimizi inceleyin.',
-    href: '/atolyeler',
-    cta: 'Atölyeler',
-  },
-];
 ---
 
 <Layout title={SITE.name} description={SITE.description}>
@@ -53,22 +39,29 @@ const audiencePaths = [
     <div class="absolute inset-0 pointer-events-none opacity-30" style="background: radial-gradient(circle at 90% 10%, var(--color-gold) 0%, transparent 40%);"></div>
     <div class="absolute inset-0 pointer-events-none opacity-10" style="background: radial-gradient(circle at 10% 80%, var(--color-gold) 0%, transparent 35%);"></div>
     <Container class="relative">
-      <p class="eyebrow !text-gold mb-7">1984'ten Bu Yana Sahnede</p>
+      {homepage.heroEyebrow && (
+        <p class="eyebrow !text-gold mb-7" data-tina-field={tinaField(homepage, 'heroEyebrow')}>
+          {homepage.heroEyebrow}
+        </p>
+      )}
       <h1 class="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.95] max-w-5xl text-paper">
-        Türkiye'nin yaşayan
-        <span class="text-gold"> en eski </span>
-        çocuk ve gençlik tiyatrosu
+        <span data-tina-field={tinaField(homepage, 'heroTitleStart')}>{homepage.heroTitleStart}</span>
+        {homepage.heroTitleHighlight && (
+          <span class="text-gold" data-tina-field={tinaField(homepage, 'heroTitleHighlight')}>
+            {' '}{homepage.heroTitleHighlight}{' '}
+          </span>
+        )}
+        <span data-tina-field={tinaField(homepage, 'heroTitleEnd')}>{homepage.heroTitleEnd}</span>
       </h1>
-      <p class="mt-8 text-lg md:text-xl text-paper/85 max-w-2xl leading-relaxed">
-        {SITE.description}
+      <p class="mt-8 text-lg md:text-xl text-paper/85 max-w-2xl leading-relaxed" data-tina-field={tinaField(homepage, 'heroSubtitle')}>
+        {homepage.heroSubtitle}
       </p>
-      <div class="mt-10 flex flex-wrap items-center gap-4">
-        <a href="/bilet" class="btn-primary">
-          Bilet Al
-        </a>
-        <a href="/performanslar" class="inline-flex items-center justify-center rounded-md border-2 border-paper/40 text-paper px-7 py-3.5 text-sm font-bold tracking-wide hover:bg-paper/10 transition-colors">
-          Oyunları Gör
-        </a>
+      <div class="mt-10 flex flex-wrap items-center gap-4" data-tina-field={tinaField(homepage, 'heroButtons')}>
+        {homepage.heroButtons.map((button) => (
+          <a href={button.href} class="btn-primary">
+            {button.label}
+          </a>
+        ))}
       </div>
     </Container>
   </section>
@@ -76,10 +69,10 @@ const audiencePaths = [
   <!-- Stats -->
   <Section tone="dim" spacing="tight">
     <Container>
-      <div class="grid md:grid-cols-3 gap-10 md:gap-8">
-        <Statistic value="43" label="Yıllık Kesintisiz Üretim" />
-        <Statistic value="2" label="Sahne — Kenan Halis ve Murat Celal" />
-        <Statistic value="Ankara" label="Merkez Yerleşke" />
+      <div class="grid md:grid-cols-3 gap-10 md:gap-8" data-tina-field={tinaField(homepage, 'stats')}>
+        {homepage.stats.map((stat) => (
+          <Statistic value={stat.value} label={stat.label} />
+        ))}
       </div>
     </Container>
   </Section>
@@ -89,8 +82,8 @@ const audiencePaths = [
     <Container>
       <p class="eyebrow mb-5">Size Nasıl Yardımcı Olabiliriz?</p>
       <h2 class="text-4xl md:text-5xl mb-12">Herkes için bir kapı</h2>
-      <div class="grid sm:grid-cols-2 gap-6">
-        {audiencePaths.map((item) => (
+      <div class="grid sm:grid-cols-2 gap-6" data-tina-field={tinaField(homepage, 'audiencePaths')}>
+        {homepage.audiencePaths.map((item) => (
           <Card href={item.href}>
             <h3 class="text-2xl mb-3 group-hover:text-curtain transition-colors">{item.title}</h3>
             <p class="text-stone leading-relaxed mb-5">{item.description}</p>
@@ -141,24 +134,22 @@ const audiencePaths = [
   <!-- Why Çan -->
   <Section tone="ink">
     <Container>
-      <p class="eyebrow !text-gold mb-5">Neden Çan Tiyatrosu?</p>
-      <h2 class="text-4xl md:text-5xl text-paper max-w-2xl mb-14">Sahne, seyirci ve üretenler için</h2>
-      <div class="grid md:grid-cols-3 gap-10 md:gap-8">
-        <div>
-          <p class="font-display text-3xl text-gold mb-3">01</p>
-          <h3 class="text-xl text-paper mb-2 font-body font-bold">Canlı Sahne Deneyimi</h3>
-          <p class="text-paper/65 leading-relaxed">43 yıllık repertuvar ve deneyimle çocuk, genç ve yetişkin seyirciye özel oyunlar.</p>
-        </div>
-        <div>
-          <p class="font-display text-3xl text-gold mb-3">02</p>
-          <h3 class="text-xl text-paper mb-2 font-body font-bold">Açık Kapı</h3>
-          <p class="text-paper/65 leading-relaxed">Ekibe katılmak isteyenler, hobi olarak üretmek isteyenler ve atölye arayan veliler için ayrı yollar.</p>
-        </div>
-        <div>
-          <p class="font-display text-3xl text-gold mb-3">03</p>
-          <h3 class="text-xl text-paper mb-2 font-body font-bold">Topluluk Ruhu</h3>
-          <p class="text-paper/65 leading-relaxed">Cast ajansı değiliz — bir tiyatro topluluğuyuz. Yazar, yönetmen, oyuncu, teknik ekip bir arada üretir.</p>
-        </div>
+      {homepage.whyEyebrow && (
+        <p class="eyebrow !text-gold mb-5" data-tina-field={tinaField(homepage, 'whyEyebrow')}>
+          {homepage.whyEyebrow}
+        </p>
+      )}
+      <h2 class="text-4xl md:text-5xl text-paper max-w-2xl mb-14" data-tina-field={tinaField(homepage, 'whyTitle')}>
+        {homepage.whyTitle}
+      </h2>
+      <div class="grid md:grid-cols-3 gap-10 md:gap-8" data-tina-field={tinaField(homepage, 'whyItems')}>
+        {homepage.whyItems.map((item) => (
+          <div>
+            <p class="font-display text-3xl text-gold mb-3">{item.number}</p>
+            <h3 class="text-xl text-paper mb-2 font-body font-bold">{item.title}</h3>
+            <p class="text-paper/65 leading-relaxed">{item.description}</p>
+          </div>
+        ))}
       </div>
     </Container>
   </Section>
@@ -169,12 +160,18 @@ const audiencePaths = [
       <Container>
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
           <div>
-            <p class="eyebrow mb-5">Duyurular</p>
-            <h2 class="text-4xl md:text-5xl">Güncel</h2>
+            <p class="eyebrow mb-5">{homepage.announcementsTitle ?? 'Duyurular'}</p>
+            <h2 class="text-4xl md:text-5xl">{homepage.announcementsTitle ?? 'Güncel'}</h2>
           </div>
-          <a href="/basin/basinda-biz" class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
-            Tüm haberler →
-          </a>
+          {homepage.announcementsCtaHref && homepage.announcementsCtaLabel ? (
+            <a href={homepage.announcementsCtaHref} class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
+              {homepage.announcementsCtaLabel}
+            </a>
+          ) : (
+            <a href="/basin/basinda-biz" class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
+              Tüm haberler →
+            </a>
+          )}
         </div>
         <div>
           {announcements.map((a) => (
@@ -190,13 +187,23 @@ const audiencePaths = [
     <Container>
       <div class="text-center max-w-2xl mx-auto">
         <p class="eyebrow mb-5">Sahneye Bekleriz</p>
-        <h2 class="text-4xl md:text-5xl mb-6">Bir sonraki oyunumuzda görüşelim</h2>
-        <p class="text-stone text-lg mb-10 leading-relaxed">
-          Bilet almak, ekibe başvurmak veya Çan Akademi hakkında bilgi edinmek için hemen başlayın.
+        <h2 class="text-4xl md:text-5xl mb-6" data-tina-field={tinaField(homepage, 'ctaTitle')}>
+          {homepage.ctaTitle}
+        </h2>
+        <p class="text-stone text-lg mb-10 leading-relaxed" data-tina-field={tinaField(homepage, 'ctaDescription')}>
+          {homepage.ctaDescription}
         </p>
         <div class="flex flex-wrap justify-center gap-4">
-          <a href="/bilet" class="btn-primary">Bilet Al</a>
-          <a href="/basvurular/ekip-basvurusu" class="btn-secondary">Ekip Başvurusu</a>
+          {homepage.ctaPrimaryHref && (
+            <a href={homepage.ctaPrimaryHref} class="btn-primary" data-tina-field={tinaField(homepage, 'ctaPrimaryLabel')}>
+              {homepage.ctaPrimaryLabel}
+            </a>
+          )}
+          {homepage.ctaSecondaryHref && homepage.ctaSecondaryLabel && (
+            <a href={homepage.ctaSecondaryHref} class="btn-secondary" data-tina-field={tinaField(homepage, 'ctaSecondaryLabel')}>
+              {homepage.ctaSecondaryLabel}
+            </a>
+          )}
         </div>
       </div>
     </Container>

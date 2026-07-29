@@ -3,27 +3,64 @@ export const SITE = {
   founded: 1984,
   tagline: "Türkiye'nin Yaşayan En Eski Çocuk ve Gençlik Tiyatrosu",
   description:
-    '1984\u2019ten bu yana kesintisiz sahnede olan Çan Tiyatrosu; çocuk, gençlik ve yetişkin seyirci için oyunlar üreten, ekip ve gönüllülerle büyüyen bir tiyatro kuruluşudur.',
+    "1984'ten bu yana kesintisiz sahnede olan Çan Tiyatrosu; çocuk, gençlik ve yetişkin seyirci için oyunlar üreten, ekip ve gönüllülerle büyüyen bir tiyatro kuruluşudur.",
+
   url: 'https://cantiyatrosu.com',
+
   email: 'iletisim@cantiyatrosu.com',
-  phone: '+90 (312) 000 00 00',
-  address: '[Açık adres buraya eklenecektir], Ankara, Türkiye',
+
+  phone: '+90 541 914 04 84',
+
+  address:
+    'Sağlık Mahallesi, Süleyman Sırrı Caddesi No: 12 Daire: 5 ve 6 Sıhhiye / Ankara',
+
   hours: [
-    { label: 'Pazartesi – Cuma', value: '10:00 – 18:00' },
-    { label: 'Cumartesi', value: '10:00 – 14:00' },
-    { label: 'Pazar', value: 'Gösteri günleri hariç kapalı' },
+    {
+      label: 'Pazartesi – Cuma',
+      value: '10:00 – 18:00',
+    },
+    {
+      label: 'Cumartesi',
+      value: '10:00 – 14:00',
+    },
+    {
+      label: 'Pazar',
+      value: 'Gösteri günleri hariç kapalı',
+    },
   ],
+
   social: [
-    { label: 'Instagram', href: 'https://instagram.com/' },
-    { label: 'YouTube', href: 'https://youtube.com/' },
-    { label: 'Facebook', href: 'https://facebook.com/' },
+    {
+      label: 'Instagram',
+      href: 'https://www.instagram.com/cantiyatrosu/',
+    },
+    {
+      label: 'Facebook',
+      href: 'https://www.facebook.com/cocuktiyatrosu/?locale=tr_TR',
+    },
+    {
+      label: 'YouTube',
+      href: 'https://www.youtube.com/@ÇanTiyatrosu-o1x',
+    },
+    {
+      label: 'LinkedIn',
+      href: 'https://www.linkedin.com/company/çan-tiyatrosu/about/?viewAsMember=true',
+    },
   ],
 };
 
-export type NavChild = { label: string; href: string; description?: string };
-export type NavItem = { label: string; href: string; children?: NavChild[] };
+export type NavChild = {
+  label: string;
+  href: string;
+  description?: string;
+};
 
-/** Seyirci ve topluluk odaklı navigasyon — kurumsal satış ön planda değil */
+export type NavItem = {
+  label: string;
+  href: string;
+  children?: NavChild[];
+};
+
 export const NAV: NavItem[] = [
   { label: 'Anasayfa', href: '/' },
   {

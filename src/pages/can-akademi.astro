@@ -1,24 +1,38 @@
 ---
+import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Card from '../components/Card.astro';
+
+const academyCollection = await getCollection('academy');
+const academyEntry =
+  academyCollection.find((entry) => entry.id === 'academy.md' || entry.id === 'academy' || entry.slug === 'academy') ??
+  academyCollection[0];
+if (!academyEntry) {
+  throw new Error('Academy page content not found');
+}
+const academy = academyEntry.data;
 ---
 
 <Layout title="Çan Akademi" description="Ana ekibe dahil olmadan yazıp, yönetip, oynayabileceğiniz özgür bir tiyatro üretim alanı.">
   <PageHero
-    eyebrow="Üretim Alanı"
-    title="Çan Akademi"
-    lede="Ana ekibe dahil olmadan tiyatro yapmak isteyenler için — yazın, yönetin, oynayın. Özgür bir üretim alanı."
+    eyebrow={academy.eyebrow}
+    title={academy.title}
+    lede={academy.lede}
+    eyebrowField={tinaField(academy, 'eyebrow')}
+    titleField={tinaField(academy, 'title')}
+    ledeField={tinaField(academy, 'lede')}
   />
 
   <Section tone="dim" spacing="tight">
     <Container>
       <div class="max-w-3xl">
         <h2 class="text-3xl md:text-4xl mb-6">Atölye değil, üretim alanı</h2>
-        <p class="text-lg text-stone leading-relaxed mb-6">
-          Çan Akademi, Çan Tiyatrosu'nun alt yapısı olarak işleyen bir alandır. Burada çocuk atölyesi veya kurs programı yok — ana kadroya katılmadan, hobi olarak tiyatro yapmak isteyen yetişkinler kendi oyunlarını yazar, yönetir ve oynar.
+        <p class="text-lg text-stone leading-relaxed mb-6" data-tina-field={tinaField(academy, 'description')}>
+          {academy.description}
         </p>
         <p class="text-lg text-stone leading-relaxed">
           Sahne, teknik altyapı ve kurumsal destek Çan Tiyatrosu tarafından sağlanır; üretim özgürlüğü ise Akademi üyelerindedir. Yaratıcı drama dersi arayan veliler için <a href="/atolyeler" class="text-curtain font-bold hover:underline">Atölyeler</a> sayfamıza bakabilirsiniz.
@@ -31,19 +45,13 @@ import Card from '../components/Card.astro';
     <Container>
       <p class="eyebrow mb-5">Ne Yapabilirsiniz?</p>
       <h2 class="text-3xl md:text-4xl mb-10">Özgür üretim, gerçek sahne</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <Card>
-          <h3 class="text-xl mb-3 text-curtain">Yazın</h3>
-          <p class="text-stone leading-relaxed">Kendi oyununuzu yazın, metninizi geliştirin, dramaturjik destek alın.</p>
-        </Card>
-        <Card>
-          <h3 class="text-xl mb-3 text-curtain">Yönetin</h3>
-          <p class="text-stone leading-relaxed">Kendi yapımınızın yönetmeni olun, prova sürecini kendi vizyonunuzla yönetin.</p>
-        </Card>
-        <Card>
-          <h3 class="text-xl mb-3 text-curtain">Oynayın</h3>
-          <p class="text-stone leading-relaxed">Sahneye çıkın, rol alın — cast ajansı değil, üreten bir topluluk parçası olun.</p>
-        </Card>
+      <div class="grid md:grid-cols-3 gap-6" data-tina-field={tinaField(academy, 'features')}>
+        {academy.features.map((feature) => (
+          <Card>
+            <h3 class="text-xl mb-3 text-curtain">{feature.title}</h3>
+            <p class="text-stone leading-relaxed">{feature.description}</p>
+          </Card>
+        ))}
       </div>
     </Container>
   </Section>
@@ -51,11 +59,17 @@ import Card from '../components/Card.astro';
   <Section tone="ink">
     <Container>
       <div class="max-w-2xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl text-paper mb-6">Katılmak ister misiniz?</h2>
-        <p class="text-paper/70 text-lg mb-8 leading-relaxed">
-          Çan Akademi'ye başvurmak için formu doldurun. Uygunluk durumunuz değerlendirildikten sonra sizinle iletişime geçilecektir.
+        <h2 class="text-3xl md:text-4xl text-paper mb-6" data-tina-field={tinaField(academy, 'ctaTitle')}>
+          {academy.ctaTitle}
+        </h2>
+        <p class="text-paper/70 text-lg mb-8 leading-relaxed" data-tina-field={tinaField(academy, 'ctaDescription')}>
+          {academy.ctaDescription}
         </p>
-        <a href="/basvurular/can-akademi-basvurusu" class="btn-primary">Başvuru Formu</a>
+        {academy.ctaButton?.href && (
+          <a href={academy.ctaButton.href} class="btn-primary" data-tina-field={tinaField(academy, 'ctaButton')}>
+            {academy.ctaButton.label}
+          </a>
+        )}
       </div>
     </Container>
   </Section>
