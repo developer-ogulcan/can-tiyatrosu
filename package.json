@@ -6,8 +6,8 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "set \"NODE_OPTIONS=--max-old-space-size=8192\" && tinacms dev -p 4002 --datalayer-port 9001 -c \"astro dev --host 127.0.0.1 --port 4321\"",
-    "build": "set \"NODE_OPTIONS=--max-old-space-size=8192\" && tinacms build -p 4002 --local --skip-cloud-checks --skip-indexing --skip-search-index --datalayer-port 9001 && astro build",
+    "dev": "cross-env NODE_OPTIONS=--max-old-space-size=8192 tinacms dev -p 4002 --datalayer-port 9001 -c \"astro dev --host 127.0.0.1 --port 4321\"",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 tinacms build -p 4002 --local --skip-cloud-checks --skip-indexing --skip-search-index --datalayer-port 9001 && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -19,6 +19,7 @@
     "@tinacms/cli": "^2.5.6",
     "@tinacms/datalayer": "^2.0.29",
     "astro": "^7.1.4",
+    "cross-env": "^7.0.3",
     "tailwindcss": "^4.3.3",
     "tinacms": "^3.11.0"
   },
