@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Card from '../components/Card.astro';
+---
+
+<Layout title="Bilet" description="Çan Tiyatrosu oyunları için bilet alın.">
+  <PageHero
+    eyebrow="Seyirci"
+    title="Bilet Al"
+    lede="Repertuvarımızdaki oyunlar için bilet satın alın veya okul grubunuz için rezervasyon yapın."
+  />
+
+  <Section tone="paper">
+    <Container narrow>
+      <div class="rounded-xl border-2 border-hairline bg-paper-dim p-8 md:p-12 text-center">
+        <p class="text-lg text-stone leading-relaxed mb-8">
+          Online bilet satış sistemimiz yakında aktif olacaktır. Bu arada bilet ve rezervasyon talepleriniz için bizimle iletişime geçebilirsiniz.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="/iletisim" class="btn-primary">İletişime Geç</a>
+          <a href="/performanslar" class="btn-secondary">Oyunları İncele</a>
+        </div>
+      </div>
+
+      <div class="mt-12 grid md:grid-cols-2 gap-6">
+        <Card href="/performanslar/cocuk-oyunlari">
+          <h2 class="text-2xl mb-3 group-hover:text-curtain transition-colors">Çocuk Oyunları</h2>
+          <p class="text-stone leading-relaxed mb-4">Aileler ve okul grupları için repertuvarımızdaki çocuk oyunları.</p>
+          <span class="text-sm font-bold text-curtain">Oyunları gör →</span>
+        </Card>
+        <Card href="/performanslar/yetiskin-oyunlari">
+          <h2 class="text-2xl mb-3 group-hover:text-curtain transition-colors">Yetişkin Oyunları</h2>
+          <p class="text-stone leading-relaxed mb-4">Yetişkin seyirciye yönelik sahne yapımlarımız.</p>
+          <span class="text-sm font-bold text-curtain">Oyunları gör →</span>
+        </Card>
+      </div>
+    </Container>
+  </Section>
+</Layout>

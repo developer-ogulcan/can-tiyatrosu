@@ -7,28 +7,28 @@ import Card from '../../components/Card.astro';
 
 const items = [
   {
+    title: 'Ekip Başvurusu',
+    href: '/basvurular/ekip-basvurusu',
+    description: 'Tiyatro bünyesinde oyuncu, yönetmen, yazar, teknik ekip veya başka bir alanda görev almak isteyenler.',
+  },
+  {
+    title: 'Çan Akademi Başvurusu',
+    href: '/basvurular/can-akademi-basvurusu',
+    description: 'Ana ekibe dahil olmadan hobi olarak tiyatro yapmak isteyen yetişkinler için özgür üretim alanı.',
+  },
+  {
     title: 'Kurumsal Gösterim Talebi',
     href: '/basvurular/kurumsal-gosterim-talebi',
-    description: 'Okulunuz veya kurumunuz için bir sahne gösterimi planlamak üzere talep oluşturun.',
-  },
-  {
-    title: 'Çan Akademi',
-    href: '/basvurular/can-akademi',
-    description: 'Çocuklar ve gençler için oyunculuk ve sahne sanatları eğitim programımıza başvurun.',
-  },
-  {
-    title: 'Oyunculuk Başvurusu',
-    href: '/basvurular/oyunculuk-basvurusu',
-    description: 'Kadromuza katılmak isteyen oyuncu adayları için başvuru formu.',
+    description: 'Okul, belediye veya kurumunuz için sahne gösterimi planlamak üzere talep oluşturun.',
   },
 ];
 ---
 
-<Layout title="Başvurular" description="Kurumsal gösterim, Çan Akademi ve oyunculuk başvuru formları.">
+<Layout title="Katıl" description="Ekip başvurusu, Çan Akademi ve kurumsal gösterim talepleri.">
   <PageHero
-    eyebrow="Katılım"
+    eyebrow="Katıl"
     title="Başvurular"
-    lede="Kurumsal gösterim talebinden oyunculuk başvurusuna, Çan Tiyatrosu ile çalışmanın farklı yolları."
+    lede="Ekibe katılmak, Çan Akademi'de üretmek veya kurumunuz için gösterim talep etmek — size uygun formu seçin."
   />
 
   <Section tone="paper">
@@ -38,7 +38,7 @@ const items = [
           <Card href={item.href}>
             <h2 class="text-2xl mb-3 group-hover:text-curtain transition-colors">{item.title}</h2>
             <p class="text-stone leading-relaxed mb-6">{item.description}</p>
-            <span class="text-sm font-semibold text-curtain">Başvuru formuna git →</span>
+            <span class="text-sm font-bold text-curtain">Başvuru formuna git →</span>
           </Card>
         ))}
       </div>

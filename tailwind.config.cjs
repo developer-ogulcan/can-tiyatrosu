@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{astro,html,js,ts}'],
+  content: ['./src/**/*.{astro,html,js,ts,css}'],
   theme: {
     extend: {
       colors: {
@@ -11,11 +11,11 @@ module.exports = {
         'ct-bg-light': '#F2EEE7',
       },
       fontFamily: {
-        display: ['"Luckiest Guy"', 'cursive'],
-        body: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Comfortaa"', 'cursive'],
+        body: ['"Nunito Sans"', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        'hero-lg': '0 20px 60px rgba(0,0,0,0.45)',
+        'hero-lg': '0 20px 60px rgba(0,0,0,0.25)',
       },
     },
   },

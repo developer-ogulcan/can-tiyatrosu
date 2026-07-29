@@ -7,40 +7,43 @@ const year = new Date().getFullYear();
   <Container class="py-16 md:py-20">
     <div class="grid grid-cols-2 md:grid-cols-5 gap-10 md:gap-8">
       <div class="col-span-2">
-        <p class="font-display text-2xl text-paper">Çan Tiyatrosu</p>
+        <p class="font-display text-3xl">
+          <span class="text-curtain">Çan</span>
+          <span class="text-paper"> Tiyatrosu</span>
+        </p>
         <p class="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">{SITE.tagline}</p>
         <p class="mt-6 text-sm text-paper/60">{SITE.address}</p>
         <p class="mt-1 text-sm text-paper/60">{SITE.phone}</p>
         <p class="mt-1 text-sm text-paper/60">{SITE.email}</p>
         <div class="mt-6 flex gap-4">
           {SITE.social.map((s) => (
-            <a href={s.href} class="text-sm text-paper/60 hover:text-gold-bright transition-colors">{s.label}</a>
+            <a href={s.href} class="text-sm text-paper/60 hover:text-gold transition-colors">{s.label}</a>
           ))}
         </div>
       </div>
 
       <div>
-        <p class="eyebrow !text-gold-bright mb-4">Kurum</p>
+        <p class="eyebrow !text-gold mb-4">Seyirci</p>
+        <ul class="flex flex-col gap-2.5 text-sm">
+          {FOOTER_LINKS.seyirci.map((l) => <li><a href={l.href} class="text-paper/60 hover:text-paper transition-colors">{l.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <p class="eyebrow !text-gold mb-4">Katıl</p>
+        <ul class="flex flex-col gap-2.5 text-sm">
+          {FOOTER_LINKS.katil.map((l) => <li><a href={l.href} class="text-paper/60 hover:text-paper transition-colors">{l.label}</a></li>)}
+        </ul>
+        <p class="eyebrow !text-gold mb-4 mt-8">Kurum</p>
         <ul class="flex flex-col gap-2.5 text-sm">
           {FOOTER_LINKS.kurum.map((l) => <li><a href={l.href} class="text-paper/60 hover:text-paper transition-colors">{l.label}</a></li>)}
         </ul>
       </div>
 
       <div>
-        <p class="eyebrow !text-gold-bright mb-4">Sahne</p>
-        <ul class="flex flex-col gap-2.5 text-sm">
-          {FOOTER_LINKS.sahne.map((l) => <li><a href={l.href} class="text-paper/60 hover:text-paper transition-colors">{l.label}</a></li>)}
-        </ul>
-        <p class="eyebrow !text-gold-bright mb-4 mt-8">Hizmetler</p>
+        <p class="eyebrow !text-gold mb-4">Hizmetler</p>
         <ul class="flex flex-col gap-2.5 text-sm">
           {FOOTER_LINKS.hizmet.map((l) => <li><a href={l.href} class="text-paper/60 hover:text-paper transition-colors">{l.label}</a></li>)}
-        </ul>
-      </div>
-
-      <div>
-        <p class="eyebrow !text-gold-bright mb-4">Başvurular</p>
-        <ul class="flex flex-col gap-2.5 text-sm">
-          {FOOTER_LINKS.basvuru.map((l) => <li><a href={l.href} class="text-paper/60 hover:text-paper transition-colors">{l.label}</a></li>)}
         </ul>
       </div>
     </div>

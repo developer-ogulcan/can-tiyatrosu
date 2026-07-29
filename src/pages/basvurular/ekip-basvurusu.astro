@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import FormField from '../../components/FormField.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Layout title="Ekip Başvurusu" description="Çan Tiyatrosu bünyesinde görev almak isteyen adaylar için ekip başvuru formu.">
+  <PageHero
+    eyebrow="Katıl"
+    title="Ekip Başvurusu"
+    lede="Tiyatro bünyesinde görev almak istediğiniz alanı belirtin — oyuncu, yönetmen, yazar, teknik ekip ve daha fazlası. Cast ajansı değiliz; bir tiyatro topluluğu arıyoruz."
+  />
+
+  <Section tone="paper">
+    <Container narrow>
+      <form class="grid gap-6" method="post" action="#" enctype="multipart/form-data">
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Adı Soyadı" name="ad-soyad" required />
+          <FormField label="Doğum Tarihi" name="dogum-tarihi" type="date" />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="E-posta" name="email" type="email" required />
+          <FormField label="Telefon" name="telefon" type="tel" required />
+        </div>
+        <FormField
+          label="Görev Almak İstediğiniz Alan"
+          name="alan"
+          type="select"
+          required
+          options={[
+            'Oyuncu',
+            'Yönetmen',
+            'Yazar / Dramaturg',
+            'Sahne Tasarım',
+            'Kostüm',
+            'Işık / Ses Teknik',
+            'Reji Asistanı',
+            'Prodüksiyon / Organizasyon',
+            'Diğer',
+          ]}
+        />
+        <FormField
+          label="Eğitim Durumu"
+          name="egitim"
+          type="select"
+          options={[
+            'Konservatuvar Mezunu',
+            'Tiyatro / Sahne Sanatları Bölümü Mezunu',
+            'İlgili Eğitim Almış',
+            'Deneyimle Öğrenmiş',
+            'Diğer',
+          ]}
+        />
+        <FormField
+          label="Deneyim ve Neden Katılmak İstiyorsunuz?"
+          name="deneyim"
+          type="textarea"
+          placeholder="Sahne deneyiminiz, ilgi alanlarınız ve Çan Tiyatrosu'nda görev almak isteme nedeniniz"
+        />
+        <div class="flex flex-col gap-2">
+          <label for="field-cv" class="text-sm font-bold text-ink">Özgeçmiş / Portfolyo (PDF veya bağlantı)</label>
+          <input id="field-cv" name="cv" type="file" class="text-sm text-stone file:mr-4 file:rounded-md file:border-0 file:bg-curtain file:text-paper file:px-4 file:py-2.5 file:text-sm file:font-bold" />
+        </div>
+        <div>
+          <Button type="submit" variant="primary">Başvuruyu Gönder</Button>
+        </div>
+      </form>
+    </Container>
+  </Section>
+</Layout>

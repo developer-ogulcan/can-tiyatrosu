@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Card from '../components/Card.astro';
+---
+
+<Layout title="Çan Akademi" description="Ana ekibe dahil olmadan yazıp, yönetip, oynayabileceğiniz özgür bir tiyatro üretim alanı.">
+  <PageHero
+    eyebrow="Üretim Alanı"
+    title="Çan Akademi"
+    lede="Ana ekibe dahil olmadan tiyatro yapmak isteyenler için — yazın, yönetin, oynayın. Özgür bir üretim alanı."
+  />
+
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <div class="max-w-3xl">
+        <h2 class="text-3xl md:text-4xl mb-6">Atölye değil, üretim alanı</h2>
+        <p class="text-lg text-stone leading-relaxed mb-6">
+          Çan Akademi, Çan Tiyatrosu'nun alt yapısı olarak işleyen bir alandır. Burada çocuk atölyesi veya kurs programı yok — ana kadroya katılmadan, hobi olarak tiyatro yapmak isteyen yetişkinler kendi oyunlarını yazar, yönetir ve oynar.
+        </p>
+        <p class="text-lg text-stone leading-relaxed">
+          Sahne, teknik altyapı ve kurumsal destek Çan Tiyatrosu tarafından sağlanır; üretim özgürlüğü ise Akademi üyelerindedir. Yaratıcı drama dersi arayan veliler için <a href="/atolyeler" class="text-curtain font-bold hover:underline">Atölyeler</a> sayfamıza bakabilirsiniz.
+        </p>
+      </div>
+    </Container>
+  </Section>
+
+  <Section tone="paper">
+    <Container>
+      <p class="eyebrow mb-5">Ne Yapabilirsiniz?</p>
+      <h2 class="text-3xl md:text-4xl mb-10">Özgür üretim, gerçek sahne</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <Card>
+          <h3 class="text-xl mb-3 text-curtain">Yazın</h3>
+          <p class="text-stone leading-relaxed">Kendi oyununuzu yazın, metninizi geliştirin, dramaturjik destek alın.</p>
+        </Card>
+        <Card>
+          <h3 class="text-xl mb-3 text-curtain">Yönetin</h3>
+          <p class="text-stone leading-relaxed">Kendi yapımınızın yönetmeni olun, prova sürecini kendi vizyonunuzla yönetin.</p>
+        </Card>
+        <Card>
+          <h3 class="text-xl mb-3 text-curtain">Oynayın</h3>
+          <p class="text-stone leading-relaxed">Sahneye çıkın, rol alın — cast ajansı değil, üreten bir topluluk parçası olun.</p>
+        </Card>
+      </div>
+    </Container>
+  </Section>
+
+  <Section tone="ink">
+    <Container>
+      <div class="max-w-2xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl text-paper mb-6">Katılmak ister misiniz?</h2>
+        <p class="text-paper/70 text-lg mb-8 leading-relaxed">
+          Çan Akademi'ye başvurmak için formu doldurun. Uygunluk durumunuz değerlendirildikten sonra sizinle iletişime geçilecektir.
+        </p>
+        <a href="/basvurular/can-akademi-basvurusu" class="btn-primary">Başvuru Formu</a>
+      </div>
+    </Container>
+  </Section>
+</Layout>

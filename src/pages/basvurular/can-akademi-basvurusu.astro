@@ -1,0 +1,61 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import FormField from '../../components/FormField.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Layout title="Çan Akademi Başvurusu" description="Çan Akademi özgür üretim alanına katılmak için başvuru formu.">
+  <PageHero
+    eyebrow="Çan Akademi"
+    title="Akademi Başvurusu"
+    lede="Ana ekibe dahil olmadan tiyatro yapmak isteyen yetişkinler için. Yazın, yönetin, oynayın — başvurunuzu bu formdan iletin."
+  />
+
+  <Section tone="dim" spacing="tight">
+    <Container>
+      <p class="max-w-2xl text-stone leading-relaxed">
+        Bu form <a href="/can-akademi" class="text-curtain font-bold hover:underline">Çan Akademi</a> içindir — çocuk atölyesi veya kurs başvurusu değildir. Veliler için <a href="/atolyeler" class="text-curtain font-bold hover:underline">Atölyeler</a> sayfamıza bakın.
+      </p>
+    </Container>
+  </Section>
+
+  <Section tone="paper">
+    <Container narrow>
+      <form class="grid gap-6" method="post" action="#">
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Adı Soyadı" name="ad-soyad" required />
+          <FormField label="Doğum Tarihi" name="dogum-tarihi" type="date" required />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="E-posta" name="email" type="email" required />
+          <FormField label="Telefon" name="telefon" type="tel" required />
+        </div>
+        <FormField
+          label="Üretim İlgisi"
+          name="ilgi"
+          type="select"
+          required
+          options={['Yazarlık', 'Yönetmenlik', 'Oyunculuk', 'Hepsi / Karışık Üretim', 'Diğer']}
+        />
+        <FormField
+          label="Daha Önce Tiyatro Deneyiminiz"
+          name="deneyim"
+          type="textarea"
+          placeholder="Varsa yazdığınız oyunlar, yönettiğiniz yapımlar veya oynadığınız roller"
+        />
+        <FormField
+          label="Neden Çan Akademi?"
+          name="motivasyon"
+          type="textarea"
+          placeholder="Çan Akademi'ye katılmak isteme nedeniniz ve üretmek istediğiniz projeler hakkında kısa bilgi"
+        />
+        <div>
+          <Button type="submit" variant="primary">Başvuruyu Gönder</Button>
+        </div>
+      </form>
+    </Container>
+  </Section>
+</Layout>
