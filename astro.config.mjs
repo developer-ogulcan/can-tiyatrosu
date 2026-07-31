@@ -4,8 +4,8 @@ import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 
 import node from "@astrojs/node";
-import tina from "@tinacms/astro/integration";
-import { tinaAdminDevRedirect } from "@tinacms/astro/vite";
+// import tina from "@tinacms/astro/integration";
+// import { tinaAdminDevRedirect } from "@tinacms/astro/vite";
 
 export default defineConfig({
   site: "https://cantiyatrosu.com",
@@ -18,19 +18,19 @@ export default defineConfig({
 
   integrations: [
     sitemap(),
-    tina(),
+    // tina(),
   ],
 
   vite: {
     plugins: [
       tailwindcss(),
-      tinaAdminDevRedirect(),
+      // tinaAdminDevRedirect(),
     ],
-    ssr: {
-      noExternal: [
-        "@tinacms/astro",
-        "@tinacms/bridge",
-      ],
-    },
+    // ssr: {
+    //   noExternal: [
+    //     "@tinacms/astro",
+    //     "@tinacms/bridge",
+    //   ],
+    // },
   },
 });
