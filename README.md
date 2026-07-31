@@ -1,40 +1,166 @@
 # Çan Tiyatrosu — Resmî Web Sitesi
 
-Astro 7 + Tailwind CSS 4 ile inşa edilmiş, prodüksiyona hazır kurumsal tiyatro web sitesi.
+Astro 7 + Tailwind CSS 4 ile geliştirilmiş, TinaCMS destekli, Cloudflare Workers üzerinde çalışan kurumsal tiyatro web sitesi.
 
-## Kurulum
+---
+
+# Kurulum
 
 ```bash
 npm install
-npm run dev       # http://localhost:4321
-npm run build     # dist/ klasörüne production build
-npm run preview   # production build'i yerelde önizle
+npm run dev
 ```
 
-## Mimari
+Geliştirme sunucusu:
 
-- `src/content.config.ts` — İçerik koleksiyonları şeması: `plays`, `announcements`, `news`
-- `src/content/plays/*.md` — Her oyun bir markdown dosyası. **Yeni oyun eklemek için kod değişikliği gerekmez**, sadece yeni bir `.md` dosyası ekleyin (şablon için mevcut dosyalara bakın).
-- `src/components/` — Yeniden kullanılabilir bileşen kütüphanesi (Navbar, Footer, PlayCard, Timeline, Accordion, FormField, vb.)
-- `src/layouts/Layout.astro` — Ortak sayfa iskeleti (SEO, fontlar, Navbar, Footer)
-- `src/lib/site.ts` — Navigasyon yapısı, iletişim bilgileri ve site geneli sabitler
-- `src/styles/global.css` — Tasarım tokenleri (renk, tipografi, gölge) — Tailwind 4 `@theme` ile tanımlı
+- Site: http://localhost:4321
+- TinaCMS: http://localhost:4321/admin/index.html
 
-## Tasarım Sistemi
+> Not: Geliştirme ortamında admin paneli `/admin/index.html` adresinden açılır.
 
-- **Renkler:** Sıcak kağıt beyazı (`--color-paper`), mürekkep siyahı (`--color-ink`), antika altın (`--color-gold`), perde kırmızısı (`--color-curtain`)
-- **Tipografi:** Başlıklar için `Comfortaa`, gövde metni için `Nunito Sans`
-- **Logo:** Navbar'da `public/images/logo.png` kullanılıyor; mevcut tasarımda metinli başlık yerine logo gösteriliyor.
-- **İmza öğesi:** "Perde" işareti (`PerdeMark.astro`) — çizilmiş bir perde kıvrımını temsil eden, bölümler arasında kullanılan ayraç
+Production build:
 
-## İçerik Güncelleme
+```bash
+npm run build
+```
 
-Tüm `[köşeli parantez]` içindeki metinler yer tutucudur ve gerçek kurumsal içerikle değiştirilmelidir. Hiçbir tarihsel bilgi uydurulmamıştır.
+Production önizleme:
 
-## Cloudflare Pages'e Dağıtım
+```bash
+npm run preview
+```
 
-- Build komutu: `npm run build`
-- Çıktı klasörü: `dist`
-- Node sürümü: 22+
+---
 
-Repo doğrudan Cloudflare Pages'e bağlanabilir; ek bir yapılandırma gerekmez.
+# Proje Yapısı
+
+```
+src/
+ ├── components/
+ ├── layouts/
+ ├── pages/
+ ├── content/
+ ├── lib/
+ └── styles/
+
+tina/
+ ├── config.ts
+ └── __generated__/
+
+public/
+ ├── images/
+ └── admin/
+```
+
+---
+
+# Mimari
+
+- `src/content.config.ts` — İçerik koleksiyonları
+- `src/content/plays/*.md` — Oyun içerikleri
+- `src/components/` — Ortak bileşenler
+- `src/layouts/Layout.astro` — Ana sayfa iskeleti
+- `src/lib/site.ts` — Site ayarları
+- `src/styles/global.css` — Tasarım sistemi
+- `tina/config.ts` — TinaCMS yapılandırması
+
+---
+
+# Tasarım Sistemi
+
+### Renkler
+
+- Paper
+- Ink
+- Gold
+- Curtain
+
+### Tipografi
+
+- Comfortaa
+- Nunito Sans
+
+---
+
+# İçerik Yönetimi
+
+Proje TinaCMS ile içerik yönetimini desteklemektedir.
+
+Local geliştirme sırasında:
+
+```
+http://localhost:4321/admin/index.html
+```
+
+üzerinden içerikler düzenlenebilir.
+
+Production ortamında Tina Cloud yapılandırılmadığı için admin paneli kullanılmaz.
+
+---
+
+# Build Süreci
+
+```
+npm run build
+```
+
+komutu şu işlemleri gerçekleştirir:
+
+1. TinaCMS dosyalarını oluşturur.
+2. Astro production build'ini oluşturur.
+
+---
+
+# Deployment
+
+Site Cloudflare Workers üzerinde çalışmaktadır.
+
+Astro yapılandırması:
+
+```ts
+output: "server"
+```
+
+Adapter:
+
+```ts
+@astrojs/node
+```
+
+Cloudflare Workers, Node compatibility modu ile çalıştırılmaktadır.
+
+---
+
+# Bilinen Durumlar
+
+- Local ortamda TinaCMS paneli:
+
+```
+/admin/index.html
+```
+
+adresinden açılır.
+
+- Production ortamında `/admin` sayfası Tina Cloud giriş ekranını gösterebilir.
+
+- Production'da içerik düzenleme yapılmamaktadır.
+
+---
+
+# Teknolojiler
+
+- Astro 7
+- Tailwind CSS 4
+- TinaCMS
+- Cloudflare Workers
+- Node Adapter
+
+---
+
+# Node Sürümü
+
+Minimum:
+
+```
+Node.js 22
+```
