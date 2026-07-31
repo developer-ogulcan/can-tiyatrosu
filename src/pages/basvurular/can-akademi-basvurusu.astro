@@ -17,38 +17,38 @@ import Button from '../../components/Button.astro';
   <Section tone="dim" spacing="tight">
     <Container>
       <p class="max-w-2xl text-stone leading-relaxed">
-        Bu form <a href="/can-akademi" class="text-curtain font-bold hover:underline">Çan Akademi</a> içindir — çocuk atölyesi veya kurs başvurusu değildir. Veliler için <a href="/atolyeler" class="text-curtain font-bold hover:underline">Atölyeler</a> sayfamıza bakın.
+        Bu form <a href="/can-akademi" class="text-curtain font-bold hover:underline">Çan Akademi</a> içindir — çocuk atölyesi veya kurs başvurusu değildir. Atölyeler için <a href="/atolyeler" class="text-curtain font-bold hover:underline">Atölyeler</a> sayfamıza bakın.
       </p>
     </Container>
   </Section>
 
   <Section tone="paper">
     <Container narrow>
-      <form class="grid gap-6" method="post" action="#">
+      <form id="akademi-form" class="grid gap-6">
         <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Adı Soyadı" name="ad-soyad" required />
-          <FormField label="Doğum Tarihi" name="dogum-tarihi" type="date" required />
+          <FormField label="Adı Soyadı" name="name" required />
+          <FormField label="Doğum Tarihi" name="birth_date" type="date" required />
         </div>
         <div class="grid md:grid-cols-2 gap-6">
           <FormField label="E-posta" name="email" type="email" required />
-          <FormField label="Telefon" name="telefon" type="tel" required />
+          <FormField label="Telefon" name="phone" type="tel" required />
         </div>
         <FormField
           label="Üretim İlgisi"
-          name="ilgi"
+          name="project_title"
           type="select"
           required
           options={['Yazarlık', 'Yönetmenlik', 'Oyunculuk', 'Hepsi / Karışık Üretim', 'Diğer']}
         />
         <FormField
           label="Daha Önce Tiyatro Deneyiminiz"
-          name="deneyim"
+          name="experience"
           type="textarea"
           placeholder="Varsa yazdığınız oyunlar, yönettiğiniz yapımlar veya oynadığınız roller"
         />
         <FormField
           label="Neden Çan Akademi?"
-          name="motivasyon"
+          name="notes"
           type="textarea"
           placeholder="Çan Akademi'ye katılmak isteme nedeniniz ve üretmek istediğiniz projeler hakkında kısa bilgi"
         />
@@ -59,3 +59,38 @@ import Button from '../../components/Button.astro';
     </Container>
   </Section>
 </Layout>
+
+<script>
+  const form = document.getElementById('akademi-form') as HTMLFormElement;
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuew1DnRFGx3lU4RXMOyjaxPzL_SkHKZKouzDZ8Hl36GY6CIzeDGfSqO0AwwZFAhFC/exec';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Gönderiliyor...';
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    data.form_type = 'akademi';
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+
+      alert('Çan Akademi başvurunuz başarıyla alındı! Değerlendirme sonrası sizinle iletişime geçeceğiz.');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('Bir hata oluştu, lütfen daha sonra tekrar deneyiniz.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  });
+</script>

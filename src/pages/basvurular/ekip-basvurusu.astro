@@ -16,18 +16,18 @@ import Button from '../../components/Button.astro';
 
   <Section tone="paper">
     <Container narrow>
-      <form class="grid gap-6" method="post" action="#" enctype="multipart/form-data">
+      <form id="ekip-form" class="grid gap-6">
         <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Adı Soyadı" name="ad-soyad" required />
-          <FormField label="Doğum Tarihi" name="dogum-tarihi" type="date" />
+          <FormField label="Adı Soyadı" name="name" required />
+          <FormField label="Doğum Tarihi" name="birth_date" type="date" />
         </div>
         <div class="grid md:grid-cols-2 gap-6">
           <FormField label="E-posta" name="email" type="email" required />
-          <FormField label="Telefon" name="telefon" type="tel" required />
+          <FormField label="Telefon" name="phone" type="tel" required />
         </div>
         <FormField
           label="Görev Almak İstediğiniz Alan"
-          name="alan"
+          name="role_area"
           type="select"
           required
           options={[
@@ -44,7 +44,7 @@ import Button from '../../components/Button.astro';
         />
         <FormField
           label="Eğitim Durumu"
-          name="egitim"
+          name="education"
           type="select"
           options={[
             'Konservatuvar Mezunu',
@@ -56,14 +56,10 @@ import Button from '../../components/Button.astro';
         />
         <FormField
           label="Deneyim ve Neden Katılmak İstiyorsunuz?"
-          name="deneyim"
+          name="experience"
           type="textarea"
-          placeholder="Sahne deneyiminiz, ilgi alanlarınız ve Çan Tiyatrosu'nda görev almak isteme nedeniniz"
+          placeholder="Sahne deneyiminiz, ilgi alanlarınız, portfolyo/CV bağlantınız ve Çan Tiyatrosu'nda görev almak isteme nedeniniz"
         />
-        <div class="flex flex-col gap-2">
-          <label for="field-cv" class="text-sm font-bold text-ink">Özgeçmiş / Portfolyo (PDF veya bağlantı)</label>
-          <input id="field-cv" name="cv" type="file" class="text-sm text-stone file:mr-4 file:rounded-md file:border-0 file:bg-curtain file:text-paper file:px-4 file:py-2.5 file:text-sm file:font-bold" />
-        </div>
         <div>
           <Button type="submit" variant="primary">Başvuruyu Gönder</Button>
         </div>
@@ -71,3 +67,37 @@ import Button from '../../components/Button.astro';
     </Container>
   </Section>
 </Layout>
+
+<script>
+  const form = document.getElementById('ekip-form') as HTMLFormElement;
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyBGaSAsdhoxTZ4cU-dUgsQTbcYdSTrzfcYktLKoCbVXLDh3r8zRrOkKWWA3ss13L7i1Q/exec';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Gönderiliyor...';
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.form_type = 'ekip';
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+
+      alert('Ekip başvurunuz başarıyla alındı! Değerlendirme sonrası sizinle iletişime geçeceğiz.');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('Bir hata oluştu, lütfen daha sonra tekrar deneyiniz.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  });
+</script>

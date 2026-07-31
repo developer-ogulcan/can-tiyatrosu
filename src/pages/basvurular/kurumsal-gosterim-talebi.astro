@@ -16,26 +16,26 @@ import Button from '../../components/Button.astro';
 
   <Section tone="paper">
     <Container narrow>
-      <form class="grid gap-6" method="post" action="#">
+      <form id="kurumsal-form" class="grid gap-6">
         <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Kurum Adı" name="kurum-adi" required />
-          <FormField label="Kurum Türü" name="kurum-turu" type="select" options={['Okul', 'Anaokulu / Kreş', 'Belediye', 'Kültür Merkezi', 'Diğer']} required />
+          <FormField label="Kurum Adı" name="company_name" required />
+          <FormField label="Kurum Türü" name="company_type" type="select" options={['Okul', 'Anaokulu / Kreş', 'Belediye', 'Kültür Merkezi', 'Diğer']} required />
         </div>
         <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Yetkili Kişi" name="yetkili" required />
-          <FormField label="Görevi" name="gorev" />
+          <FormField label="Yetkili Kişi" name="contact_person" required />
+          <FormField label="Görevi" name="title" />
         </div>
         <div class="grid md:grid-cols-2 gap-6">
           <FormField label="E-posta" name="email" type="email" required />
-          <FormField label="Telefon" name="telefon" type="tel" required />
+          <FormField label="Telefon" name="phone" type="tel" required />
         </div>
         <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Tercih Edilen Tarih" name="tarih" type="date" />
-          <FormField label="Tahmini Seyirci Sayısı" name="seyirci-sayisi" />
+          <FormField label="Tercih Edilen Tarih" name="event_date" type="date" />
+          <FormField label="Tahmini Seyirci Sayısı" name="estimated_attendees" />
         </div>
-        <FormField label="İlgilendiğiniz Oyun" name="oyun" placeholder="Belirli bir oyun düşünüyorsanız belirtin" />
-        <FormField label="Mekân Bilgisi" name="mekan" type="textarea" rows={3} placeholder="Gösterimin yapılacağı salon veya alan hakkında bilgi" />
-        <FormField label="Ek Notlar" name="notlar" type="textarea" />
+        <FormField label="İlgilendiğiniz Oyun" name="request_type" placeholder="Belirli bir oyun veya talep türü belirtin" />
+        <FormField label="Mekân Bilgisi" name="venue_info" type="textarea" rows={3} placeholder="Gösterimin yapılacağı salon veya alan hakkında bilgi" />
+        <FormField label="Ek Notlar" name="notes" type="textarea" />
         <div>
           <Button type="submit" variant="primary">Talebi Gönder</Button>
         </div>
@@ -43,3 +43,39 @@ import Button from '../../components/Button.astro';
     </Container>
   </Section>
 </Layout>
+
+<script>
+  const form = document.getElementById('kurumsal-form') as HTMLFormElement;
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuew1DnRFGx3lU4RXMOyjaxPzL_SkHKZKouzDZ8Hl36GY6CIzeDGfSqO0AwwZFAhFC/exec';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Gönderiliyor...';
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Google Script için form_type belirtiyoruz
+    data.form_type = 'kurumsal';
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+
+      alert('Kurumsal gösterim talebiniz başarıyla alındı! Ekibimiz en kısa sürede sizinle iletişime geçecektir.');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('Bir hata oluştu, lütfen doğrudan iletisim sayfamızdan bizimle bağlantıya geçiniz.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  });
+</script>

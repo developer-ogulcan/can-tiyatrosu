@@ -1,96 +1,244 @@
 ---
-import { getCollection, render } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro';
-import Container from '../../../components/Container.astro';
-import Section from '../../../components/Section.astro';
-import Badge from '../../../components/Badge.astro';
-import Gallery from '../../../components/Gallery.astro';
-import CTA from '../../../components/CTA.astro';
+import { getEntry, render } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import Container from "../../../components/Container.astro";
+import Section from "../../../components/Section.astro";
+import Badge from "../../../components/Badge.astro";
+import CTA from "../../../components/CTA.astro";
 
-export async function getStaticPaths() {
-  const plays = await getCollection('plays');
-  return plays.map((play) => ({
-    params: {
-      category: play.data.category === 'cocuk' ? 'cocuk-oyunlari' : 'yetiskin-oyunlari',
-      slug: play.id,
-    },
-    props: { play },
-  }));
+export const prerender = false;
+
+const { category, slug } = Astro.params;
+
+const play = await getEntry("plays", slug!);
+
+if (!play) {
+  return Astro.redirect("/performanslar");
 }
 
-const { play } = Astro.props;
+const expectedCategory =
+  play.data.category === "cocuk"
+    ? "cocuk-oyunlari"
+    : "yetiskin-oyunlari";
+
+if (category !== expectedCategory) {
+  return Astro.redirect(`/performanslar/${expectedCategory}/${slug}`);
+}
+
 const { Content } = await render(play);
 
-const statusLabel: Record<string, string> = {
-  repertuvarda: 'Repertuvarda',
-  yakinda: 'Yakında',
-  arsiv: 'Arşiv',
-};
-const statusTone: Record<string, 'gold' | 'curtain' | 'stone'> = {
-  repertuvarda: 'curtain',
-  yakinda: 'gold',
-  arsiv: 'stone',
+const statusLabel = {
+  repertuvarda: "Repertuvarda",
+  yakinda: "Yakında",
+  arsiv: "Arşiv",
 };
 
-const backHref = play.data.category === 'cocuk' ? '/performanslar/cocuk-oyunlari' : '/performanslar/yetiskin-oyunlari';
+const statusTone = {
+  repertuvarda: "curtain",
+  yakinda: "gold",
+  arsiv: "stone",
+};
+
+const backHref =
+  play.data.category === "cocuk"
+    ? "/performanslar/cocuk-oyunlari"
+    : "/performanslar/yetiskin-oyunlari";
 ---
 
-<Layout title={play.data.title} description={play.data.synopsis}>
-  <header class="pt-32 pb-14 md:pt-40 md:pb-16 bg-paper-dim border-b border-hairline">
-    <Container>
-      <a href={backHref} class="text-sm text-stone hover:text-curtain transition-colors">← Repertuvara dön</a>
-      <div class="mt-6 flex items-center gap-3">
-        <Badge tone={statusTone[play.data.status]}>{statusLabel[play.data.status]}</Badge>
-        {play.data.ageRange && <span class="text-sm text-stone">{play.data.ageRange}</span>}
-        {play.data.duration && <span class="text-sm text-stone">· {play.data.duration}</span>}
-      </div>
-      <h1 class="mt-5 text-4xl md:text-6xl max-w-3xl">{play.data.title}</h1>
-      <p class="mt-6 text-lg text-stone max-w-2xl leading-relaxed">{play.data.synopsis}</p>
-    </Container>
+<Layout
+  title={play.data.title}
+  description={play.data.synopsis}
+>
+
+  <!-- HERO -->
+  <header class="relative">
+
+    {
+      play.data.cover && (
+        <img
+          src={play.data.cover}
+          alt={play.data.title}
+          class="w-full h-[60vh] object-cover"
+        />
+      )
+    }
+
+    <div class="bg-paper-dim border-b border-hairline">
+
+      <Container class="py-14">
+
+        <a
+          href={backHref}
+          class="text-sm text-stone hover:text-curtain"
+        >
+          ← Repertuvara dön
+        </a>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+
+          <Badge tone={statusTone[play.data.status]}>
+            {statusLabel[play.data.status]}
+          </Badge>
+
+          {play.data.ageRange && (
+            <span class="text-sm text-stone">
+              {play.data.ageRange}
+            </span>
+          )}
+
+          {play.data.duration && (
+            <span class="text-sm text-stone">
+              • {play.data.duration}
+            </span>
+          )}
+
+        </div>
+
+        <h1 class="mt-5 text-5xl">
+          {play.data.title}
+        </h1>
+
+        <p class="mt-6 max-w-3xl text-lg text-stone">
+          {play.data.synopsis}
+        </p>
+
+      </Container>
+
+    </div>
+
   </header>
 
-  <Section tone="paper" spacing="tight">
-    <Container>
-      <Gallery count={6} caption={play.data.title} />
-    </Container>
-  </Section>
+  {
+  play.data.heroImage && (
+    <div class="mt-10">
+      <img
+        src={play.data.heroImage}
+        alt={play.data.title}
+        class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto"
+      />
+    </div>
+  )
+}
+
+
+
+  <!-- GALERİ -->
+
+  {
+    play.data.gallery?.length > 0 && (
+
+      <Section tone="paper" spacing="tight">
+
+        <Container>
+
+          <div class="grid md:grid-cols-3 gap-6">
+
+            {play.data.gallery.map((image) => (
+
+              <img
+                src={image}
+                alt={play.data.title}
+                class="rounded-xl object-cover w-full aspect-[4/3]"
+              />
+
+            ))}
+
+          </div>
+
+        </Container>
+
+      </Section>
+
+    )
+  }
+
+
+
+  <!-- İÇERİK -->
 
   <Section tone="paper">
+
     <Container>
+
       <div class="grid md:grid-cols-12 gap-12">
-        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed">
+
+        <div class="md:col-span-8 prose-editorial">
+
           <Content />
+
         </div>
-        <aside class="md:col-span-4 space-y-8">
-          {play.data.cast.length > 0 && (
-            <div>
-              <p class="eyebrow mb-3">Oyuncular</p>
-              <ul class="space-y-1.5 text-ink">
-                {play.data.cast.map((name: string) => <li>{name}</li>)}
-              </ul>
-            </div>
-          )}
-          {play.data.crew.length > 0 && (
-            <div>
-              <p class="eyebrow mb-3">Ekip</p>
-              <ul class="space-y-1.5 text-ink">
-                {play.data.crew.map((c: { role: string; name: string }) => (
-                  <li><span class="text-stone">{c.role}:</span> {c.name}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+
+
+
+        <aside class="md:col-span-4 space-y-10">
+
+          {
+            play.data.cast?.length > 0 && (
+              <div>
+
+                <h3 class="eyebrow mb-3">
+                  Oyuncular
+                </h3>
+
+                <ul class="space-y-2">
+
+                  {play.data.cast.map((actor) => (
+                    <li>{actor}</li>
+                  ))}
+
+                </ul>
+
+              </div>
+            )
+          }
+
+
+
+          {
+            play.data.crew?.length > 0 && (
+              <div>
+
+                <h3 class="eyebrow mb-3">
+                  Künye
+                </h3>
+
+                <ul class="space-y-2">
+
+                  {play.data.crew.map((item) => (
+
+                    <li>
+
+                      <strong>{item.role}</strong><br />
+
+                      {item.name}
+
+                    </li>
+
+                  ))}
+
+                </ul>
+
+              </div>
+            )
+          }
+
         </aside>
+
       </div>
+
     </Container>
+
   </Section>
+
+
 
   <CTA
     title="Bu oyuna bilet alın"
-    description="Gösteri takvimimiz ve bilet bilgileri için bilet sayfamızı ziyaret edin. Okul grubunuz için kurumsal gösterim de talep edebilirsiniz."
+    description="Gösteri takvimimiz ve bilet bilgileri için bilet sayfamızı ziyaret edin."
     primaryLabel="Bilet Al"
     primaryHref="/bilet"
     secondaryLabel="Kurumsal Gösterim Talebi"
     secondaryHref="/basvurular/kurumsal-gosterim-talebi"
   />
+
 </Layout>

@@ -1,0 +1,162 @@
+---
+import { getCollection } from 'astro:content';
+import { tinaField } from '@tinacms/astro/tina-field';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Accordion from '../../components/Accordion.astro';
+import FormField from '../../components/FormField.astro';
+import Button from '../../components/Button.astro';
+
+// Her türlü ID, path, uzantı ve Türkçe karakter uyumsuzluğunu çözen tam temizleme fonksiyonu
+function getCleanSlug(entry: any) {
+  if (!entry) return '';
+  
+  // Önce slug, id veya filePath bilgisini al
+  const raw = entry.slug || entry.id || entry.filePath || '';
+  
+  // Yolun sonundaki dosya adını al
+  let filename = raw.split('/').pop() || raw;
+  
+  // .md veya .mdx uzantılarını temizle
+  filename = filename.replace(/\.mdx?$/, '');
+  
+  // Türkçe karakterleri ve uyumsuzlukları slug formatına dönüştür
+  return filename
+    .toLowerCase()
+    .trim()
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-');
+}
+
+export async function getStaticPaths() {
+  const details = await getCollection('serviceDetails');
+  return details.map((entry) => {
+    const slug = getCleanSlug(entry);
+    return {
+      params: { slug },
+      props: { item: entry },
+    };
+  });
+}
+
+const { item } = Astro.props;
+const { slug } = Astro.params;
+
+const details = await getCollection('serviceDetails');
+
+// Aranan slug parametresini de aynı süzgeçten geçiriyoruz
+const normalizedParamSlug = getCleanSlug({ id: slug });
+
+// 1. Önce doğrudan eşleştirme
+// 2. Yoksa normalize edilmiş slug eşleştirmesi
+// 3. O da yoksa dosya adı eşleştirmesi
+const currentItem =
+  item ||
+  details.find((d) => getCleanSlug(d) === normalizedParamSlug) ||
+  details.find((d) => (d.id || '').includes(slug || ''));
+
+if (!currentItem) {
+  // Terminal konsoluna hata öncesi eldeki tüm slug'ları bastıralım ki teşhis edebilelim
+  console.error('Mevcut serviceDetails slug listesi:', details.map(d => ({ id: d.id, clean: getCleanSlug(d) })));
+  console.error('Aranan slug:', slug, 'Normalize:', normalizedParamSlug);
+  throw new Error(`Service detail not found for slug: ${slug}`);
+}
+
+const data = currentItem.data;
+---
+
+<Layout title={data.title} description={data.lede}>
+  <PageHero
+    eyebrow={data.eyebrow}
+    title={data.title}
+    lede={data.lede}
+    eyebrowField={tinaField(data, 'eyebrow')}
+    titleField={tinaField(data, 'title')}
+    ledeField={tinaField(data, 'lede')}
+  />
+
+  {data.benefits && data.benefits.length > 0 && (
+    <Section tone="paper">
+      <Container>
+        <p class="eyebrow mb-5">Neden Bizimle Çalışmalısınız</p>
+        <div class="grid md:grid-cols-3 gap-8" data-tina-field={tinaField(data, 'benefits')}>
+          {data.benefits.map((b: any) => (
+            <div class="border-t-2 border-gold-deep pt-5">
+              <h3 class="text-xl mb-2">{b.title}</h3>
+              <p class="text-stone leading-relaxed">{b.description}</p>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  )}
+
+  {data.gallery && data.gallery.length > 0 && (
+    <Section tone="dim" spacing="tight">
+      <Container>
+        <div data-tina-field={tinaField(data, 'gallery')}>
+          <p class="eyebrow mb-6">Galeri & Görseller</p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {data.gallery.map((imgUrl: string, index: number) => (
+              <div class="overflow-hidden rounded-xl bg-stone/10 aspect-[4/3]">
+                <img
+                  src={imgUrl}
+                  alt={`${data.title} - Görsel ${index + 1}`}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </Container>
+    </Section>
+  )}
+
+  {data.faq && data.faq.length > 0 && (
+    <Section tone="paper">
+      <Container>
+        <p class="eyebrow mb-5">Sıkça Sorulan Sorular</p>
+        <div data-tina-field={tinaField(data, 'faq')}>
+          <Accordion items={data.faq} />
+        </div>
+      </Container>
+    </Section>
+  )}
+
+  <Section tone="dim">
+    <Container narrow>
+      <p class="eyebrow mb-5">Talep Formu</p>
+      <h2 class="text-3xl md:text-4xl mb-8" data-tina-field={tinaField(data, 'formConfig')}>
+        {data.formConfig?.formTitle || `${data.title} Talebinizi İletin`}
+      </h2>
+      <form class="grid gap-6" method="post" action="#">
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Kurum / Kişi Adı" name="ad" required />
+          <FormField label="Yetkili Kişi / Detay" name="yetkili" />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="E-posta" name="email" type="email" required />
+          <FormField label="Telefon" name="telefon" type="tel" required />
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <FormField label="Tercih Edilen Tarih" name="tarih" type="date" />
+          <FormField label="Tahmini Katılımcı / Seyirci Sayısı" name="seyirci-sayisi" />
+        </div>
+        <FormField label="Notlarınız" name="mesaj" type="textarea" placeholder="Talep detayları ve notlarınız" />
+        <div>
+          <Button type="submit" variant="primary">
+            {data.formConfig?.submitButtonText || 'Talebi Gönder'}
+          </Button>
+        </div>
+      </form>
+    </Container>
+  </Section>
+</Layout>

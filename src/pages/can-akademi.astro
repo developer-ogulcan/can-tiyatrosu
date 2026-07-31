@@ -6,6 +6,7 @@ import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Card from '../components/Card.astro';
+import PerdeMark from '../components/PerdeMark.astro';
 
 const academyCollection = await getCollection('academy');
 const academyEntry =
@@ -17,59 +18,128 @@ if (!academyEntry) {
 const academy = academyEntry.data;
 ---
 
-<Layout title="Çan Akademi" description="Ana ekibe dahil olmadan yazıp, yönetip, oynayabileceğiniz özgür bir tiyatro üretim alanı.">
+<Layout 
+  title="Çan Akademi | Özgür Tiyatro Üretim Alanı" 
+  description="Ana ekibe dahil olmadan kendi oyununuzu yazıp, yönetip, oynayabileceğiniz özgür bir sahne ve tiyatro üretim alanı."
+>
+  <!-- Hero Section -->
   <PageHero
-    eyebrow={academy.eyebrow}
-    title={academy.title}
-    lede={academy.lede}
+    eyebrow={academy.eyebrow || 'Bağımsız Sahne Üretimi'}
+    title={academy.title || 'Çan Akademi'}
+    lede={academy.lede || 'Oyunculuk, reji, yazarlık... Kendi hikayenizi özgürce sahneye taşıyabileceğiniz profesyonel bir üretim alanı.'}
     eyebrowField={tinaField(academy, 'eyebrow')}
     titleField={tinaField(academy, 'title')}
     ledeField={tinaField(academy, 'lede')}
   />
 
+  <!-- Manifest / Manifesto Vurgusu -->
   <Section tone="dim" spacing="tight">
     <Container>
-      <div class="max-w-3xl">
-        <h2 class="text-3xl md:text-4xl mb-6">Atölye değil, üretim alanı</h2>
-        <p class="text-lg text-stone leading-relaxed mb-6" data-tina-field={tinaField(academy, 'description')}>
+      <div class="max-w-3xl mx-auto text-center md:text-left">
+        <span class="eyebrow !text-curtain mb-4 block">Akademi Felsefesi</span>
+        <h2 class="text-3xl md:text-4xl font-display mb-6 text-ink">
+          Sadece teorik bir ders değil; gerçek bir sahne ve üretim ekosistemi.
+        </h2>
+        <p class="text-lg md:text-xl text-stone leading-relaxed mb-6" data-tina-field={tinaField(academy, 'description')}>
           {academy.description}
         </p>
-        <p class="text-lg text-stone leading-relaxed">
-          Sahne, teknik altyapı ve kurumsal destek Çan Tiyatrosu tarafından sağlanır; üretim özgürlüğü ise Akademi üyelerindedir. Yaratıcı drama dersi arayan veliler için <a href="/atolyeler" class="text-curtain font-bold hover:underline">Atölyeler</a> sayfamıza bakabilirsiniz.
+        <p class="text-base md:text-lg text-stone/80 leading-relaxed border-l-2 border-curtain pl-4 italic">
+          Işık, ses, teknik altyapı ve kurumsal rehberlik Çan Tiyatrosu'ndan; metin, Reji ve yaratıcı özgürlük sizden. 
+          <br class="hidden md:inline" />
+          <span class="not-italic text-sm font-semibold mt-2 block">
+            * Çocuk & Genç drama grupları için <a href="/atolyeler" class="text-curtain underline hover:opacity-80">Atölyeler</a> sayfamızı inceleyebilirsiniz.
+          </span>
         </p>
       </div>
     </Container>
   </Section>
 
+  <!-- Özellikler / Ne Yapabilirsiniz? -->
   <Section tone="paper">
     <Container>
-      <p class="eyebrow mb-5">Ne Yapabilirsiniz?</p>
-      <h2 class="text-3xl md:text-4xl mb-10">Özgür üretim, gerçek sahne</h2>
-      <div class="grid md:grid-cols-3 gap-6" data-tina-field={tinaField(academy, 'features')}>
-        {academy.features.map((feature) => (
-          <Card>
-            <h3 class="text-xl mb-3 text-curtain">{feature.title}</h3>
-            <p class="text-stone leading-relaxed">{feature.description}</p>
-          </Card>
+      <div class="mb-12 text-center md:text-left">
+        <p class="eyebrow mb-3">İmkanlar & Özgürlükler</p>
+        <h2 class="text-3xl md:text-5xl">Kendi Sahnenizi Yaratın</h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8" data-tina-field={tinaField(academy, 'features')}>
+        {academy.features.map((feature, idx) => (
+          <div class="relative p-8 rounded-xl border border-hairline bg-paper hover:border-curtain/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+            <div>
+              <span class="font-display text-4xl text-gold/60 block mb-4">0{idx + 1}</span>
+              <h3 class="text-2xl mb-3 text-ink font-bold">{feature.title}</h3>
+              <p class="text-stone leading-relaxed">{feature.description}</p>
+            </div>
+          </div>
         ))}
       </div>
     </Container>
   </Section>
 
+  <PerdeMark align="center" class="!py-2" />
+
+  <!-- Adım Adım Süreç -->
+  <Section tone="dim">
+    <Container>
+      <div class="max-w-2xl mx-auto text-center mb-12">
+        <p class="eyebrow mb-3">Nasıl İlerliyoruz?</p>
+        <h2 class="text-3xl md:text-4xl">Fikirden Prömiyere</h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="p-6 rounded border border-hairline bg-paper">
+          <span class="text-xs font-bold uppercase tracking-widest text-curtain block mb-2">1. Adım</span>
+          <h4 class="text-lg font-bold mb-2">Fikir & Başvuru</h4>
+          <p class="text-sm text-stone">Metninizi, projenizi veya sahneleme fikrinizi Akademi ile paylaşırsınız.</p>
+        </div>
+
+        <div class="p-6 rounded border border-hairline bg-paper">
+          <span class="text-xs font-bold uppercase tracking-widest text-curtain block mb-2">2. Adım</span>
+          <h4 class="text-lg font-bold mb-2">Masa Başı & Reji</h4>
+          <p class="text-sm text-stone">Metin çözümlemesi, dramaturji ve reji konsepti üzerinde ortak çalışma.</p>
+        </div>
+
+        <div class="p-6 rounded border border-hairline bg-paper">
+          <span class="text-xs font-bold uppercase tracking-widest text-curtain block mb-2">3. Adım</span>
+          <h4 class="text-lg font-bold mb-2">Sahne & Prova</h4>
+          <p class="text-sm text-stone">Işık, ses ve teknik imkanlarla profesyonel sahnede prova süreci.</p>
+        </div>
+
+        <div class="p-6 rounded border border-hairline bg-paper">
+          <span class="text-xs font-bold uppercase tracking-widest text-curtain block mb-2">4. Adım</span>
+          <h4 class="text-lg font-bold mb-2">Seyirciyle Buluşma</h4>
+          <p class="text-sm text-stone">Oyununuz Çan Tiyatrosu takviminde yerini alır ve seyirciye perde açar.</p>
+        </div>
+      </div>
+    </Container>
+  </Section>
+
+  <!-- CTA Section -->
   <Section tone="ink">
     <Container>
-      <div class="max-w-2xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl text-paper mb-6" data-tina-field={tinaField(academy, 'ctaTitle')}>
-          {academy.ctaTitle}
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="eyebrow !text-gold mb-4">Aramıza Katılın</p>
+        <h2 class="text-3xl md:text-5xl text-paper mb-6 font-display" data-tina-field={tinaField(academy, 'ctaTitle')}>
+          {academy.ctaTitle || 'Sahne Sizin. Kendi Oyununuzu Yazıp Yönetmeye Hazır Mısınız?'}
         </h2>
-        <p class="text-paper/70 text-lg mb-8 leading-relaxed" data-tina-field={tinaField(academy, 'ctaDescription')}>
-          {academy.ctaDescription}
+        <p class="text-paper/75 text-lg md:text-xl mb-10 leading-relaxed" data-tina-field={tinaField(academy, 'ctaDescription')}>
+          {academy.ctaDescription || 'Proje fikrinizi veya oyunculuk/reji talebinizi bizimle paylaşın, Çan Akademi çatısı altında birlikte sahneleyelim.'}
         </p>
-        {academy.ctaButton?.href && (
-          <a href={academy.ctaButton.href} class="btn-primary" data-tina-field={tinaField(academy, 'ctaButton')}>
-            {academy.ctaButton.label}
+        
+        <div class="flex flex-wrap justify-center items-center gap-4">
+          {academy.ctaButton?.href ? (
+            <a href={academy.ctaButton.href} class="btn-primary" data-tina-field={tinaField(academy, 'ctaButton')}>
+              {academy.ctaButton.label}
+            </a>
+          ) : (
+            <a href="/iletisim" class="btn-primary">
+              Akademiye Başvur
+            </a>
+          )}
+          <a href="/atolyeler" class="btn-secondary !text-paper !border-paper/30 hover:!border-paper">
+            Atölyeleri İncele
           </a>
-        )}
+        </div>
       </div>
     </Container>
   </Section>

@@ -6,31 +6,40 @@ import Container from '../../../components/Container.astro';
 import Section from '../../../components/Section.astro';
 import PlayCard from '../../../components/PlayCard.astro';
 
-export async function getStaticPaths() {
-  return [
-    { params: { category: 'cocuk-oyunlari' }, props: { category: 'cocuk' as const, label: 'Çocuk Oyunları' } },
-    { params: { category: 'yetiskin-oyunlari' }, props: { category: 'yetiskin' as const, label: 'Yetişkin Oyunları' } },
-  ];
+const { category } = Astro.params;
+
+// URL'deki kategori adını content schema'daki karşılığına dönüştür
+const categoryMap: Record<string, { key: 'cocuk' | 'yetiskin'; label: string; lede: string }> = {
+  'cocuk-oyunlari': {
+    key: 'cocuk',
+    label: 'Çocuk Oyunları',
+    lede: 'Çocuk ve gençlik seyircisine yönelik, pedagojik yaklaşımla hazırlanan yapımlarımız.',
+  },
+  'yetiskin-oyunlari': {
+    key: 'yetiskin',
+    label: 'Yetişkin Oyunları',
+    lede: 'Yetişkin seyirci için sahnelenen, farklı bir dramaturjik dil taşıyan yapımlarımız.',
+  },
+};
+
+const currentCategory = categoryMap[category || ''];
+
+if (!currentCategory) {
+  return Astro.redirect('/performanslar');
 }
 
-const { category, label } = Astro.props;
 const plays = (await getCollection('plays'))
-  .filter((p) => p.data.category === category)
-  .sort((a, b) => a.data.order - b.data.order);
-
-const lede =
-  category === 'cocuk'
-    ? 'Çocuk ve gençlik seyircisine yönelik, pedagojik yaklaşımla hazırlanan yapımlarımız.'
-    : 'Yetişkin seyirci için sahnelenen, farklı bir dramaturjik dil taşıyan yapımlarımız.';
+  .filter((p) => p.data.category === currentCategory.key)
+  .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 ---
 
-<Layout title={label} description={lede}>
-  <PageHero eyebrow="Repertuvar" title={label} lede={lede} />
+<Layout title={currentCategory.label} description={currentCategory.lede}>
+  <PageHero eyebrow="Repertuvar" title={currentCategory.label} lede={currentCategory.lede} />
 
   <Section tone="paper">
     <Container>
       {plays.length > 0 ? (
-        <div>
+        <div class="space-y-6">
           {plays.map((play) => (
             <PlayCard
               title={play.data.title}
@@ -40,6 +49,7 @@ const lede =
               synopsis={play.data.synopsis}
               ageRange={play.data.ageRange}
               duration={play.data.duration}
+              heroImage={play.data.heroImage}
             />
           ))}
         </div>

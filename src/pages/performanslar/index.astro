@@ -42,6 +42,7 @@ const adultCount = allPlays.filter((p) => p.data.category === 'yetiskin').length
       <div>
         {allPlays.map((play) => (
           <PlayCard
+          heroImage={play.data.heroImage}
             title={play.data.title}
             slug={play.id}
             category={play.data.category}

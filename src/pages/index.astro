@@ -28,8 +28,8 @@ const plays = (await getCollection('plays'))
   .slice(0, 4);
 
 const announcements = (await getCollection('announcements'))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  .slice(0, 5);
 
 ---
 
@@ -105,11 +105,17 @@ const announcements = (await getCollection('announcements'))
             <p class="eyebrow mb-5">Repertuvar</p>
             <h2 class="text-4xl md:text-5xl">Bu sezon sahnede</h2>
           </div>
-          <div class="flex flex-wrap gap-4">
-            <a href="/bilet" class="btn-primary !py-2.5 !px-5 !text-sm !shadow-none">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <a 
+              href="/hizmetler/kurumsal-gosterimler" 
+              class="text-xs font-semibold text-curtain border border-curtain/40 hover:border-curtain hover:bg-curtain hover:text-paper px-3 py-1.5 rounded transition-all duration-150 whitespace-nowrap"
+            >
+              Okul / Kreş Gösterimleri
+            </a>
+            <a href="/bilet" class="btn-primary !py-1.5 !px-4 !text-xs !shadow-none">
               Bilet Al
             </a>
-            <a href="/performanslar" class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap self-center">
+            <a href="/performanslar" class="text-xs font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap ml-1">
               Tüm oyunlar →
             </a>
           </div>
@@ -163,19 +169,13 @@ const announcements = (await getCollection('announcements'))
             <p class="eyebrow mb-5">{homepage.announcementsTitle ?? 'Duyurular'}</p>
             <h2 class="text-4xl md:text-5xl">{homepage.announcementsTitle ?? 'Güncel'}</h2>
           </div>
-          {homepage.announcementsCtaHref && homepage.announcementsCtaLabel ? (
-            <a href={homepage.announcementsCtaHref} class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
-              {homepage.announcementsCtaLabel}
-            </a>
-          ) : (
-            <a href="/basin/basinda-biz" class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
-              Tüm haberler →
-            </a>
-          )}
+          <a href="/basin/basinda-biz" class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap">
+            Tüm haberler →
+          </a>
         </div>
         <div>
           {announcements.map((a) => (
-            <AnnouncementCard title={a.data.title} date={a.data.date} summary={a.data.summary} href={a.data.href} />
+            <AnnouncementCard title={a.data.title} date={a.data.date} summary={a.data.summary} href={a.data.externalUrl || `/haberler/${a.id}`} />
           ))}
         </div>
       </Container>

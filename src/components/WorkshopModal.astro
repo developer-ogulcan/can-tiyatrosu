@@ -1,0 +1,172 @@
+---
+import FormField from './FormField.astro';
+
+interface Props {
+  workshops: { title: string; age: string }[];
+}
+
+const { workshops = [] } = Astro.props;
+---
+
+<div
+  id="workshop-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 p-4"
+>
+  <div class="relative w-full max-w-lg rounded-xl border border-hairline bg-paper p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300" id="modal-container">
+    
+    <!-- Kapatma Butonu -->
+    <button
+      id="close-modal"
+      class="absolute top-4 right-4 text-stone hover:text-ink text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-stone/10 transition-colors"
+      aria-label="Kapat"
+    >
+      &times;
+    </button>
+
+    <div class="mb-6">
+      <span class="text-xs font-bold uppercase tracking-wider text-curtain">Ön Başvuru Formu</span>
+      <h3 id="modal-title" class="text-2xl font-bold text-ink mt-1">Atölye Başvurusu</h3>
+      <p class="text-sm text-stone mt-1">Lütfen aşağıdaki bilgileri eksiksiz doldurun.</p>
+    </div>
+
+    <form id="workshop-form" class="space-y-4">
+      <!-- Seçilen Atölye -->
+      <FormField
+        label="Başvurulacak Atölye"
+        name="workshop_name"
+        type="select"
+        required={true}
+        options={workshops.map((w) => w.title)}
+      />
+
+      <!-- Katılımcı / Yaş Türü Seçimi -->
+      <div>
+        <label class="text-sm font-semibold text-ink block mb-2">Başvuru Sahibi Kim?</label>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="flex items-center gap-2 border border-hairline p-3 rounded cursor-pointer hover:border-curtain/50 transition-colors">
+            <input type="radio" name="applicant_type" value="child" checked class="accent-curtain" />
+            <span class="text-sm text-ink font-medium">Çocuk / Genç (Veli)</span>
+          </label>
+          <label class="flex items-center gap-2 border border-hairline p-3 rounded cursor-pointer hover:border-curtain/50 transition-colors">
+            <input type="radio" name="applicant_type" value="adult" class="accent-curtain" />
+            <span class="text-sm text-ink font-medium">Yetişkin (Kendi)</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Çocuk / Veli Alanları -->
+      <div id="child-fields" class="space-y-4">
+        <FormField label="Veli Ad Soyad" name="parent_name" placeholder="Örn: Ahmet Yılmaz" required={true} />
+        <div class="grid grid-cols-2 gap-4">
+          <FormField label="Çocuğun Adı Soyadı" name="child_name" placeholder="Örn: Can Yılmaz" required={true} />
+          <FormField label="Çocuğun Yaşı" name="child_age" type="text" placeholder="Örn: 9" required={true} />
+        </div>
+      </div>
+
+      <!-- Ortak İletişim Alanları -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <FormField label="E-posta" name="email" type="email" placeholder="ornek@gmail.com" required={true} />
+        <FormField label="Telefon" name="phone" type="tel" placeholder="05XX XXX XX XX" required={true} />
+      </div>
+
+      <!-- Deneyim / Not -->
+      <FormField
+        label="Daha Önce Tiyatro / Drama Deneyimi Var mı? Notunuz var mı?"
+        name="notes"
+        type="textarea"
+        rows={3}
+        placeholder="Kısaca bahsedebilirsiniz..."
+      />
+
+      <button type="submit" class="btn-primary w-full justify-center mt-6">
+        Başvuruyu Gönder
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('workshop-modal');
+  const modalContainer = document.getElementById('modal-container');
+  const closeModalBtn = document.getElementById('close-modal');
+  const form = document.getElementById('workshop-form') as HTMLFormElement;
+  const childFields = document.getElementById('child-fields');
+  const applicantRadios = document.querySelectorAll('input[name="applicant_type"]');
+  const selectWorkshop = document.querySelector('select[name="workshop_name"]') as HTMLSelectElement;
+
+  // Modal Aç
+  window.openWorkshopModal = (workshopTitle?: string) => {
+    if (workshopTitle && selectWorkshop) {
+      selectWorkshop.value = workshopTitle;
+    }
+    modal?.classList.remove('opacity-0', 'pointer-events-none');
+    modalContainer?.classList.remove('scale-95');
+    modalContainer?.classList.add('scale-100');
+  };
+
+  // Modal Kapat
+  const closeModal = () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+    modalContainer?.classList.remove('scale-100');
+    modalContainer?.classList.add('scale-95');
+  };
+
+  closeModalBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Çocuk / Yetişkin Değişimi
+  applicantRadios.forEach((radio) => {
+    radio.addEventListener('change', (e) => {
+      const target = e.target as HTMLInputElement;
+      if (childFields) {
+        if (target.value === 'adult') {
+          childFields.style.display = 'none';
+          // Çocuk alanlarının zorunluluğunu kaldır
+          childFields.querySelectorAll('input').forEach(i => i.removeAttribute('required'));
+        } else {
+          childFields.style.display = 'block';
+          // Çocuk alanlarını tekrar zorunlu yap
+          childFields.querySelectorAll('input').forEach(i => i.setAttribute('required', 'true'));
+        }
+      }
+    });
+  });
+
+// Form Gönderim İşlemi
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalBtnText = submitBtn.innerText;
+    
+    // Butonu yükleniyor durumuna getir
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Gönderiliyor...';
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    // Buraya Google Apps Script'ten aldığın Web App URL'ini yapıştır:
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTTzS1UN_pA3Er4pVCfqV-SSHDTzeF-Glxdtl5XeRCtWjSfgKY8z7tTXRcLJtpxAOL5g/exec';
+
+    try {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+
+      alert('Başvurunuz başarıyla alındı! En kısa sürede sizinle iletişime geçeceğiz.');
+      closeModal();
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('Bir hata oluştu, lütfen daha sonra tekrar deneyiniz veya telefonla iletişime geçiniz.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalBtnText;
+    }
+  });
+</script>

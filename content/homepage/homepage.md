@@ -13,7 +13,7 @@ stats:
   - value: '43'
     label: Yıllık Kesintisiz Üretim
   - value: '2'
-    label: Sahne — Kenan Halis ve Murat Celal
+    label: Sahne — Kenan Halis Kızıldağ ve Murat Celal Kızıldağ Oda Sahnesi
   - value: Ankara
     label: Merkez Yerleşke
 audiencePaths:

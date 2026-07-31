@@ -9,31 +9,47 @@ interface Props {
   synopsis: string;
   ageRange?: string;
   duration?: string;
+  heroImage?: string;
 }
-const { title, slug, category, status, synopsis, ageRange, duration } = Astro.props;
+
+const { title, slug, category, status, synopsis, ageRange, duration, heroImage } = Astro.props;
 
 const statusLabel: Record<string, string> = {
   repertuvarda: 'Repertuvarda',
   yakinda: 'Yakında',
   arsiv: 'Arşiv',
 };
+
 const statusTone: Record<string, 'gold' | 'curtain' | 'stone'> = {
   repertuvarda: 'curtain',
   yakinda: 'gold',
   arsiv: 'stone',
 };
 ---
+
 <a
   href={`/performanslar/${category === 'cocuk' ? 'cocuk-oyunlari' : 'yetiskin-oyunlari'}/${slug}`}
-  class="group block border-t border-hairline py-8 md:py-10 first:border-t-0"
+  class="group grid md:grid-cols-12 gap-6 border-t border-hairline py-8 md:py-10 first:border-t-0 items-center"
 >
-  <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-3">
-    <h3 class="text-2xl md:text-3xl transition-colors group-hover:text-curtain">{title}</h3>
-    <div class="flex items-center gap-2 shrink-0">
-      <Badge tone={statusTone[status]}>{statusLabel[status]}</Badge>
-      {ageRange && <span class="text-sm text-stone">{ageRange}</span>}
+  {heroImage && (
+    <div class="md:col-span-3 overflow-hidden rounded-xl bg-stone/5 aspect-[3/4]">
+      <img
+        src={heroImage}
+        alt={title}
+        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+      />
     </div>
+  )}
+
+  <div class={heroImage ? "md:col-span-9" : "md:col-span-12"}>
+    <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-3">
+      <h3 class="text-2xl md:text-3xl transition-colors group-hover:text-curtain font-bold">{title}</h3>
+      <div class="flex items-center gap-2 shrink-0">
+        <Badge tone={statusTone[status]}>{statusLabel[status]}</Badge>
+        {ageRange && <span class="text-sm text-stone">{ageRange}</span>}
+      </div>
+    </div>
+    <p class="mt-3 text-stone leading-relaxed">{synopsis}</p>
+    {duration && <p class="mt-3 text-xs uppercase tracking-wide text-stone-light">• {duration}</p>}
   </div>
-  <p class="mt-3 max-w-2xl text-stone leading-relaxed">{synopsis}</p>
-  {duration && <p class="mt-3 text-xs uppercase tracking-wide text-stone-light">{duration}</p>}
 </a>

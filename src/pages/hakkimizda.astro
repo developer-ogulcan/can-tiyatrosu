@@ -6,7 +6,6 @@ import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Timeline from '../components/Timeline.astro';
-import Statistic from '../components/Statistic.astro';
 import PerdeMark from '../components/PerdeMark.astro';
 import CTA from '../components/CTA.astro';
 
@@ -14,10 +13,20 @@ const aboutCollection = await getCollection('about');
 const aboutEntry =
   aboutCollection.find((entry) => entry.id === 'about.md' || entry.id === 'about' || entry.slug === 'about') ??
   aboutCollection[0];
+
 if (!aboutEntry) {
   throw new Error('About page content not found');
 }
 const about = aboutEntry.data;
+
+// Metinlerdeki satır başlarını gerçek paragraflara dönüştüren yardımcı fonksiyon
+function renderParagraphs(text: string) {
+  if (!text) return null;
+  return text
+    .split(/\n\s*\n/) // Çift satır başlarını (paragrafları) ayırır
+    .filter((p) => p.trim().length > 0)
+    .map((paragraph) => paragraph.replace(/\n/g, ' ')); // Tekil satır kırılmalarını boşluğa çevirir
+}
 ---
 
 <Layout title="Hakkımızda" description="Çan Tiyatrosu'nun tarihi, misyonu, vizyonu ve değerleri.">
@@ -30,6 +39,7 @@ const about = aboutEntry.data;
     ledeField={tinaField(about, 'lede')}
   />
 
+  <!-- MİSYON BÖLÜMÜ -->
   <Section tone="paper">
     <Container>
       <div class="grid md:grid-cols-12 gap-12">
@@ -39,8 +49,10 @@ const about = aboutEntry.data;
             {about.missionTitle}
           </h2>
         </div>
-        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed" data-tina-field={tinaField(about, 'missionBody')}>
-          <p>{about.missionBody}</p>
+        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed space-y-6" data-tina-field={tinaField(about, 'missionBody')}>
+          {renderParagraphs(about.missionBody)?.map((pText) => (
+            <p>{pText}</p>
+          ))}
         </div>
       </div>
     </Container>
@@ -48,6 +60,7 @@ const about = aboutEntry.data;
 
   <PerdeMark align="center" class="!py-2" />
 
+  <!-- VİZYON BÖLÜMÜ -->
   <Section tone="paper" spacing="tight">
     <Container>
       <div class="grid md:grid-cols-12 gap-12">
@@ -57,8 +70,10 @@ const about = aboutEntry.data;
             {about.visionTitle}
           </h2>
         </div>
-        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed" data-tina-field={tinaField(about, 'visionBody')}>
-          <p>{about.visionBody}</p>
+        <div class="md:col-span-8 prose-editorial text-lg text-stone leading-relaxed space-y-6" data-tina-field={tinaField(about, 'visionBody')}>
+          {renderParagraphs(about.visionBody)?.map((pText) => (
+            <p>{pText}</p>
+          ))}
         </div>
       </div>
     </Container>
@@ -90,15 +105,27 @@ const about = aboutEntry.data;
 
   <Section tone="ink" spacing="tight">
     <Container>
-      <p class="eyebrow !text-gold-bright mb-5">Kazanımlar</p>
-      <div class="grid md:grid-cols-3 gap-10" data-tina-field={tinaField(about, 'stats')}>
-        {about.stats.map((stat) => (
-          <Statistic value={stat.value} label={stat.label} />
-        ))}
-      </div>
-      <p class="mt-10 max-w-2xl text-paper/60 leading-relaxed">
-        [Kurumun aldığı ödüller, onur belgeleri ve kurumsal başarılar buraya eklenecektir.]
-      </p>
+      <p class="eyebrow !text-gold-bright mb-5">Kazanımlar ve Ödüller</p>
+
+      {about.awards && about.awards.length > 0 ? (
+        <div class="grid md:grid-cols-2 gap-6 pt-6 border-t border-paper/10" data-tina-field={tinaField(about, 'awards')}>
+          {about.awards.map((award) => (
+            <div class="bg-paper/5 p-6 rounded-xl border border-paper/10">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-semibold text-paper">{award.title}</h3>
+                {award.year && <span class="text-sm text-gold-bright font-mono">{award.year}</span>}
+              </div>
+              {award.description && (
+                <p class="text-paper/70 text-sm leading-relaxed">{award.description}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="mt-4 max-w-2xl text-paper/60 leading-relaxed">
+          Henüz ödül verisi eklenmedi. TinaCMS panelinden "Ödüller ve Başarılar" kısmından ekleyebilirsiniz.
+        </p>
+      )}
     </Container>
   </Section>
 

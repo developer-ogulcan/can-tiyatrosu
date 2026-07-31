@@ -108,10 +108,10 @@ const contact = contactEntry.data;
             {contact.formDescription}
           </p>
 
-          <form class="grid gap-6" method="post" action="#">
+          <form id="iletisim-form" class="grid gap-6">
             <FormField
               label="Adınız Soyadınız"
-              name="ad-soyad"
+              name="name"
               required
             />
 
@@ -123,13 +123,19 @@ const contact = contactEntry.data;
             />
 
             <FormField
+              label="Telefon"
+              name="phone"
+              type="tel"
+            />
+
+            <FormField
               label="Konu"
-              name="konu"
+              name="subject"
             />
 
             <FormField
               label="Mesajınız"
-              name="mesaj"
+              name="message"
               type="textarea"
               required
             />
@@ -149,3 +155,37 @@ const contact = contactEntry.data;
     </Container>
   </Section>
 </Layout>
+
+<script>
+  const form = document.getElementById('iletisim-form') as HTMLFormElement;
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyBGaSAsdhoxTZ4cU-dUgsQTbcYdSTrzfcYktLKoCbVXLDh3r8zRrOkKWWA3ss13L7i1Q/exec';
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const originalText = btn.innerText;
+    btn.disabled = true;
+    btn.innerText = 'Gönderiliyor...';
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    data.form_type = 'iletisim';
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(data),
+      });
+
+      alert('Mesajınız başarıyla alındı! En kısa sürede dönüş yapacağız.');
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      alert('Bir hata oluştu, lütfen daha sonra tekrar deneyiniz.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  });
+</script>

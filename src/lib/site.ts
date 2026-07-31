@@ -3,7 +3,7 @@ export const SITE = {
   founded: 1984,
   tagline: "Türkiye'nin Yaşayan En Eski Çocuk ve Gençlik Tiyatrosu",
   description:
-    "1984'ten bu yana kesintisiz sahnede olan Çan Tiyatrosu; çocuk, gençlik ve yetişkin seyirci için oyunlar üreten, ekip ve gönüllülerle büyüyen bir tiyatro kuruluşudur.",
+    "1984’ten bu yana kesintisiz sahnede olan Çan Tiyatrosu; çocuk, gençlik ve yetişkin seyirci için oyunlar üreten, köklü bir tiyatro kuruluşudur.",
 
   url: 'https://cantiyatrosu.com',
 
@@ -73,17 +73,12 @@ export const NAV: NavItem[] = [
     ],
   },
   { label: 'Bilet', href: '/bilet' },
-  { label: 'Çan Akademi', href: '/can-akademi' },
-  { label: 'Atölyeler', href: '/atolyeler' },
-  { label: 'Hakkımızda', href: '/hakkimizda' },
-  { label: 'Kurucular', href: '/kurucular' },
   {
-    label: 'Katıl',
-    href: '/basvurular',
+    label: 'Eğitim & Akademi',
+    href: '/can-akademi',
     children: [
-      { label: 'Ekip Başvurusu', href: '/basvurular/ekip-basvurusu' },
-      { label: 'Çan Akademi Başvurusu', href: '/basvurular/can-akademi-basvurusu' },
-      { label: 'Kurumsal Gösterim Talebi', href: '/basvurular/kurumsal-gosterim-talebi' },
+      { label: 'Çan Akademi', href: '/can-akademi' },
+      { label: 'Atölyeler', href: '/atolyeler' },
     ],
   },
   {
@@ -91,16 +86,27 @@ export const NAV: NavItem[] = [
     href: '/hizmetler',
     children: [
       { label: 'Kurumsal Gösterimler', href: '/hizmetler/kurumsal-gosterimler' },
-      { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-etkinlik' },
+      { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-ve-etkinlik' },
       { label: 'Maskot Kiralama', href: '/hizmetler/maskot-kiralama' },
     ],
   },
   {
-    label: 'Basın',
-    href: '/basin/basin-kiti',
+    label: 'Hakkımızda',
+    href: '/hakkimizda',
     children: [
+      { label: 'Biz Kimiz?', href: '/hakkimizda' },
+      { label: 'Kurucular', href: '/kurucular' },
       { label: 'Basın Kiti', href: '/basin/basin-kiti' },
-      { label: 'Basında Çan Tiyatrosu', href: '/basin/basinda-biz' },
+      { label: 'Haberler ve Duyurular', href: '/basin/basinda-biz' },
+    ],
+  },
+  {
+    label: 'Katıl',
+    href: '/basvurular',
+    children: [
+      { label: 'Ekip Başvurusu', href: '/basvurular/ekip-basvurusu' },
+      { label: 'Çan Akademi Başvurusu', href: '/basvurular/can-akademi-basvurusu' },
+      { label: 'Kurumsal Gösterim Talebi', href: '/basvurular/kurumsal-gosterim-talebi' },
     ],
   },
   { label: 'İletişim', href: '/iletisim' },
@@ -122,11 +128,11 @@ export const FOOTER_LINKS = {
     { label: 'Hakkımızda', href: '/hakkimizda' },
     { label: 'Kurucular', href: '/kurucular' },
     { label: 'Basın Kiti', href: '/basin/basin-kiti' },
-    { label: 'Basında Çan Tiyatrosu', href: '/basin/basinda-biz' },
+    { label: 'Haberler ve Duyurular', href: '/basin/basinda-biz' },
   ],
   hizmet: [
     { label: 'Kurumsal Gösterimler', href: '/hizmetler/kurumsal-gosterimler' },
-    { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-etkinlik' },
+    { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-ve-etkinlik' },
     { label: 'Maskot Kiralama', href: '/hizmetler/maskot-kiralama' },
   ],
 };

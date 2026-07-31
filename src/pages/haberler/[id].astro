@@ -1,0 +1,68 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import PageHero from '../../components/PageHero.astro';
+
+export async function getStaticPaths() {
+  const announcements = await getCollection('announcements');
+  return announcements.map((entry) => ({
+    params: { id: entry.id },
+  }));
+}
+
+const { id } = Astro.params;
+const entry = await getEntry('announcements', id);
+
+if (!entry) {
+  return Astro.redirect('/404');
+}
+
+// Astro Content Collections yapısında data kontrolü
+const announcement = entry.data ?? entry;
+
+// Tarih formatlama
+const dateObj = announcement.date ? new Date(announcement.date) : new Date();
+const formattedDate = dateObj.toLocaleDateString('tr-TR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={`${announcement.title} | Çan Tiyatrosu`} description={announcement.summary}>
+  <PageHero
+    eyebrow={formattedDate}
+    title={announcement.title}
+    lede={announcement.summary}
+  />
+
+  <Section tone="paper">
+    <Container class="max-w-4xl">
+      {announcement.image && (
+        <div class="mb-10 overflow-hidden rounded-2xl border border-paper/10 shadow-lg">
+          <img
+            src={announcement.image}
+            alt={announcement.title}
+            class="w-full h-auto object-cover max-h-[500px]"
+          />
+        </div>
+      )}
+
+      {announcement.content ? (
+        <div class="prose prose-lg max-w-none text-stone leading-relaxed whitespace-pre-line space-y-4">
+          {announcement.content}
+        </div>
+      ) : (
+        <p class="text-stone italic">Bu haber için ek detay metni bulunmamaktadır.</p>
+      )}
+
+      <div class="mt-12 pt-8 border-t border-stone/20 flex justify-between items-center">
+        <a href="/basin/basinda-biz" class="text-sm font-bold text-curtain hover:underline underline-offset-4">
+          ← Tüm Haberler ve Duyurular
+        </a>
+      </div>
+    </Container>
+  </Section>
+</Layout>

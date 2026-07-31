@@ -4,34 +4,34 @@ import Layout from '../../layouts/Layout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Container from '../../components/Container.astro';
 import Section from '../../components/Section.astro';
-import NewsCard from '../../components/NewsCard.astro';
+import AnnouncementCard from '../../components/AnnouncementCard.astro';
 
-const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const announcements = (await getCollection('announcements'))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
-<Layout title="Basında Çan Tiyatrosu" description="Çan Tiyatrosu hakkında yayınlanan haber ve röportajlar.">
+<Layout title="Haberler ve Duyurular | Çan Tiyatrosu" description="Çan Tiyatrosu'ndan güncel haberler, duyurular ve etkinlikler.">
   <PageHero
-    eyebrow="Basın"
-    title="Basında Çan Tiyatrosu"
-    lede="Kurumumuz hakkında yayınlanan haberler, röportajlar ve kültür sanat yazıları."
+    eyebrow="Güncel"
+    title="Haberler ve Duyurular"
+    lede="Tiyatromuzdan son haberler, yeni sezon duyuruları, basın yansımaları ve etkinlik detayları."
   />
 
   <Section tone="paper">
     <Container>
-      {news.length > 0 ? (
+      {announcements.length > 0 ? (
         <div class="grid md:grid-cols-2 gap-6">
-          {news.map((item) => (
-            <NewsCard
+          {announcements.map((item) => (
+            <AnnouncementCard
               title={item.data.title}
               date={item.data.date}
-              source={item.data.source}
               summary={item.data.summary}
-              externalUrl={item.data.externalUrl}
+              href={item.data.externalUrl || `/haberler/${item.id}`}
             />
           ))}
         </div>
       ) : (
-        <p class="text-stone">[Basın haberleri yakında eklenecektir.]</p>
+        <p class="text-stone">Henüz yayınlanmış bir haber veya duyuru bulunmuyor.</p>
       )}
     </Container>
   </Section>

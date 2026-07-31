@@ -6,6 +6,7 @@ import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Accordion from '../components/Accordion.astro';
+import WorkshopModal from '../components/WorkshopModal.astro';
 
 const workshopsCollection = await getCollection('workshops');
 const workshopsEntry =
@@ -35,11 +36,19 @@ const workshopsData = workshopsEntry.data;
       </p>
       <div class="grid md:grid-cols-3 gap-6" data-tina-field={tinaField(workshopsData, 'workshops')}>
         {workshopsData.workshops.map((w) => (
-          <article class="rounded-xl border-2 border-hairline bg-paper p-6 hover:border-curtain/30 transition-colors">
-            <p class="eyebrow mb-3">{w.age}</p>
-            <h2 class="text-2xl mb-3">{w.title}</h2>
-            <p class="text-sm font-bold text-curtain mb-4">{w.duration}</p>
-            <p class="text-stone leading-relaxed">{w.description}</p>
+          <article class="rounded-xl border-2 border-hairline bg-paper p-6 hover:border-curtain/30 transition-colors flex flex-col justify-between">
+            <div>
+              <p class="eyebrow mb-3">{w.age}</p>
+              <h2 class="text-2xl mb-3">{w.title}</h2>
+              <p class="text-sm font-bold text-curtain mb-4">{w.duration}</p>
+              <p class="text-stone leading-relaxed mb-6">{w.description}</p>
+            </div>
+            <button
+              onclick={`window.openWorkshopModal('${w.title}')`}
+              class="w-full py-2.5 px-4 rounded-[2px] border border-curtain text-curtain font-bold text-sm hover:bg-curtain hover:text-paper transition-colors cursor-pointer"
+            >
+              Başvuru Yap
+            </button>
           </article>
         ))}
       </div>
@@ -60,10 +69,17 @@ const workshopsData = workshopsEntry.data;
         <p class="text-paper/70 text-lg mb-8 leading-relaxed" data-tina-field={tinaField(workshopsData, 'ctaDescription')}>
           {workshopsData.ctaDescription}
         </p>
-        <a href={workshopsData.ctaButton?.href ?? '/iletisim'} class="btn-primary" data-tina-field={tinaField(workshopsData, 'ctaButton')}>
-          {workshopsData.ctaButton?.label ?? 'İletişime Geç'}
-        </a>
+        <button
+          onclick="window.openWorkshopModal()"
+          class="btn-primary"
+          data-tina-field={tinaField(workshopsData, 'ctaButton')}
+        >
+          {workshopsData.ctaButton?.label ?? 'Başvuru Yap'}
+        </button>
       </div>
     </Container>
   </Section>
+
+  <!-- Modal Entegrasyonu -->
+  <WorkshopModal workshops={workshopsData.workshops} />
 </Layout>

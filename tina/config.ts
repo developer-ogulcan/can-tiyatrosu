@@ -1,6 +1,5 @@
 import { defineConfig } from "tinacms";
 
-// Your hosting provider likely exposes this as an environment variable
 const branch =
   process.env.GITHUB_BRANCH ||
   process.env.VERCEL_GIT_COMMIT_REF ||
@@ -9,10 +8,7 @@ const branch =
 
 export default defineConfig({
   branch,
-
-  // Get this from tina.io
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
-  // Get this from tina.io
   token: process.env.TINA_TOKEN,
 
   build: {
@@ -135,6 +131,17 @@ export default defineConfig({
           { type: "string", name: "visionBody", label: "Vision Body" },
           {
             type: "object",
+            name: "awards",
+            label: "Ödüller ve Başarılar",
+            list: true,
+            fields: [
+              { type: "string", name: "title", label: "Ödül / Başarı Adı" },
+              { type: "string", name: "year", label: "Yıl" },
+              { type: "string", name: "description", label: "Açıklama" },
+            ],
+          },
+          {
+            type: "object",
             name: "values",
             label: "Values",
             list: true,
@@ -177,7 +184,12 @@ export default defineConfig({
         fields: [
           { type: "string", name: "eyebrow", label: "Eyebrow" },
           { type: "string", name: "title", label: "Title" },
-          { type: "string", name: "lede", label: "Lede" },
+          {
+            type: "string",
+            name: "lede",
+            label: "Lede",
+            ui: { component: "textarea" },
+          },
           {
             type: "object",
             name: "founders",
@@ -186,10 +198,21 @@ export default defineConfig({
             fields: [
               { type: "string", name: "name", label: "Name" },
               { type: "string", name: "title", label: "Title" },
-              { type: "string", name: "bio", label: "Biography" },
+              { type: "image", name: "image", label: "Fotoğraf" },
+              {
+                type: "string",
+                name: "bio",
+                label: "Biography",
+                ui: { component: "textarea" },
+              },
             ],
           },
-          { type: "string", name: "quote", label: "Quote" },
+          {
+            type: "string",
+            name: "quote",
+            label: "Quote",
+            ui: { component: "textarea" },
+          },
           { type: "string", name: "quoteAttribution", label: "Quote Attribution" },
           { type: "string", name: "quoteRole", label: "Quote Role" },
         ],
@@ -301,6 +324,52 @@ export default defineConfig({
         ],
       },
       {
+        name: "serviceDetails",
+        label: "Hizmet Detay Sayfaları",
+        path: "content/service-details",
+        format: "md",
+        fields: [
+          { type: "string", name: "title", label: "Başlık", isTitle: true, required: true },
+          { type: "string", name: "eyebrow", label: "Üst Başlık (Eyebrow)" },
+          { type: "string", name: "lede", label: "Özet / Giriş Metni", ui: { component: "textarea" } },
+          {
+            type: "image",
+            name: "gallery",
+            label: "Galeri Görselleri",
+            list: true,
+          },
+          {
+            type: "object",
+            name: "benefits",
+            label: "Avantajlar / Neden Bizimle Çalışmalısınız",
+            list: true,
+            fields: [
+              { type: "string", name: "title", label: "Başlık" },
+              { type: "string", name: "description", label: "Açıklama", ui: { component: "textarea" } },
+            ],
+          },
+          {
+            type: "object",
+            name: "faq",
+            label: "Sıkça Sorulan Sorular",
+            list: true,
+            fields: [
+              { type: "string", name: "question", label: "Soru" },
+              { type: "string", name: "answer", label: "Yanıt", ui: { component: "textarea" } },
+            ],
+          },
+          {
+            type: "object",
+            name: "formConfig",
+            label: "Form Ayarları",
+            fields: [
+              { type: "string", name: "formTitle", label: "Form Başlığı" },
+              { type: "string", name: "submitButtonText", label: "Gönder Buton Metni" },
+            ],
+          },
+        ],
+      },
+      {
         name: "contact",
         label: "Contact",
         path: "content/contact",
@@ -351,6 +420,113 @@ export default defineConfig({
           { type: "string", name: "defaultTitle", label: "Default Title" },
           { type: "string", name: "defaultDescription", label: "Default Description" },
           { type: "image", name: "defaultOgImage", label: "Default OpenGraph Image" },
+        ],
+      },
+      {
+        name: "plays",
+        label: "Oyunlar",
+        path: "content/plays",
+        ui: {
+          router: ({ document }) => `/oyunlar/${document._sys.filename}`,
+        },
+        fields: [
+          {
+            type: "string",
+            name: "title",
+            label: "Oyun Adı",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "category",
+            label: "Kategori",
+            options: [
+              { label: "Çocuk Oyunu", value: "cocuk" },
+              { label: "Yetişkin Oyunu", value: "yetiskin" },
+            ],
+          },
+          {
+            type: "string",
+            name: "status",
+            label: "Durum",
+            options: [
+              { label: "Repertuvarda", value: "repertuvarda" },
+              { label: "Yakında", value: "yakinda" },
+              { label: "Arşiv", value: "arsiv" },
+            ],
+          },
+          {
+            type: "string",
+            name: "synopsis",
+            label: "Kısa Açıklama",
+            ui: { component: "textarea" },
+          },
+          { type: "string", name: "ageRange", label: "Yaş Aralığı" },
+          { type: "string", name: "duration", label: "Süre" },
+          { type: "image", name: "heroImage", label: "Kapak Görseli" },
+          { type: "image", name: "gallery", label: "Galeri", list: true },
+          { type: "boolean", name: "featured", label: "Öne Çıkan Oyun" },
+          { type: "number", name: "order", label: "Sıralama" },
+          { type: "string", name: "cast", label: "Oyuncular", list: true },
+          {
+            type: "object",
+            name: "crew",
+            label: "Künye",
+            list: true,
+            fields: [
+              { type: "string", name: "role", label: "Görev" },
+              { type: "string", name: "name", label: "İsim" },
+            ],
+          },
+        ],
+      },
+      {
+        name: "announcements",
+        label: "Haberler ve Duyurular",
+        path: "content/announcements",
+        format: "md",
+        fields: [
+          {
+            type: "string",
+            name: "title",
+            label: "Başlık",
+            isTitle: true,
+            required: true,
+          },
+          {
+            type: "datetime",
+            name: "date",
+            label: "Yayın Tarihi",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "summary",
+            label: "Özet Metin",
+            ui: { component: "textarea" },
+            required: true,
+          },
+          {
+            type: "image",
+            name: "image",
+            label: "Görsel",
+          },
+          {
+            type: "boolean",
+            name: "featured",
+            label: "Ana Sayfada Öne Çıkar",
+          },
+          {
+            type: "string",
+            name: "externalUrl",
+            label: "Harici Bağlantı (Varsa)",
+          },
+          {
+            type: "string",
+            name: "content",
+            label: "Detay Metni",
+            ui: { component: "textarea" },
+          },
         ],
       },
     ],

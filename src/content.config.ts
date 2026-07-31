@@ -1,6 +1,39 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+const serviceDetails = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/service-details' }),
+  schema: () =>
+    z.object({
+      title: z.string(),
+      eyebrow: z.string().default('Hizmet'),
+      lede: z.string(),
+      gallery: z.array(z.string()).default([]),
+      benefits: z
+        .array(
+          z.object({
+            title: z.string(),
+            description: z.string(),
+          })
+        )
+        .default([]),
+      faq: z
+        .array(
+          z.object({
+            question: z.string(),
+            answer: z.string(),
+          })
+        )
+        .default([]),
+      formConfig: z
+        .object({
+          formTitle: z.string().optional(),
+          submitButtonText: z.string().optional(),
+        })
+        .optional(),
+    }),
+});
+
 const settings = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './content/settings' }),
   schema: () =>
@@ -39,7 +72,7 @@ const homepage = defineCollection({
           description: z.string(),
           href: z.string(),
           cta: z.string(),
-        }),
+        })
       ).default([]),
       whyEyebrow: z.string().optional(),
       whyTitle: z.string(),
@@ -48,7 +81,7 @@ const homepage = defineCollection({
           number: z.string(),
           title: z.string(),
           description: z.string(),
-        }),
+        })
       ).default([]),
       announcementsTitle: z.string().optional(),
       announcementsCtaLabel: z.string().optional(),
@@ -76,6 +109,13 @@ const about = defineCollection({
       values: z.array(z.object({ title: z.string(), description: z.string() })).default([]),
       timeline: z.array(z.object({ perde: z.string(), year: z.string(), title: z.string(), description: z.string() })).default([]),
       stats: z.array(z.object({ value: z.string(), label: z.string() })).default([]),
+      awards: z.array(
+        z.object({
+          title: z.string(),
+          year: z.string().optional(),
+          description: z.string().optional(),
+        })
+      ).default([]),
     }),
 });
 
@@ -86,7 +126,14 @@ const founders = defineCollection({
       eyebrow: z.string().optional(),
       title: z.string(),
       lede: z.string(),
-      founders: z.array(z.object({ name: z.string(), title: z.string(), bio: z.string().optional() })).default([]),
+      founders: z.array(
+        z.object({
+          name: z.string(),
+          title: z.string(),
+          image: z.string().optional(),
+          bio: z.string().optional(),
+        })
+      ).default([]),
       quote: z.string().optional(),
       quoteAttribution: z.string().optional(),
       quoteRole: z.string().optional(),
@@ -192,20 +239,11 @@ const announcements = defineCollection({
   schema: () =>
     z.object({
       title: z.string(),
-      date: z.coerce.date(),
+      date: z.date().or(z.string().transform((val) => new Date(val))),
       summary: z.string(),
-      href: z.string().optional(),
-    }),
-});
-
-const news = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './content/news' }),
-  schema: () =>
-    z.object({
-      title: z.string(),
-      date: z.coerce.date(),
-      source: z.string(),
-      summary: z.string(),
+      content: z.string().optional(),
+      image: z.string().optional(),
+      featured: z.boolean().default(false),
       externalUrl: z.string().optional(),
     }),
 });
@@ -218,10 +256,10 @@ export const collections = {
   academy,
   workshops,
   services,
+  serviceDetails,
   contact,
   footer,
   seo,
   plays,
   announcements,
-  news,
 };
