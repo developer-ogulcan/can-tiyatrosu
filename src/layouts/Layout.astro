@@ -9,7 +9,16 @@ interface Props {
   description?: string;
   image?: string;
 }
-const { title, description, image } = Astro.props;
+
+const { 
+  title, 
+  description = "Çan Tiyatrosu - Repertuvarımızdaki yetişkin ve çocuk oyunları, gösterim takvimi ve bilet bilgileri.", 
+  image = "/og-image.jpg" // public/og-image.jpg varsayılan görseliniz
+} = Astro.props;
+
+// Görsel yolunu tam URL'ye dönüştürüyoruz
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
+const socialImageURL = new URL(image, Astro.url.origin).href;
 ---
 <!doctype html>
 <html lang="tr">
@@ -26,7 +35,12 @@ const { title, description, image } = Astro.props;
       rel="stylesheet"
     />
 
-    <SEO title={title} description={description} image={image} />
+    <SEO 
+      title={title} 
+      description={description} 
+      image={socialImageURL} 
+      canonicalURL={canonicalURL.href}
+    />
   </head>
   <body>
     <Navbar />
