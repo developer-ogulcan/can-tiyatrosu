@@ -8,7 +8,7 @@ import node from "@astrojs/node";
 // import { tinaAdminDevRedirect } from "@tinacms/astro/vite";
 
 export default defineConfig({
-  site: "https://cantiyatrosu.com",
+  site: "https://cantiyatrosu.com.tr",
 
   output: "server",
 
