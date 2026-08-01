@@ -8,7 +8,30 @@ founders:
     title: Genel Koordinatör
     image: /images/founders/murat-celal-kizildag.jpg
     bio: |
-      Biyografi eklenecek.
+      Tiyatro Deneyimi
+      1974: HAMOY (Halk Müziği ve Oyunları Araştırma ve Eğitim Derneği) kapsamında eğitimlere katıldı.
+
+      1975: Ankara Çağdaş Sahne Çocuk Oyunları biriminde "Küçük Kara Balık" isimli çocuk oyununda oyuncu olarak görev aldı.
+
+      1978: Ankara Sanat Tiyatrosu (AST) bünyesinde stajyer oyuncu olarak yer aldı.
+
+      1982 – 1984: Deneme Sahnesi çalışmalarına katıldı; Nurhan Karadağ yönetimindeki eğitim çalışmalarında yer aldı.
+
+      1984 – Halen: Çan Tiyatrosu’nun kurucuları arasında yer aldı. Halen bu tiyatroda yazar, yönetmen, eğitmen ve oyuncu olarak çalışmalarını sürdürmektedir.
+
+      Tiyatro Yazarlığı ve Yönetmenlik
+      Yazarlık / Uyarlama: 4 gençlik ve 40 çocuk oyunu kaleme aldı veya uyarladı.
+
+      Yönetmenlik: 29’u çocuk, 4’ü gençlik oyunu olmak üzere toplam 33 oyun yönetti. (İlk rejilerinin ardından aynı oyunları farklı ekiplerle defalarca sahneye koydu.)
+
+      Kurumsal Katkılar ve Üyelikler
+      ASSITEJ Türkiye (Uluslararası Çocuk ve Gençlik Tiyatroları Birliği) Üyesi
+
+      Çağdaş Drama Derneği Kurucu Üyesi
+
+      TİYAP (Tiyatro Yapımcıları Derneği) Üyesi (1992 – 1997)
+
+      Çeşitli dernek ve festivallerde aktif yürütücü/düzenleyici görevler
 
   - name: Kenan Hâlis Kızıldağ
     title: Genel Sanat Yönetmeni
