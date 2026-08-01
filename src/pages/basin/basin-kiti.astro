@@ -6,10 +6,24 @@ import Section from '../../components/Section.astro';
 import Card from '../../components/Card.astro';
 
 const downloads = [
-  { title: 'Logo Paketi (PNG / SVG)', description: 'Açık ve koyu zemin üzerinde kullanım için logo varyasyonları.' },
-  { title: 'Kurumsal Tanıtım Metni', description: 'Kurum hakkında kısa ve uzun tanıtım metinleri.' },
-  { title: 'Basın Fotoğrafları', description: 'Yüksek çözünürlüklü sahne ve kurum fotoğrafları.' },
-  { title: 'Marka Kullanım Kılavuzu', description: 'Renk paleti, tipografi ve logo kullanım kuralları.' },
+  { 
+    title: 'Logo Paketi (PNG / SVG / Vector)', 
+    description: 'Açık ve koyu zemin üzerinde kullanım için yüksek çözünürlüklü logo varyasyonları.',
+    fileUrl: '/press/Can_Tiyatrosu_Logo_Paketi.zip',
+    fileName: 'Can_Tiyatrosu_Logo_Paketi.zip'
+  },
+  { 
+    title: 'Basın Kiti & Tanıtım Metinleri', 
+    description: 'Kurum hakkında detaylı bilgi, vizyon, sahne detayları ve resmi basın bülteni.',
+    fileUrl: '/press/Can_Tiyatrosu_Basin_Kiti.docx',
+    fileName: 'Can_Tiyatrosu_Basin_Kiti.docx'
+  },
+  { 
+    title: 'Marka Kullanım Kılavuzu', 
+    description: 'Renk paleti, tipografi, logo kullanım kuralları ve kurumsal kimlik detayları.',
+    fileUrl: '/press/Can_Tiyatrosu_Marka_Kilavuzu.docx',
+    fileName: 'Can_Tiyatrosu_Marka_Kilavuzu.docx'
+  },
 ];
 ---
 
@@ -30,9 +44,16 @@ const downloads = [
                 <h2 class="text-xl mb-2">{d.title}</h2>
                 <p class="text-stone leading-relaxed">{d.description}</p>
               </div>
-              <span class="shrink-0 text-xs uppercase tracking-wide text-stone-light border border-hairline rounded-full px-3 py-1">
-                Yakında
-              </span>
+              
+             <a
+  href={d.fileUrl}
+  download
+  target="_blank"
+  type={d.fileUrl.endsWith('.zip') ? 'application/zip' : undefined}
+  class="shrink-0 text-xs uppercase font-bold tracking-wide text-curtain border border-curtain rounded-full px-4 py-1.5 hover:bg-curtain hover:text-paper transition-colors"
+>
+  İndir
+</a>
             </div>
           </Card>
         ))}
@@ -43,9 +64,14 @@ const downloads = [
   <Section tone="dim" spacing="tight">
     <Container>
       <p class="eyebrow mb-5">Kurumsal Tanıtım Metni</p>
-      <p class="max-w-2xl text-lg text-stone leading-relaxed">
-        [Basın kullanımı için hazırlanmış, kurumun tarihini ve kimliğini kısaca özetleyen resmi tanıtım metni buraya eklenecektir.]
-      </p>
+      <div class="max-w-3xl text-lg text-stone leading-relaxed space-y-4">
+        <blockquote class="border-l-4 border-curtain pl-4 italic text-ink">
+          "Çan Tiyatrosu; Ankara'da köklü tiyatro geleneklerini genç ve yenilikçi bir vizyonla buluşturan, özgür sahne üretimine ve topluluk ruhuna odaklanan bağımsız bir tiyatro alanıdır."
+        </blockquote>
+        <p>
+          Oyunculuk, reji, tiyatro yazarlığı ve çocuk atölyeleri alanında aktif üretimlerine devam eden tiyatro; hem kendi ana prodüksiyonlarını seyirciyle buluşturmakta hem de Çan Akademi çatısı altında bağımsız projeler üreten sanatçılara sahne ve teknik imkan sunmaktadır.
+        </p>
+      </div>
     </Container>
   </Section>
 

@@ -215,6 +215,32 @@ const seo = defineCollection({
     }),
 });
 
+const tickets = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/tickets' }),
+  schema: () =>
+    z.object({
+      title: z.string(),
+      category: z.string().optional(),
+      genre: z.string().optional(),
+      coverImage: z.string().optional(),
+      eventDate: z.date().or(z.string().transform((val) => new Date(val))),
+      venue: z.string().optional(),
+      locationText: z.string().optional(),
+      cast: z.string().optional(),
+      creatives: z.string().optional(),
+      ticketLinks: z
+        .array(
+          z.object({
+            platformName: z.string().optional(),
+            href: z.string().optional(),
+            bgColor: z.string().optional(),
+            textColor: z.string().optional(),
+          })
+        )
+        .default([]),
+    }),
+});
+
 const plays = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './content/plays' }),
   schema: () =>
@@ -260,6 +286,7 @@ export const collections = {
   contact,
   footer,
   seo,
+  tickets,
   plays,
   announcements,
 };

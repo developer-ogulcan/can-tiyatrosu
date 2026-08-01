@@ -423,6 +423,52 @@ export default defineConfig({
         ],
       },
       {
+        name: "tickets",
+        label: "Bilet Etkinlikleri",
+        path: "content/tickets",
+        format: "md",
+        ui: {
+          router: () => "/bilet",
+        },
+        fields: [
+          { type: "string", name: "title", label: "Etkinlik / Oyun Adı", isTitle: true, required: true },
+          { type: "string", name: "category", label: "Kategori", options: ["Çocuk Oyunu", "Yetişkin Oyunu", "Akademi Sahnesi", "Özel Gösterim"] },
+          { type: "string", name: "genre", label: "Tür", placeholder: "Müzikal Komedi, Dram, Yaratıcı Drama..." },
+          { type: "image", name: "coverImage", label: "Kapak Görseli / Afiş" },
+          { type: "datetime", name: "eventDate", label: "Tarih ve Saat", required: true },
+          { type: "string", name: "venue", label: "Mekân / Sahne Adı", placeholder: "Çan Tiyatrosu Ana Sahne" },
+          { type: "string", name: "locationText", label: "Açık Konum / İlçe", placeholder: "Kızılay / Ankara" },
+          { type: "string", name: "cast", label: "Oyuncular / Kadro (Virgülle ayırın)", placeholder: "Ahmet Y., Ayşe K." },
+          { type: "string", name: "creatives", label: "Künye (Yazar, Yönetmen)", placeholder: "Yazan: ... | Yöneten: ..." },
+          {
+            type: "object",
+            name: "ticketLinks",
+            label: "Bilet Satış Bağlantıları",
+            list: true,
+            ui: {
+              itemProps: (item) => ({ label: item?.platformName || "Yeni Bilet Butonu" }),
+            },
+            fields: [
+              { type: "string", name: "platformName", label: "Platform Adı", placeholder: "BuBilet, Biletinial, Fırsatbufırsat..." },
+              { type: "string", name: "href", label: "Bilet Satış Linki (URL)" },
+              {
+                type: "string",
+                name: "bgColor",
+                label: "Buton Arka Plan Rengi (Hex veya CSS rengi)",
+                placeholder: "#e11d48 (Örn: Bubilet Kırmızı, #0284c7 Biletinial Mavi)",
+              },
+              {
+                type: "string",
+                name: "textColor",
+                label: "Yazı Rengi",
+                placeholder: "#ffffff",
+                options: ["#ffffff", "#000000"],
+              },
+            ],
+          },
+        ],
+      },
+      {
         name: "plays",
         label: "Oyunlar",
         path: "content/plays",
@@ -468,6 +514,7 @@ export default defineConfig({
           { type: "boolean", name: "featured", label: "Öne Çıkan Oyun" },
           { type: "number", name: "order", label: "Sıralama" },
           { type: "string", name: "cast", label: "Oyuncular", list: true },
+          
           {
             type: "object",
             name: "crew",
