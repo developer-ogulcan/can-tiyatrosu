@@ -22,6 +22,10 @@
     "cross-env": "^7.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "slate": "0.103.0",
+    "slate-dom": "0.103.0",
+    "slate-hyperscript": "0.103.0",
+    "slate-react": "0.103.0",
     "tailwindcss": "^4.3.3",
     "tinacms": "^3.11.0"
   },
@@ -32,6 +36,14 @@
   "overrides": {
     "@vite-pwa/astro": {
       "astro": "$astro"
-    }
+    },
+    "@udecode/plate-core": {
+      "slate": "0.103.0",
+      "slate-react": "0.103.0",
+      "slate-hyperscript": "0.103.0"
+    },
+    "slate": "0.103.0",
+    "slate-react": "0.103.0",
+    "slate-hyperscript": "0.103.0"
   }
 }
