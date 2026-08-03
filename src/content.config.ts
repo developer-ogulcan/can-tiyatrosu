@@ -274,6 +274,19 @@ const announcements = defineCollection({
     }),
 });
 
+const press = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/press' }),
+  schema: () =>
+    z.object({
+      title: z.string(),
+      sourceName: z.string(),
+      publishDate: z.date().or(z.string().transform((val) => new Date(val))),
+      coverImage: z.string(),
+      summary: z.string().optional(),
+      externalUrl: z.string(),
+    }),
+});
+
 export const collections = {
   settings,
   homepage,
@@ -289,4 +302,5 @@ export const collections = {
   tickets,
   plays,
   announcements,
+  press,
 };

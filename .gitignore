@@ -3,6 +3,7 @@ dist/
 .astro/
 .env
 .DS_Store
+.wrangler
 
 node_modules
 tina/__generated__

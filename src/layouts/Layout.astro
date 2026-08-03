@@ -34,8 +34,7 @@ const socialImageURL = new URL(image, Astro.url.origin).href;
       rel="stylesheet"
     />
 
-    <script src="/src/pwa.ts"></script>
-    { import.meta.env.PROD && <script is:inline src="/registerSW.js"></script> }
+    { import.meta.env.PROD && <script src="/src/pwa.ts"></script> }
 
     <SEO 
       title={title} 
@@ -49,6 +48,57 @@ const socialImageURL = new URL(image, Astro.url.origin).href;
     <main>
       <slot />
     </main>
+
+    <!-- PWA Yükleme Bildirimi (Pop-Up) -->
+    <div 
+      id="pwa-install-banner" 
+      class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm bg-ink text-paper p-4 rounded-lg shadow-2xl border border-gold/40 z-50 hidden flex-col gap-3 transition-all duration-300"
+    >
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wider text-gold">Mobil Uygulama</span>
+        <button id="pwa-close" class="text-paper/60 hover:text-paper text-sm px-1 font-bold" aria-label="Kapat">✕</button>
+      </div>
+      <p class="text-sm text-paper/90 leading-snug">
+        Çan Tiyatrosu uygulamasını mobil cihazınıza yükleyerek biletlere ve duyurulara tek tıkla ulaşın.
+      </p>
+      <button id="pwa-install-btn" class="btn-primary !py-2 !text-xs !w-full">
+        Uygulamayı Yükle
+      </button>
+    </div>
+
     <Footer />
+
+    <script>
+      let deferredPrompt: any;
+      const banner = document.getElementById('pwa-install-banner');
+      const installBtn = document.getElementById('pwa-install-btn');
+      const closeBtn = document.getElementById('pwa-close');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (banner) {
+          banner.classList.remove('hidden');
+          banner.classList.add('flex');
+        }
+      });
+
+      installBtn?.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted' && banner) {
+            banner.classList.add('hidden');
+          }
+          deferredPrompt = null;
+        }
+      });
+
+      closeBtn?.addEventListener('click', () => {
+        if (banner) {
+          banner.classList.add('hidden');
+        }
+      });
+    </script>
   </body>
 </html>

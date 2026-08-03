@@ -96,8 +96,10 @@ export const NAV: NavItem[] = [
     children: [
       { label: 'Biz Kimiz?', href: '/hakkimizda' },
       { label: 'Kurucular', href: '/kurucular' },
+      { label: 'Basında Biz', href: '/basinda-biz' },
       { label: 'Basın Kiti', href: '/basin/basin-kiti' },
       { label: 'Haberler ve Duyurular', href: '/basin/basinda-biz' },
+      { label: 'Mobil Uygulama', href: '/mobil-uygulama' },
     ],
   },
   {
@@ -127,8 +129,10 @@ export const FOOTER_LINKS = {
   kurum: [
     { label: 'Hakkımızda', href: '/hakkimizda' },
     { label: 'Kurucular', href: '/kurucular' },
+    { label: 'Basında Biz', href: '/basinda-biz' },
     { label: 'Basın Kiti', href: '/basin/basin-kiti' },
     { label: 'Haberler ve Duyurular', href: '/basin/basinda-biz' },
+    { label: 'Mobil Uygulama', href: '/mobil-uygulama' },
   ],
   hizmet: [
     { label: 'Kurumsal Gösterimler', href: '/hizmetler/kurumsal-gosterimler' },

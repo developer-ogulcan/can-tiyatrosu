@@ -2,58 +2,80 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Mobil Uygulama" description="Çan Tiyatrosu mobil uygulamasını telefonunuza indirin ve etkinlikleri anında takip edin.">
-  <section class="py-16 container-editorial max-w-2xl mx-auto text-center">
-    <div class="mb-6 flex justify-center">
-      <img src="/images/logo.png" alt="Çan Tiyatrosu Logo" class="h-24 w-auto" />
-    </div>
+<Layout title="Uygulamayı Yükle - Çan Tiyatrosu">
+  <main class="min-h-screen bg-ink text-paper flex flex-col justify-between p-6 md:p-12">
+    
+    <header class="w-full max-w-xl mx-auto flex justify-between items-center">
+      <a href="/" class="text-sm font-bold tracking-widest uppercase text-gold">
+        Çan Tiyatrosu
+      </a>
+      <a href="/" class="text-xs text-paper/70 hover:text-paper transition-colors border border-paper/20 px-3 py-1.5 rounded">
+        Ana Sayfa
+      </a>
+    </header>
 
-    <h1 class="text-3xl font-bold text-ink mb-4">Çan Tiyatrosu Mobil Uygulaması</h1>
-    <p class="text-stone mb-8 leading-relaxed">
-      Sahnemize ve biletlerimize tek tıkla ulaşın! Uygulamamızı cihazınızın ana ekranına ekleyerek gösterim takvimini kolayca takip edebilirsiniz.
-    </p>
+    <section class="w-full max-w-md mx-auto my-auto text-center py-8">
+      <h1 class="text-2xl font-bold tracking-tight mb-3">
+        Mobil Uygulama
+      </h1>
+      
+      <p class="text-paper/80 text-sm leading-relaxed mb-8">
+        Oyun takvimi, biletler ve duyurulara hızlı erişim sağlamak için uygulamayı cihazınıza ekleyebilirsiniz.
+      </p>
 
-    <!-- Yükle Butonu (Android / Destekleyen Tarayıcılar) -->
-    <div class="bg-paper-dim p-6 rounded-xl border border-hairline mb-8 shadow-sm">
-      <button 
-        id="pwa-install-btn" 
-        class="hidden w-full btn-primary !py-3.5 !text-base font-bold shadow-md"
-      >
-        📲 Uygulamayı Yüklü Olarak Ekle
-      </button>
+      <div id="pwa-install-container">
+        <button 
+          id="pwa-page-install-btn"
+          class="btn-primary w-full !py-3.5 !text-sm"
+        >
+          Uygulamayı Cihaza Yükle
+        </button>
 
-      <!-- iOS / Safari Rehberi -->
-      <div id="ios-instructions" class="text-left text-sm text-ink/90 space-y-3">
-        <p class="font-bold text-curtain border-b border-hairline pb-2">iPhone / Safari Kullanıcıları İçin Yükleme:</p>
-        <ol class="list-decimal list-inside space-y-1.5 text-stone">
-          <li>Tarayıcının en altındaki <strong>Paylaş (Share)</strong> simgesine dokunun.</li>
-          <li>Açılan menüde aşağı kaydırıp <strong>"Ana Ekrana Ekle"</strong> seçeneğini seçin.</li>
-          <li>Sağ üstteki <strong>"Ekle"</strong> butonuna basarak tamamlayın.</li>
-        </ol>
+        <p id="pwa-installed-msg" class="hidden text-sm text-emerald-400 font-medium mt-4">
+          Uygulama cihazınızda yüklü.
+        </p>
       </div>
-    </div>
-  </section>
+
+      <div class="mt-12 p-4 bg-paper/5 rounded border border-paper/10 text-left text-xs text-paper/70 space-y-2">
+        <p class="font-semibold text-paper mb-1">Yükleme Seçeneği Çıkmıyorsa:</p>
+        <p>• <strong>iOS (Safari):</strong> Paylaş menüsünden "Ana Ekrana Ekle" seçeneğini kullanın.</p>
+        <p>• <strong>Android (Chrome):</strong> Tarayıcı menüsünden "Uygulamayı Yükle" seçeneğini seçin.</p>
+      </div>
+    </section>
+
+    <footer class="w-full text-center text-xs text-paper/40">
+      © {new Date().getFullYear()} Çan Tiyatrosu
+    </footer>
+
+  </main>
 </Layout>
 
 <script>
   let deferredPrompt: any;
-  const installBtn = document.getElementById('pwa-install-btn');
+  const installBtn = document.getElementById('pwa-page-install-btn');
+  const installedMsg = document.getElementById('pwa-installed-msg');
 
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    if (installBtn) {
-      installBtn.classList.remove('hidden');
-    }
   });
 
   installBtn?.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      installBtn.classList.add('hidden');
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.classList.add('hidden');
+        installedMsg?.classList.remove('hidden');
+      }
+      deferredPrompt = null;
+    } else {
+      alert('Uygulama zaten yüklü veya tarayıcınız bu özelliği şu an desteklemiyor. Sayfadaki adımları takip edebilirsiniz.');
     }
-    deferredPrompt = null;
+  });
+
+  window.addEventListener('appinstalled', () => {
+    installBtn?.classList.add('hidden');
+    installedMsg?.classList.remove('hidden');
   });
 </script>

@@ -8,13 +8,17 @@ const branch =
 
 export default defineConfig({
   branch,
-  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID,
-  token: process.env.TINA_TOKEN,
+  clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || "",
+  token: process.env.TINA_TOKEN || "",
+  
+  // Local çalışmayı zorlayan hayati parametre
+  contentApiUrlOverride: 'http://localhost:4002/graphql',
 
   build: {
     outputFolder: "admin",
     publicFolder: "public",
     host: "127.0.0.1",
+    clientPath: "/admin",
   },
   media: {
     tina: {
@@ -573,6 +577,52 @@ export default defineConfig({
             name: "content",
             label: "Detay Metni",
             ui: { component: "textarea" },
+          },
+        ],
+      },
+      {
+        name: "press",
+        label: "Basında Biz",
+        path: "content/press",
+        format: "md",
+        fields: [
+          {
+            type: "string",
+            name: "title",
+            label: "Haber Başlığı",
+            isTitle: true,
+            required: true,
+          },
+          {
+            type: "string",
+            name: "sourceName",
+            label: "Haber Kaynağı / Gazete Adı",
+            placeholder: "Örn: Hürriyet, Milliyet, Tiyatro Gazetesi",
+            required: true,
+          },
+          {
+            type: "datetime",
+            name: "publishDate",
+            label: "Yayınlanma Tarihi",
+            required: true,
+          },
+          {
+            type: "image",
+            name: "coverImage",
+            label: "Kapak Görseli",
+            required: true,
+          },
+          {
+            type: "string",
+            name: "summary",
+            label: "Kısa Özet / Spot Metin",
+            ui: { component: "textarea" },
+          },
+          {
+            type: "string",
+            name: "externalUrl",
+            label: "Haberin Bağlantısı (URL)",
+            required: true,
           },
         ],
       },
