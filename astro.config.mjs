@@ -3,15 +3,15 @@ import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import AstroPWA from "@vite-pwa/astro";
-import node from "@astrojs/node";
+import cloudflare from "@astrojs/cloudflare";
 
 export default defineConfig({
   site: "https://cantiyatrosu.com.tr",
 
   output: "server",
 
-  adapter: node({
-    mode: "standalone",
+  adapter: cloudflare({
+    mode: "directory",
   }),
 
   integrations: [
