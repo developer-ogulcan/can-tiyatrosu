@@ -13,10 +13,9 @@ interface Props {
 const { 
   title, 
   description = "Çan Tiyatrosu - Repertuvarımızdaki yetişkin ve çocuk oyunları, gösterim takvimi ve bilet bilgileri.", 
-  image = "/og-image.jpg" // public/og-image.jpg varsayılan görseliniz
+  image = "/og-image.jpg"
 } = Astro.props;
 
-// Görsel yolunu tam URL'ye dönüştürüyoruz
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
 const socialImageURL = new URL(image, Astro.url.origin).href;
 ---
@@ -36,7 +35,7 @@ const socialImageURL = new URL(image, Astro.url.origin).href;
     />
 
     <script src="/src/pwa.ts"></script>
-    { import.meta.env.PROD && <script src="/registerSW.js"></script> }
+    { import.meta.env.PROD && <script is:inline src="/registerSW.js"></script> }
 
     <SEO 
       title={title} 
