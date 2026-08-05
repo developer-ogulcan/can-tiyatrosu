@@ -84,9 +84,9 @@ const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWit
     </div>
   </div>
 
-  <!-- Açılır Mobil Menü -->
-  <div id="mobile-menu" class="xl:hidden hidden border-t-2 border-hairline bg-paper">
-    <nav class="container-editorial py-4 flex flex-col" aria-label="Mobil menü">
+  <!-- Açılır Mobil Menü (Dikey scroll eklendi) -->
+  <div id="mobile-menu" class="xl:hidden hidden border-t-2 border-hairline bg-paper max-h-[calc(100vh-5rem)] overflow-y-auto">
+    <nav class="container-editorial py-4 pb-12 flex flex-col" aria-label="Mobil menü">
       {NAV.map((item) => (
         <div class="py-2 border-b border-hairline/60 last:border-b-0">
           <a href={item.href} class="block py-1.5 text-base font-bold text-ink">{item.label}</a>

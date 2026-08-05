@@ -34,7 +34,19 @@ const socialImageURL = new URL(image, Astro.url.origin).href;
       rel="stylesheet"
     />
 
+    <!-- OneSignal Web Push SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script is:inline>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "d74c27af-8b3f-462a-bb63-8fd7441f8ed0",
+        });
+      });
+    </script>
+
     { import.meta.env.PROD && <script src="/src/pwa.ts"></script> }
+    { import.meta.env.PROD && <script is:inline src="/registerSW.js"></script> }
 
     <SEO 
       title={title} 
