@@ -9,20 +9,11 @@ import Accordion from '../../components/Accordion.astro';
 import FormField from '../../components/FormField.astro';
 import Button from '../../components/Button.astro';
 
-// Her türlü ID, path, uzantı ve Türkçe karakter uyumsuzluğunu çözen tam temizleme fonksiyonu
 function getCleanSlug(entry: any) {
   if (!entry) return '';
-  
-  // Önce slug, id veya filePath bilgisini al
   const raw = entry.slug || entry.id || entry.filePath || '';
-  
-  // Yolun sonundaki dosya adını al
   let filename = raw.split('/').pop() || raw;
-  
-  // .md veya .mdx uzantılarını temizle
   filename = filename.replace(/\.mdx?$/, '');
-  
-  // Türkçe karakterleri ve uyumsuzlukları slug formatına dönüştür
   return filename
     .toLowerCase()
     .trim()
@@ -51,20 +42,14 @@ const { item } = Astro.props;
 const { slug } = Astro.params;
 
 const details = await getCollection('serviceDetails');
-
-// Aranan slug parametresini de aynı süzgeçten geçiriyoruz
 const normalizedParamSlug = getCleanSlug({ id: slug });
 
-// 1. Önce doğrudan eşleştirme
-// 2. Yoksa normalize edilmiş slug eşleştirmesi
-// 3. O da yoksa dosya adı eşleştirmesi
 const currentItem =
   item ||
   details.find((d) => getCleanSlug(d) === normalizedParamSlug) ||
   details.find((d) => (d.id || '').includes(slug || ''));
 
 if (!currentItem) {
-  // Terminal konsoluna hata öncesi eldeki tüm slug'ları bastıralım ki teşhis edebilelim
   console.error('Mevcut serviceDetails slug listesi:', details.map(d => ({ id: d.id, clean: getCleanSlug(d) })));
   console.error('Aranan slug:', slug, 'Normalize:', normalizedParamSlug);
   throw new Error(`Service detail not found for slug: ${slug}`);
@@ -137,7 +122,9 @@ const data = currentItem.data;
       <h2 class="text-3xl md:text-4xl mb-8" data-tina-field={tinaField(data, 'formConfig')}>
         {data.formConfig?.formTitle || `${data.title} Talebinizi İletin`}
       </h2>
-      <form class="grid gap-6" method="post" action="#">
+      
+      <form id="service-form" class="grid gap-6">
+        <input type="hidden" name="hizmet" value={data.title} />
         <div class="grid md:grid-cols-2 gap-6">
           <FormField label="Kurum / Kişi Adı" name="ad" required />
           <FormField label="Yetkili Kişi / Detay" name="yetkili" />
@@ -151,12 +138,67 @@ const data = currentItem.data;
           <FormField label="Tahmini Katılımcı / Seyirci Sayısı" name="seyirci-sayisi" />
         </div>
         <FormField label="Notlarınız" name="mesaj" type="textarea" placeholder="Talep detayları ve notlarınız" />
+        
         <div>
-          <Button type="submit" variant="primary">
+          <Button id="submit-btn" type="submit" variant="primary">
             {data.formConfig?.submitButtonText || 'Talebi Gönder'}
           </Button>
         </div>
+        
+        <p id="form-status" class="hidden text-sm font-medium mt-2"></p>
       </form>
     </Container>
   </Section>
 </Layout>
+
+<script>
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxX9OWi_W1eArSjomxPuNYl5MgxWVseQWTkb3N1Lqqd8vTFWaWolyczfYRMtuZIOjitAg/exec";
+
+  const form = document.getElementById('service-form') as HTMLFormElement;
+  const statusMsg = document.getElementById('form-status');
+  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (statusMsg) {
+      statusMsg.textContent = "Talebiniz iletiliyor...";
+      statusMsg.className = "text-sm font-medium mt-2 text-paper/70 block";
+    }
+
+    const formData = new FormData(form);
+    const payload = {
+      hizmet: formData.get('hizmet'),
+      ad: formData.get('ad'),
+      yetkili: formData.get('yetkili'),
+      email: formData.get('email'),
+      telefon: formData.get('telefon'),
+      tarih: formData.get('tarih'),
+      seyirciSayisi: formData.get('seyirci-sayisi'),
+      mesaj: formData.get('mesaj')
+    };
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (statusMsg) {
+        statusMsg.textContent = "✓ Talebiniz başarıyla alındı. En kısa sürede dönüş yapacağız.";
+        statusMsg.className = "text-sm font-medium mt-2 text-emerald-400 block";
+      }
+      form.reset();
+    } catch (error) {
+      if (statusMsg) {
+        statusMsg.textContent = "Gönderim sırasında bir hata oluştu. Lütfen tekrar deneyin.";
+        statusMsg.className = "text-sm font-medium mt-2 text-red-400 block";
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+</script>
