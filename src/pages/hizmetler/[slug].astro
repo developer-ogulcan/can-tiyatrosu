@@ -152,7 +152,7 @@ const data = currentItem.data;
 </Layout>
 
 <script>
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxX9OWi_W1eArSjomxPuNYl5MgxWVseQWTkb3N1Lqqd8vTFWaWolyczfYRMtuZIOjitAg/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKtU7KQVJV9w9MZm-gJGoEk7H6buvIMD8wME6ZHIKOCiNyaNKoseTlzLZjIeWJxOU3dQ/exec";
 
   const form = document.getElementById('service-form') as HTMLFormElement;
   const statusMsg = document.getElementById('form-status');
@@ -169,14 +169,15 @@ const data = currentItem.data;
 
     const formData = new FormData(form);
     const payload = {
-      hizmet: formData.get('hizmet'),
-      ad: formData.get('ad'),
-      yetkili: formData.get('yetkili'),
+      form_type: 'kurumsal',
+      company_name: formData.get('ad'),
+      contact_person: formData.get('yetkili'),
       email: formData.get('email'),
-      telefon: formData.get('telefon'),
-      tarih: formData.get('tarih'),
-      seyirciSayisi: formData.get('seyirci-sayisi'),
-      mesaj: formData.get('mesaj')
+      phone: formData.get('telefon'),
+      event_date: formData.get('tarih'),
+      estimated_attendees: formData.get('seyirci-sayisi'),
+      request_type: formData.get('hizmet'),
+      notes: formData.get('mesaj')
     };
 
     try {
