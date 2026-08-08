@@ -134,6 +134,7 @@ export const FOOTER_LINKS = {
     { label: 'Haberler ve Duyurular', href: '/basin/basinda-biz' },
     { label: 'Mobil Uygulama', href: '/mobil-uygulama' },
   ],
+  
   hizmet: [
     { label: 'Kurumsal Gösterimler', href: '/hizmetler/kurumsal-gosterimler' },
     { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-ve-etkinlik' },

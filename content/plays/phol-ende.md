@@ -31,13 +31,14 @@ gallery:
   - /images/plays-images/phol-ende/IMG_20260208_205402.jpg
 featured: true
 cast:
-  - 'Phol/Şaman/Oidipus: Oğulcan Topsakal'
+  - 'Phol Ende/Şaman/Oidipus: Oğulcan Topsakal'
   - 'Vodonna/Koro: Esma Nur Mercan'
   - 'Ölüm/Koro/Laios: Utkan Batu Kızıldağ'
   - 'Koro: İlayda Orçan'
   - 'Koro: Aleyna Durusoy'
   - 'Koro: Seher Köroğlu'
   - 'Koro: Gizem Bolat'
+  - 'Ölüm/Koro (C): Yiğit Kırıcı'
 crew:
   - role: Yönetmen
     name: Kenan Halis Kızıldağ
