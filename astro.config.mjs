@@ -2,7 +2,7 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
-import cloudflare from "@astrojs/cloudflare"; // <- Node yerine Cloudflare içe aktarıldı
+import cloudflare from "@astrojs/cloudflare";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -12,6 +12,8 @@ export default defineConfig({
 
   adapter: cloudflare({
     imageService: "cloudflare",
+    // ASSETS ismi Cloudflare Pages ile çakıştığı için devre dışı bırakıyoruz:
+    cloudflareModules: true,
   }),
 
   integrations: [
