@@ -12,8 +12,9 @@ export default defineConfig({
 
   adapter: cloudflare({
     imageService: "cloudflare",
-    // ASSETS ismi Cloudflare Pages ile çakıştığı için devre dışı bırakıyoruz:
-    cloudflareModules: true,
+    platformProxy: {
+      enabled: true,
+    },
   }),
 
   integrations: [
