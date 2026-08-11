@@ -1,8 +1,8 @@
-// @ts-check
+// astro.config.mjs
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
-import node from "@astrojs/node";
+import cloudflare from "@astrojs/cloudflare"; // <- Node yerine Cloudflare içe aktarıldı
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -10,8 +10,8 @@ export default defineConfig({
 
   output: "server",
 
-  adapter: node({
-    mode: "standalone",
+  adapter: cloudflare({
+    imageService: "cloudflare",
   }),
 
   integrations: [
