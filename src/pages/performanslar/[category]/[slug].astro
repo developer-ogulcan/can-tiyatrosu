@@ -48,6 +48,7 @@ const backHref =
 <Layout
   title={play.data.title}
   description={play.data.synopsis}
+  image={play.data.heroImage}
 >
 
   <!-- HERO -->
@@ -109,18 +110,16 @@ const backHref =
   </header>
 
   {
-  play.data.heroImage && (
-    <div class="mt-10">
-      <img
-        src={play.data.heroImage}
-        alt={play.data.title}
-        class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto"
-      />
-    </div>
-  )
-}
-
-
+    play.data.heroImage && (
+      <div class="mt-10">
+        <img
+          src={play.data.heroImage}
+          alt={play.data.title}
+          class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto"
+        />
+      </div>
+    )
+  }
 
   <!-- GALERİ -->
 
@@ -152,8 +151,6 @@ const backHref =
     )
   }
 
-
-
   <!-- İÇERİK -->
 
   <Section tone="paper">
@@ -167,8 +164,6 @@ const backHref =
           <Content />
 
         </div>
-
-
 
         <aside class="md:col-span-4 space-y-10">
 
@@ -191,8 +186,6 @@ const backHref =
               </div>
             )
           }
-
-
 
           {
             play.data.crew?.length > 0 && (
@@ -229,8 +222,6 @@ const backHref =
     </Container>
 
   </Section>
-
-
 
   <CTA
     title="Bu oyuna bilet alın"

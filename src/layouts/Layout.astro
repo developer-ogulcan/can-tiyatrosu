@@ -17,7 +17,8 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
-const socialImageURL = new URL(image, Astro.url.origin).href;
+// Görsel yolunun mutlak (absolute) URL olduğundan emin oluyoruz
+const socialImageURL = new URL(image, Astro.site || Astro.url.origin).href;
 ---
 <!doctype html>
 <html lang="tr">
