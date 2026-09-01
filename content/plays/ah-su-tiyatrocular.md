@@ -16,6 +16,7 @@ gallery:
   - /images/plays-images/ah-su-tiyatrocular/IMG-20260423-WA0007.jpg
   - /images/plays-images/ah-su-tiyatrocular/IMG-20260503-WA0050.jpg
 featured: true
+order: 5
 cast:
   - 'Mete: Güçlü Yalçıner'
   - 'Mete (C): Can Yücel Metin'

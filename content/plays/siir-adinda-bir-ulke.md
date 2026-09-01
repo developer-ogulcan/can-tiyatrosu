@@ -10,7 +10,7 @@ gallery:
   - /images/plays-images/IMG-20260122-WA0003.jpg
   - /images/plays-images/IMG-20260122-WA0004.jpg
   - /images/plays-images/IMG-20260122-WA0016.jpg
-order: 0
+order: 4
 cast:
   - Oğulcan Topsakal
   - İlayda Orçan

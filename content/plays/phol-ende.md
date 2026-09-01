@@ -30,6 +30,7 @@ gallery:
   - /images/plays-images/phol-ende/IMG_20260208_204929.jpg
   - /images/plays-images/phol-ende/IMG_20260208_205402.jpg
 featured: true
+order: 2
 cast:
   - 'Phol Ende/Şaman/Oidipus: Oğulcan Topsakal'
   - 'Vodonna/Koro: Esma Nur Mercan'

@@ -18,6 +18,7 @@ gallery:
   - /images/plays-images/bizimkiler-uzayda/IMG-20211202-WA0006.jpg
   - /images/plays-images/bizimkiler-uzayda/Bizimkiler-Uzayda-7.jpg
 featured: true
+order: 3
 crew:
   - role: Yönetmen
     name: Oğulcan Topsakal

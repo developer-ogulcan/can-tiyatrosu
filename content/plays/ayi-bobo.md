@@ -12,6 +12,7 @@ gallery:
   - /images/plays-images/ayi-bobo/IMG-20251116-WA0020.jpg
   - /images/plays-images/ayi-bobo/IMG-20251130-WA0010.jpg
   - /images/plays-images/ayi-bobo/IMG-20251204-WA0047.jpg
+order: 6
 crew:
   - role: Yönetmen
     name: Oğulcan Topsakal
