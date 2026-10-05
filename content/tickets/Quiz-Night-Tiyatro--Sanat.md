@@ -3,7 +3,7 @@ title: Quiz Night (Tiyatro & Sanat)
 category: Özel Gösterim
 genre: Etkinliği
 coverImage: /images/plays-images/quiz-night-afiş1.png
-eventDate: 2026-10-09T16:00:03.944Z
+eventDate: 2026-10-09T19:00:03.944Z
 venue: Çan Tiyatrosu Eftal Kayış Prova Sahnesi
 locationText: 'Sağlık Mahallesi, Süleyman Sırrı Caddesi, No: 12 Daire: 5 ve 6 Sıhhiye/Ankara'
 ticketLinks:
