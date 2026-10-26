@@ -10,10 +10,6 @@ cast: 'Oğulcan Topsakal, Belkıs Akkaya, Nurullah Dağ, Gül Nigar Tekbaş, Ser
 creatives: 'Yazan: Kenan Halis Kızıldağ | Yönetmen: Oğulcan Topsakal'
 detailUrl: 'https://cantiyatrosu.com.tr/performanslar/cocuk-oyunlari/bizimkiler-uzayda'
 ticketLinks:
-  - platformName: Aqtivite
-    href: 'https://aqtivite.com.tr/ankara/events/bizimkiler-uzayda'
-    bgColor: '#F8E71C'
-    textColor: '#ffffff'
   - platformName: BuBilet
     href: 'https://www.bubilet.com.tr/ankara/etkinlik/bizimkiler-uzayda'
     bgColor: '#00FF66'
