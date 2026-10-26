@@ -228,8 +228,8 @@ const tickets = defineCollection({
       locationText: z.string().optional(),
       cast: z.string().optional(),
       creatives: z.string().optional(),
+      detailUrl: z.string().optional(), // Doğru yere taşındı
       ticketLinks: z
-      detailUrl: z.string().optional(),
         .array(
           z.object({
             platformName: z.string().optional(),
