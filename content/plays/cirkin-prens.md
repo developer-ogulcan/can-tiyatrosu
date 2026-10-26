@@ -14,23 +14,51 @@ synopsis: |-
   Peki, dünyanın en çirkin insanı güzel olmak isterse ne olur?
 ageRange: '+18'
 duration: 80 Dakika
-heroImage: /images/plays-images/cirkin-prens/Cirkin-Prens-Afis-Tasarim-Son.png
+heroImage: /images/plays-images/cirkin-prens/CirkinPrens-Son-Afis_cleaned.png
+gallery:
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0001.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0002.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0003.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0004.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0005.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0006.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0007.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0008.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0009.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0010.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0011.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0012.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0013.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0014.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0015.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0016.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0017.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0018.jpg
+  - /images/plays-images/cirkin-prens/Cirkin_Prens_Tanitim_Kitapcigi_page-0019.jpg
 featured: true
 order: 1
 cast:
   - Oğulcan Topsakal
-  - Sude Demirçin
+  - Süheyla Demir
   - Esma Nur Mercan
   - İlayda Orçan
-  - Mert Bük
-  - Ekin Erkaya
   - Mehmet Doğukan İris
-  - Süheyla Demir
+  - Ekin Erkaya
+  - Lütfi Dinçer
   - Lübeyna Batır
   - Ecem Elif İnanç
-  - Lütfi Dinçer
+  - Sude Demirçin
+  - Mert Bük
+  - Beren Bakır
+  - Ahmet Emin Kolayel
+  - Nurullah Dağ
+  - Sercan Sondoğaç
 crew:
   - role: 'Yazan - Yöneten:'
     name: Oğulcan Topsakal
+  - role: 'Yardımcı Yönetmen:'
+    name: Esma Nur Mercan
+  - role: Müzik Tasarım
+    name: Lütfi Dinçer
 ---
 

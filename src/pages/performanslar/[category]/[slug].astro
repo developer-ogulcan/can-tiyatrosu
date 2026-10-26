@@ -59,7 +59,8 @@ const backHref =
         <img
           src={play.data.cover}
           alt={play.data.title}
-          class="w-full h-[60vh] object-cover"
+          data-lightbox
+          class="w-full h-[60vh] object-cover cursor-zoom-in"
         />
       )
     }
@@ -115,7 +116,8 @@ const backHref =
         <img
           src={play.data.heroImage}
           alt={play.data.title}
-          class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto"
+          data-lightbox
+          class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto cursor-zoom-in"
         />
       </div>
     )
@@ -137,7 +139,8 @@ const backHref =
               <img
                 src={image}
                 alt={play.data.title}
-                class="rounded-xl object-cover w-full aspect-[4/3]"
+                data-lightbox
+                class="rounded-xl object-cover w-full aspect-[4/3] cursor-zoom-in"
               />
 
             ))}
@@ -231,5 +234,128 @@ const backHref =
     secondaryLabel="Kurumsal Gösterim Talebi"
     secondaryHref="/basvurular/kurumsal-gosterim-talebi"
   />
+
+  <!-- LIGHTBOX -->
+  <dialog
+    id="lightbox"
+    class="m-0 w-screen h-screen max-w-none max-h-none bg-transparent p-0 backdrop:bg-black/90"
+  >
+    <div
+      id="lightbox-stage"
+      class="relative flex h-full w-full items-center justify-center p-4 md:p-10"
+    >
+      <img
+        id="lightbox-img"
+        src=""
+        alt=""
+        class="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
+      />
+
+      <button
+        id="lightbox-close"
+        type="button"
+        aria-label="Kapat"
+        class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/25"
+      >
+        ×
+      </button>
+
+      <button
+        id="lightbox-prev"
+        type="button"
+        aria-label="Önceki görsel"
+        class="absolute left-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/25"
+      >
+        ‹
+      </button>
+
+      <button
+        id="lightbox-next"
+        type="button"
+        aria-label="Sonraki görsel"
+        class="absolute right-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/25"
+      >
+        ›
+      </button>
+
+      <span
+        id="lightbox-counter"
+        class="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/80"
+      ></span>
+    </div>
+  </dialog>
+
+  <script>
+    const dialog = document.getElementById("lightbox") as HTMLDialogElement | null;
+
+    if (dialog) {
+      const stage = document.getElementById("lightbox-stage")!;
+      const imgEl = document.getElementById("lightbox-img") as HTMLImageElement;
+      const counter = document.getElementById("lightbox-counter")!;
+      const prevBtn = document.getElementById("lightbox-prev")!;
+      const nextBtn = document.getElementById("lightbox-next")!;
+      const closeBtn = document.getElementById("lightbox-close")!;
+
+      // Sayfadaki tüm tıklanabilir görseller, doküman sırasıyla
+      const sources = Array.from(
+        document.querySelectorAll<HTMLImageElement>(
+          "[data-lightbox], .prose-editorial img"
+        )
+      );
+
+      let index = 0;
+
+      const show = (i: number) => {
+        index = (i + sources.length) % sources.length;
+        const src = sources[index];
+        imgEl.src = src.currentSrc || src.src;
+        imgEl.alt = src.alt;
+        counter.textContent = `${index + 1} / ${sources.length}`;
+      };
+
+      const open = (i: number) => {
+        show(i);
+        dialog.showModal();
+        document.body.style.overflow = "hidden";
+      };
+
+      const close = () => dialog.close();
+
+      sources.forEach((img, i) => {
+        img.classList.add("cursor-zoom-in");
+        img.tabIndex = 0;
+        img.setAttribute("role", "button");
+        img.addEventListener("click", () => open(i));
+        img.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") open(i);
+        });
+      });
+
+      if (sources.length < 2) {
+        prevBtn.hidden = true;
+        nextBtn.hidden = true;
+        counter.hidden = true;
+      }
+
+      prevBtn.addEventListener("click", (e) => { e.stopPropagation(); show(index - 1); });
+      nextBtn.addEventListener("click", (e) => { e.stopPropagation(); show(index + 1); });
+      closeBtn.addEventListener("click", close);
+
+      // Boş alana tıklayınca kapat
+      stage.addEventListener("click", (e) => {
+        if (e.target === stage) close();
+      });
+
+      dialog.addEventListener("close", () => {
+        document.body.style.overflow = "";
+        imgEl.src = "";
+      });
+
+      dialog.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") show(index - 1);
+        if (e.key === "ArrowRight") show(index + 1);
+      });
+    }
+  </script>
 
 </Layout>
