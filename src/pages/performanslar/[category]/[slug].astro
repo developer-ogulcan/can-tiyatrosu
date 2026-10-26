@@ -19,7 +19,8 @@ if (!play) {
 const expectedCategory =
   play.data.category === "cocuk"
     ? "cocuk-oyunlari"
-    : "yetiskin-oyunlari";
+    : "yetiskin-oyunlari"
+    + "etkinlikler";
 
 if (category !== expectedCategory) {
   return Astro.redirect(`/performanslar/${expectedCategory}/${slug}`);
@@ -42,7 +43,8 @@ const statusTone = {
 const backHref =
   play.data.category === "cocuk"
     ? "/performanslar/cocuk-oyunlari"
-    : "/performanslar/yetiskin-oyunlari";
+    : "/performanslar/yetiskin-oyunlari"
+    + "performanslar/etkinlikler";
 ---
 
 <Layout

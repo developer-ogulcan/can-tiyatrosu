@@ -439,11 +439,12 @@ export default defineConfig({
           { type: "string", name: "category", label: "Kategori", options: ["Çocuk Oyunu", "Yetişkin Oyunu", "Akademi Sahnesi", "Özel Gösterim"] },
           { type: "string", name: "genre", label: "Tür", placeholder: "Müzikal Komedi, Dram, Yaratıcı Drama..." },
           { type: "image", name: "coverImage", label: "Kapak Görseli / Afiş" },
-          { type: "datetime", name: "eventDate", label: "Tarih ve Saat", required: true },
+          { type: "datetime", name: "eventDate", label: "Tarih ve Saat", required: true, ui: { dateFormat: "DD.MM.YYYY", timeFormat: "HH:mm",},},
           { type: "string", name: "venue", label: "Mekân / Sahne Adı", placeholder: "Çan Tiyatrosu Ana Sahne" },
           { type: "string", name: "locationText", label: "Açık Konum / İlçe", placeholder: "Kızılay / Ankara" },
           { type: "string", name: "cast", label: "Oyuncular / Kadro (Virgülle ayırın)", placeholder: "Ahmet Y., Ayşe K." },
           { type: "string", name: "creatives", label: "Künye (Yazar, Yönetmen)", placeholder: "Yazan: ... | Yöneten: ..." },
+          {type: "string", name: "detailUrl", label: "Etkinlik Detay Sayfası (Opsiyonel)", description: "Doluysa bilet kartında 'Etkinlik Detayları' butonu çıkar.", placeholder: "/performanslar/cocuk-oyunlari/bizimkiler-uzayda", },
           {
             type: "object",
             name: "ticketLinks",
@@ -493,6 +494,7 @@ export default defineConfig({
             options: [
               { label: "Çocuk Oyunu", value: "cocuk" },
               { label: "Yetişkin Oyunu", value: "yetiskin" },
+              { label: "Etkinlik", value: "etkinlik" },
             ],
           },
           {

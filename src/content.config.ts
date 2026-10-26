@@ -229,6 +229,7 @@ const tickets = defineCollection({
       cast: z.string().optional(),
       creatives: z.string().optional(),
       ticketLinks: z
+      detailUrl: z.string().optional(),
         .array(
           z.object({
             platformName: z.string().optional(),
@@ -246,7 +247,7 @@ const plays = defineCollection({
   schema: () =>
     z.object({
       title: z.string(),
-      category: z.enum(['cocuk', 'yetiskin']),
+      category: z.enum(['cocuk', 'yetiskin', 'etkinlik']),
       status: z.enum(['repertuvarda', 'yakinda', 'arsiv']).default('repertuvarda'),
       synopsis: z.string(),
       ageRange: z.string().optional(),

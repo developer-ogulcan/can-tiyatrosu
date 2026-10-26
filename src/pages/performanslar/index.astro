@@ -10,18 +10,19 @@ import PlayCard from '../../components/PlayCard.astro';
 const allPlays = (await getCollection('plays')).sort((a, b) => a.data.order - b.data.order);
 const childrenCount = allPlays.filter((p) => p.data.category === 'cocuk').length;
 const adultCount = allPlays.filter((p) => p.data.category === 'yetiskin').length;
+const eventCount = allPlays.filter((p) => p.data.category === 'etkinlik').length;
 ---
 
-<Layout title="Oyunlar" description="Çan Tiyatrosu repertuvarındaki çocuk ve yetişkin oyunları.">
+<Layout title="Oyunlar" description="Çan Tiyatrosu repertuvarındaki çocuk ve yetişkin oyunları ile etkinlikler.">
   <PageHero
     eyebrow="Repertuvar"
     title="Oyunlar"
-    lede="Çocuk, gençlik ve yetişkin seyirciye yönelik Çan Tiyatrosu repertuvarı. Bilet almak için oyun detaylarına göz atın."
+    lede="Çocuk, gençlik ve yetişkin seyirciye yönelik Çan Tiyatrosu repertuvarı ve etkinliklerimiz. Bilet almak için detaylara göz atın."
   />
 
   <Section tone="paper">
     <Container>
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="grid md:grid-cols-3 gap-6">
         <Card href="/performanslar/cocuk-oyunlari">
           <p class="eyebrow mb-3">{childrenCount} Oyun</p>
           <h2 class="text-3xl mb-3 group-hover:text-curtain transition-colors">Çocuk Oyunları</h2>
@@ -31,6 +32,11 @@ const adultCount = allPlays.filter((p) => p.data.category === 'yetiskin').length
           <p class="eyebrow mb-3">{adultCount} Oyun</p>
           <h2 class="text-3xl mb-3 group-hover:text-curtain transition-colors">Yetişkin Oyunları</h2>
           <p class="text-stone leading-relaxed">Yetişkin seyirci için sahnelenen, farklı bir dramaturjik dil taşıyan yapımlar.</p>
+        </Card>
+        <Card href="/performanslar/etkinlikler">
+          <p class="eyebrow mb-3">{eventCount} Etkinlik</p>
+          <h2 class="text-3xl mb-3 group-hover:text-curtain transition-colors">Etkinlikler</h2>
+          <p class="text-stone leading-relaxed">Özel gösterimler, söyleşiler ve sahne dışı buluşmalar.</p>
         </Card>
       </div>
     </Container>
@@ -42,7 +48,7 @@ const adultCount = allPlays.filter((p) => p.data.category === 'yetiskin').length
       <div>
         {allPlays.map((play) => (
           <PlayCard
-          heroImage={play.data.heroImage}
+            heroImage={play.data.heroImage}
             title={play.data.title}
             slug={play.id}
             category={play.data.category}

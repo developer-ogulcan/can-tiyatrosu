@@ -4,7 +4,7 @@ import Badge from './Badge.astro';
 interface Props {
   title: string;
   slug: string;
-  category: 'cocuk' | 'yetiskin';
+  category: 'cocuk' | 'yetiskin' | 'etkinlik';
   status: 'repertuvarda' | 'yakinda' | 'arsiv';
   synopsis: string;
   ageRange?: string;
@@ -28,7 +28,7 @@ const statusTone: Record<string, 'gold' | 'curtain' | 'stone'> = {
 ---
 
 <a
-  href={`/performanslar/${category === 'cocuk' ? 'cocuk-oyunlari' : 'yetiskin-oyunlari'}/${slug}`}
+  href={`/performanslar/${category === 'cocuk' ? 'cocuk-oyunlari' : 'yetiskin-oyunlari' + 'etkinlikler'}/${slug}`}
   class="group grid md:grid-cols-12 gap-6 border-t border-hairline py-8 md:py-10 first:border-t-0 items-center"
 >
   {heroImage && (

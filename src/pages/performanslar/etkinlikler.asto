@@ -1,0 +1,43 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import PlayCard from '../../components/PlayCard.astro';
+
+const events = (await getCollection('plays'))
+  .filter((p) => p.data.category === 'etkinlik')
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<Layout title="Etkinlikler" description="Çan Tiyatrosu etkinlikleri ve özel gösterimleri.">
+  <PageHero
+    eyebrow="Repertuvar"
+    title="Etkinlikler"
+    lede="Çan Tiyatrosu'nun özel gösterimleri, söyleşileri ve diğer etkinlikleri."
+  />
+
+  <Section tone="paper">
+    <Container>
+      {events.length > 0 ? (
+        <div>
+          {events.map((play) => (
+            <PlayCard
+              heroImage={play.data.heroImage}
+              title={play.data.title}
+              slug={play.id}
+              category={play.data.category}
+              status={play.data.status}
+              synopsis={play.data.synopsis}
+              ageRange={play.data.ageRange}
+              duration={play.data.duration}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-stone text-center py-12">Şu an listelenen bir etkinlik bulunmuyor.</p>
+      )}
+    </Container>
+  </Section>
+</Layout>
