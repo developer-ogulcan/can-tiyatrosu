@@ -20,6 +20,9 @@ workshops:
     age: Yetişkin
     duration: 10 hafta
     description: 'İş sonrası yapılacak eğlenceli bir aktivite mi arıyorsunuz? Oyun Çıkarma Atölyelerimiz en iyi tercihiniz olabilir! Yetişkin yaş grupları için sezon boyunca yürüttüğümüz atölyelerimizle sosyalleşebilir, sanat üretiminin bir parçası olabilir ve ekibinizle birlikte gösteriler yapabilirsiniz. Büyük ve prodüksiyon oyunlar sahnelemenin stresinden uzak, tamamen eğlenmek ve kendinizi geliştirmek için sahneye çıkabilirsiniz.'
+  - title: Yazının Anatomisi
+    age: YETİŞKİN
+    duration: 4 Hafta Temel - 8 Hafta İleri
 faqs:
   - question: Atölyeler ile Çan Akademi arasındaki fark nedir?
     answer: 'Atölyeler, belirli yaş gruplarına yönelik dönemsel etkinlik programlarıdır. Çan Akademi ise yetişkinlerin hobi olarak kendi oyunlarını ürettiği özgür bir alandır — atölye değildir. Programın amacı, özgün ve yenilikçi gösterileri kısıtlamalara tabi olmadan sahneye taşımaktır.'

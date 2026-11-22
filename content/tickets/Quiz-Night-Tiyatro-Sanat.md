@@ -1,8 +1,8 @@
 ---
-title: Quiz Night (Tiyatro & Sanat)
+title: Fikir Fikir
 category: Özel Gösterim
 genre: Gece Etkinliği
-coverImage: /images/plays-images/quiz-night-afiş1.png
+coverImage: /images/Events/Fikir-Fikir.png
 eventDate: 2026-11-14T18:00:25.384Z
 venue: Kenan Halis Kızıldağ Oda Sahnesi
 locationText: 'Sağlık Mahallesi, Süleyman Sırrı Caddesi, No: 12 Daire: 5 ve 6 Sıhhiye/Ankara'
