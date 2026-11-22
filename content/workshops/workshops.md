@@ -23,6 +23,7 @@ workshops:
   - title: Yazının Anatomisi
     age: YETİŞKİN
     duration: 4 Hafta Temel - 8 Hafta İleri
+    description: 'Yaratıcı yazarlık atölyemiz ile yeteneklerinizi keşfedin ve yazarlığın eğlenceli dünyasına adım atın.'
 faqs:
   - question: Atölyeler ile Çan Akademi arasındaki fark nedir?
     answer: 'Atölyeler, belirli yaş gruplarına yönelik dönemsel etkinlik programlarıdır. Çan Akademi ise yetişkinlerin hobi olarak kendi oyunlarını ürettiği özgür bir alandır — atölye değildir. Programın amacı, özgün ve yenilikçi gösterileri kısıtlamalara tabi olmadan sahneye taşımaktır.'
