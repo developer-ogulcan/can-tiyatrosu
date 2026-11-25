@@ -7,6 +7,7 @@ synopsis: |-
   yardım eder ve Kraliçeyi kurtarmış gibi yaparlar böylece de tembel Prens bu şakayla sorumlulukların önemini farkeder.
 ageRange: 3-12
 duration: 45 Dakika
+heroImage: /images/plays-images/uykucu-prens/uykucuprens.png
 cast:
   - Sercan Sondoğaç
   - Nida Erdem

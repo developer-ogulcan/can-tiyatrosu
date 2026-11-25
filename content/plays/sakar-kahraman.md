@@ -8,5 +8,12 @@ duration: 45 Dakika
 heroImage: /images/plays-images/sakar-kahraman/sakar-kahraman-202511595429ead15e17e52e43febf3119433c23b3c8.png
 gallery:
   - /images/plays-images/sakar-kahraman/IMG-20241213-WA0020.jpg
+  - /images/plays-images/sakar-kahraman/20261118_194656.jpg
+  - /images/plays-images/sakar-kahraman/20261119_101132.jpg
+crew:
+  - role: 'Yazan: '
+    name: Kenan Halis Kızıldağ
+  - role: 'Yöneten:'
+    name: Oğulcan Topsakal
 ---
 

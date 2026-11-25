@@ -1,7 +1,7 @@
 ---
 title: Çirkin Prens
 category: yetiskin
-status: yakinda
+status: repertuvarda
 synopsis: |-
   Güzellik Göreceli Midir, Yoksa Katıksız Bir Absürtlük Mü?
 
