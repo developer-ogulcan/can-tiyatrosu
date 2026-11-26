@@ -9,7 +9,7 @@ locationText: 'Sağlık Mahallesi, Süleyman Sırrı Caddesi, No: 12 Daire: 5 ve
 detailUrl: 'https://cantiyatrosu.com.tr/performanslar/yetiskin-oyunlarietkinlikler/quiz-night-tiyatro-sanat'
 ticketLinks:
   - platformName: BuBilet
-    href: 'https://www.bubilet.com.tr/ankara/etkinlik/quiz-night-tiyatro-sanat'
+    href: 'https://www.bubilet.com.tr/ankara/etkinlik/fikir-fikir'
     bgColor: '#00E676'
     textColor: '#ffffff'
 ---
