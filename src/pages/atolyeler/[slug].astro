@@ -1,0 +1,393 @@
+---
+import { getEntry, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/Container.astro";
+import Section from "../../components/Section.astro";
+import Badge from "../../components/Badge.astro";
+import Lightbox from "../../components/Lightbox.astro";
+import WorkshopModal from "../../components/WorkshopModal.astro";
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+const workshop = await getEntry("workshopPages", slug!);
+
+if (!workshop) {
+  return Astro.redirect("/atolyeler");
+}
+
+const { Content } = await render(workshop);
+const w = workshop.data;
+
+const statusLabel: Record<string, string> = {
+  acik: "Kayıtlar Açık",
+  yakinda: "Yakında",
+  dolu: "Kontenjan Doldu",
+  tamamlandi: "Tamamlandı",
+};
+
+const statusTone: Record<string, "gold" | "curtain" | "stone"> = {
+  acik: "curtain",
+  yakinda: "gold",
+  dolu: "stone",
+  tamamlandi: "stone",
+};
+
+const canApply = w.status === "acik" || w.status === "yakinda";
+const applyLabel = w.applyLabel || "Başvuru Yap";
+const hasContent = Boolean(workshop.body && workshop.body.trim());
+
+/* ---------- Tarih ---------- */
+const startDate = w.startDate ? new Date(w.startDate) : null;
+const startText = startDate
+  ? `${startDate.toLocaleDateString("tr-TR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      weekday: "long",
+      timeZone: "Europe/Istanbul",
+    })} • ${startDate.toLocaleTimeString("tr-TR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/Istanbul",
+    })}`
+  : "";
+
+const venueText = [w.venue, w.locationText].filter(Boolean).join(" – ");
+
+const infoRows: { label: string; value: string }[] = [
+  { label: "Başlangıç", value: startText },
+  { label: "Ders Programı", value: w.schedule ?? "" },
+  { label: "Süre", value: w.duration ?? "" },
+  { label: "Yaş Grubu", value: w.ageRange ?? "" },
+  { label: "Ücret", value: w.price ?? "" },
+  { label: "Kontenjan", value: w.quota ?? "" },
+  { label: "Mekân", value: venueText },
+  ...w.details,
+].filter((row) => row.value);
+
+/* ---------- Başvuru formu için veri ---------- */
+const modalWorkshops = [
+  {
+    title: w.title,
+    age: w.ageRange ?? "",
+    duration: w.duration ?? "",
+    description: w.synopsis,
+  },
+];
+
+/* ---------- SEO ---------- */
+const seoTitle = w.seoTitle || `${w.title} – Ankara Atölyesi`;
+const seoDescription = w.seoDescription || w.synopsis;
+
+const origin = (Astro.site ?? Astro.url).origin;
+const pageUrl = `${origin}/atolyeler/${slug}`;
+const imageUrl = w.heroImage ? new URL(w.heroImage, origin).href : undefined;
+
+const courseLd: Record<string, unknown> = {
+  "@type": "Course",
+  "@id": `${pageUrl}#course`,
+  name: w.title,
+  description: seoDescription,
+  url: pageUrl,
+  inLanguage: "tr",
+  image: imageUrl,
+  provider: { "@id": `${origin}/#organization` },
+};
+
+if (startDate) {
+  courseLd.hasCourseInstance = {
+    "@type": "CourseInstance",
+    courseMode: "onsite",
+    startDate: startDate.toISOString(),
+    courseSchedule: w.schedule
+      ? { "@type": "Schedule", description: w.schedule }
+      : undefined,
+    location: {
+      "@type": "Place",
+      name: w.venue || "Çan Tiyatrosu",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: w.locationText || undefined,
+        addressLocality: "Ankara",
+        addressCountry: "TR",
+      },
+    },
+    instructor: w.instructors.map((name) => ({ "@type": "Person", name })),
+  };
+}
+---
+
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  image={w.heroImage}
+  imageAlt={w.title}
+  jsonLd={courseLd}
+>
+
+  <!-- HERO -->
+  <header class="relative">
+
+    {
+      w.cover && (
+        <img
+          src={w.cover}
+          alt={w.title}
+          data-lightbox
+          class="w-full h-[60vh] object-cover cursor-zoom-in"
+        />
+      )
+    }
+
+    <div class="bg-paper-dim border-b border-hairline">
+
+      <Container class="py-14">
+
+        <a
+          href="/atolyeler"
+          class="text-sm text-stone hover:text-curtain"
+        >
+          ← Tüm atölyelere dön
+        </a>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+
+          <Badge tone={statusTone[w.status]}>
+            {statusLabel[w.status]}
+          </Badge>
+
+          {w.ageRange && (
+            <span class="text-sm text-stone">
+              {w.ageRange}
+            </span>
+          )}
+
+          {w.duration && (
+            <span class="text-sm text-stone">
+              • {w.duration}
+            </span>
+          )}
+
+        </div>
+
+        <h1 class="mt-5 text-5xl">
+          {w.title}
+        </h1>
+
+        <p class="mt-6 max-w-3xl text-lg text-stone">
+          {w.synopsis}
+        </p>
+
+        {
+          canApply && (
+            <div class="mt-8">
+              {w.applyUrl ? (
+                <a
+                  href={w.applyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-primary"
+                >
+                  {applyLabel}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onclick={`window.openWorkshopModal(${JSON.stringify(w.title)})`}
+                  class="btn-primary"
+                >
+                  {applyLabel}
+                </button>
+              )}
+            </div>
+          )
+        }
+
+      </Container>
+
+    </div>
+
+  </header>
+
+  {
+    w.heroImage && (
+      <div class="mt-10">
+        <img
+          src={w.heroImage}
+          alt={w.title}
+          data-lightbox
+          class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto cursor-zoom-in"
+        />
+      </div>
+    )
+  }
+
+  <!-- GALERİ -->
+
+  {
+    w.gallery?.length > 0 && (
+
+      <Section tone="paper" spacing="tight">
+
+        <Container>
+
+          <div class="grid md:grid-cols-3 gap-6">
+
+            {w.gallery.map((image) => (
+
+              <img
+                src={image}
+                alt={w.title}
+                data-lightbox
+                class="rounded-xl object-cover w-full aspect-[4/3] cursor-zoom-in"
+              />
+
+            ))}
+
+          </div>
+
+        </Container>
+
+      </Section>
+
+    )
+  }
+
+  <!-- İÇERİK -->
+
+  <Section tone="paper">
+
+    <Container>
+
+      <div class="grid md:grid-cols-12 gap-12">
+
+        <div class="md:col-span-8 prose-editorial">
+
+          {hasContent ? <Content /> : <p>{w.synopsis}</p>}
+
+        </div>
+
+        <aside class="md:col-span-4 space-y-10">
+
+          {
+            infoRows.length > 0 && (
+              <div>
+
+                <h3 class="eyebrow mb-3">
+                  Atölye Bilgileri
+                </h3>
+
+                <dl class="space-y-3">
+
+                  {infoRows.map((row) => (
+
+                    <div>
+
+                      <dt class="text-xs font-bold uppercase tracking-wide text-stone">{row.label}</dt>
+
+                      <dd class="mt-0.5">{row.value}</dd>
+
+                    </div>
+
+                  ))}
+
+                </dl>
+
+              </div>
+            )
+          }
+
+          {
+            w.instructors?.length > 0 && (
+              <div>
+
+                <h3 class="eyebrow mb-3">
+                  Eğitmenler
+                </h3>
+
+                <ul class="space-y-2">
+
+                  {w.instructors.map((name) => (
+                    <li>{name}</li>
+                  ))}
+
+                </ul>
+
+              </div>
+            )
+          }
+
+          {
+            w.status === "dolu" && (
+              <p class="rounded-lg border border-hairline bg-paper-dim p-4 text-sm text-stone">
+                Bu atölyenin kontenjanı dolmuştur. Yeni dönem atölyelerinden haberdar olmak için bizimle iletişime geçebilirsiniz.
+              </p>
+            )
+          }
+
+        </aside>
+
+      </div>
+
+    </Container>
+
+  </Section>
+
+  <!-- BAŞVURU ÇAĞRISI -->
+
+  <Section tone="ink">
+
+    <Container>
+
+      <div class="max-w-2xl mx-auto text-center">
+
+        <h2 class="text-3xl text-paper mb-6">
+          {canApply ? `${w.title} için yerinizi ayırtın` : "Diğer atölyelerimize göz atın"}
+        </h2>
+
+        <p class="text-paper/70 text-lg mb-8 leading-relaxed">
+          {
+            canApply
+              ? "Başvurunuzu hemen iletin, kayıt detayları için sizinle iletişime geçelim."
+              : "Güncel dönem atölyelerimizin tamamını atölyeler sayfasında bulabilirsiniz."
+          }
+        </p>
+
+        {
+          canApply ? (
+            w.applyUrl ? (
+              <a
+                href={w.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-primary"
+              >
+                {applyLabel}
+              </a>
+            ) : (
+              <button
+                type="button"
+                onclick={`window.openWorkshopModal(${JSON.stringify(w.title)})`}
+                class="btn-primary"
+              >
+                {applyLabel}
+              </button>
+            )
+          ) : (
+            <a href="/atolyeler" class="btn-primary">Tüm Atölyeler</a>
+          )
+        }
+
+      </div>
+
+    </Container>
+
+  </Section>
+
+  <WorkshopModal workshops={modalWorkshops} />
+
+  <Lightbox />
+
+</Layout>

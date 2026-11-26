@@ -9,16 +9,27 @@ import PlayCard from '../../../components/PlayCard.astro';
 const { category } = Astro.params;
 
 // URL'deki kategori adını content schema'daki karşılığına dönüştür
-const categoryMap: Record<string, { key: 'cocuk' | 'yetiskin'; label: string; lede: string }> = {
+const categoryMap: Record<
+  string,
+  { key: 'cocuk' | 'yetiskin' | 'etkinlik'; label: string; lede: string; empty: string }
+> = {
   'cocuk-oyunlari': {
     key: 'cocuk',
     label: 'Çocuk Oyunları',
     lede: 'Çocuk ve gençlik seyircisine yönelik, pedagojik yaklaşımla hazırlanan yapımlarımız.',
+    empty: 'Bu kategoriye ait oyunlar yakında eklenecektir.',
   },
   'yetiskin-oyunlari': {
     key: 'yetiskin',
     label: 'Yetişkin Oyunları',
     lede: 'Yetişkin seyirci için sahnelenen, farklı bir dramaturjik dil taşıyan yapımlarımız.',
+    empty: 'Bu kategoriye ait oyunlar yakında eklenecektir.',
+  },
+  'etkinlikler': {
+    key: 'etkinlik',
+    label: 'Etkinlikler',
+    lede: 'Çan Tiyatrosu\'nun özel gösterimleri, söyleşileri ve diğer etkinlikleri.',
+    empty: 'Şu an listelenen bir etkinlik bulunmuyor.',
   },
 };
 
@@ -54,7 +65,7 @@ const plays = (await getCollection('plays'))
           ))}
         </div>
       ) : (
-        <p class="text-stone">[Bu kategoriye ait oyunlar yakında eklenecektir.]</p>
+        <p class="text-stone">{currentCategory.empty}</p>
       )}
     </Container>
   </Section>

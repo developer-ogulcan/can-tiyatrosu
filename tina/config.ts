@@ -6,11 +6,17 @@ const branch =
   process.env.HEAD ||
   "main";
 
+const playCategoryRoutes: Record<string, string> = {
+  cocuk: "cocuk-oyunlari",
+  yetiskin: "yetiskin-oyunlari",
+  etkinlik: "etkinlikler",
+};
+
 export default defineConfig({
   branch,
   clientId: process.env.NEXT_PUBLIC_TINA_CLIENT_ID || "",
   token: process.env.TINA_TOKEN || "",
-  
+
   // Local çalışmayı zorlayan hayati parametre
   contentApiUrlOverride: 'http://localhost:4002/graphql',
 
@@ -61,7 +67,10 @@ export default defineConfig({
           { type: "string", name: "heroTitleStart", label: "Hero Title Start" },
           { type: "string", name: "heroTitleHighlight", label: "Hero Title Highlight" },
           { type: "string", name: "heroTitleEnd", label: "Hero Title End" },
-          { type: "string", name: "heroSubtitle", label: "Hero Subtitle" },
+          { type: "string", name: "heroSubtitle", label: "Hero Subtitle", ui: { component: "textarea" } },
+          { type: "image", name: "heroImage", label: "Hero Vitrin Görseli (opsiyonel)" },
+          { type: "string", name: "spotlightEyebrow", label: "Vitrin Üst Başlığı" },
+          { type: "string", name: "spotlightTitle", label: "Vitrin Başlığı" },
           {
             type: "object",
             name: "heroButtons",
@@ -82,6 +91,8 @@ export default defineConfig({
               { type: "string", name: "label", label: "Label" },
             ],
           },
+          { type: "string", name: "audienceEyebrow", label: "Audience Section Eyebrow" },
+          { type: "string", name: "audienceTitle", label: "Audience Section Title" },
           {
             type: "object",
             name: "audiencePaths",
@@ -89,11 +100,17 @@ export default defineConfig({
             list: true,
             fields: [
               { type: "string", name: "title", label: "Title" },
-              { type: "string", name: "description", label: "Description" },
+              { type: "string", name: "description", label: "Description", ui: { component: "textarea" } },
               { type: "string", name: "href", label: "Link" },
               { type: "string", name: "cta", label: "Button Label" },
+              { type: "image", name: "image", label: "Görsel (opsiyonel)" },
             ],
           },
+          { type: "string", name: "playsEyebrow", label: "Plays Section Eyebrow" },
+          { type: "string", name: "playsTitle", label: "Plays Section Title" },
+          { type: "string", name: "workshopsEyebrow", label: "Workshops Section Eyebrow" },
+          { type: "string", name: "workshopsTitle", label: "Workshops Section Title" },
+          { type: "string", name: "workshopsCtaLabel", label: "Workshops CTA Label" },
           { type: "string", name: "whyEyebrow", label: "Why Section Eyebrow" },
           { type: "string", name: "whyTitle", label: "Why Section Title" },
           {
@@ -104,14 +121,16 @@ export default defineConfig({
             fields: [
               { type: "string", name: "number", label: "Number" },
               { type: "string", name: "title", label: "Title" },
-              { type: "string", name: "description", label: "Description" },
+              { type: "string", name: "description", label: "Description", ui: { component: "textarea" } },
             ],
           },
+          { type: "string", name: "announcementsEyebrow", label: "Announcements Section Eyebrow" },
           { type: "string", name: "announcementsTitle", label: "Announcements Section Title" },
           { type: "string", name: "announcementsCtaLabel", label: "Announcements CTA Label" },
           { type: "string", name: "announcementsCtaHref", label: "Announcements CTA Href" },
+          { type: "string", name: "ctaEyebrow", label: "Bottom CTA Eyebrow" },
           { type: "string", name: "ctaTitle", label: "Bottom CTA Title" },
-          { type: "string", name: "ctaDescription", label: "Bottom CTA Description" },
+          { type: "string", name: "ctaDescription", label: "Bottom CTA Description", ui: { component: "textarea" } },
           { type: "string", name: "ctaPrimaryLabel", label: "Bottom CTA Primary Label" },
           { type: "string", name: "ctaPrimaryHref", label: "Bottom CTA Primary Href" },
           { type: "string", name: "ctaSecondaryLabel", label: "Bottom CTA Secondary Label" },
@@ -304,6 +323,94 @@ export default defineConfig({
         ],
       },
       {
+        name: "workshopPages",
+        label: "Atölye Detay Sayfaları",
+        path: "content/workshop-pages",
+        format: "md",
+        ui: {
+          router: ({ document }) => `/atolyeler/${document._sys.filename}`,
+        },
+        fields: [
+          { type: "string", name: "title", label: "Atölye Adı", isTitle: true, required: true },
+          {
+            type: "string",
+            name: "status",
+            label: "Durum",
+            options: [
+              { label: "Kayıtlar Açık", value: "acik" },
+              { label: "Yakında", value: "yakinda" },
+              { label: "Kontenjan Doldu", value: "dolu" },
+              { label: "Tamamlandı", value: "tamamlandi" },
+            ],
+          },
+          {
+            type: "string",
+            name: "synopsis",
+            label: "Kısa Açıklama",
+            ui: { component: "textarea" },
+            required: true,
+          },
+          { type: "string", name: "ageRange", label: "Yaş Grubu", description: "Örn: 7-12 yaş" },
+          { type: "string", name: "duration", label: "Süre", description: "Örn: 8 hafta / 16 saat" },
+          {
+            type: "datetime",
+            name: "startDate",
+            label: "Başlangıç Tarihi ve Saati",
+            ui: { dateFormat: "DD.MM.YYYY", timeFormat: "HH:mm" },
+          },
+          { type: "string", name: "schedule", label: "Ders Programı", description: "Örn: Her Cumartesi 11:00 - 12:30" },
+          { type: "string", name: "price", label: "Ücret", description: "Örn: 1.500 TL / ay" },
+          { type: "string", name: "quota", label: "Kontenjan", description: "Örn: 12 kişi" },
+          { type: "string", name: "venue", label: "Mekân", placeholder: "Kenan Halis Kızıldağ Oda Sahnesi" },
+          { type: "string", name: "locationText", label: "Açık Adres / İlçe" },
+          { type: "string", name: "instructors", label: "Eğitmenler", list: true },
+          {
+            type: "object",
+            name: "details",
+            label: "Ek Bilgiler (Etiket / Değer)",
+            list: true,
+            ui: {
+              itemProps: (item) => ({ label: item?.label || "Yeni Bilgi" }),
+            },
+            fields: [
+              { type: "string", name: "label", label: "Etiket" },
+              { type: "string", name: "value", label: "Değer" },
+            ],
+          },
+          { type: "image", name: "cover", label: "Geniş Kapak Görseli (opsiyonel)" },
+          { type: "image", name: "heroImage", label: "Afiş / Ana Görsel" },
+          { type: "image", name: "gallery", label: "Galeri", list: true },
+          { type: "string", name: "applyLabel", label: "Başvuru Butonu Metni", description: "Boşsa 'Başvuru Yap' yazar." },
+          {
+            type: "string",
+            name: "applyUrl",
+            label: "Harici Başvuru Linki (opsiyonel)",
+            description: "Boş bırakırsanız sitedeki atölye başvuru formu açılır.",
+          },
+          { type: "boolean", name: "featured", label: "Öne Çıkan" },
+          { type: "number", name: "order", label: "Sıralama" },
+          {
+            type: "string",
+            name: "seoTitle",
+            label: "SEO Başlığı (opsiyonel)",
+            description: "Boşsa otomatik üretilir. İdeal uzunluk 50-60 karakter.",
+          },
+          {
+            type: "string",
+            name: "seoDescription",
+            label: "SEO Açıklaması (opsiyonel)",
+            description: "Boşsa kısa açıklama kullanılır. İdeal uzunluk 120-160 karakter.",
+            ui: { component: "textarea" },
+          },
+          {
+            type: "rich-text",
+            name: "body",
+            label: "Detaylı İçerik",
+            isBody: true,
+          },
+        ],
+      },
+      {
         name: "services",
         label: "Services",
         path: "content/services",
@@ -418,12 +525,105 @@ export default defineConfig({
       },
       {
         name: "seo",
-        label: "SEO",
+        label: "SEO (Genel Ayarlar)",
         path: "content/seo",
         fields: [
-          { type: "string", name: "defaultTitle", label: "Default Title" },
-          { type: "string", name: "defaultDescription", label: "Default Description" },
-          { type: "image", name: "defaultOgImage", label: "Default OpenGraph Image" },
+          {
+            type: "string",
+            name: "defaultTitle",
+            label: "Anasayfa SEO Başlığı",
+            description: "Google'da anasayfanın başlığı. İdeal: 50-60 karakter. Örn: Çan Tiyatrosu | Ankara Çocuk Tiyatrosu ve Yetişkin Oyunları",
+          },
+          {
+            type: "string",
+            name: "defaultDescription",
+            label: "Varsayılan SEO Açıklaması",
+            description: "Açıklaması olmayan sayfalarda kullanılır. İdeal: 120-160 karakter.",
+            ui: { component: "textarea" },
+          },
+          {
+            type: "image",
+            name: "defaultOgImage",
+            label: "Varsayılan Paylaşım Görseli (Logo / Afiş)",
+            description: "Linki WhatsApp, Instagram vb. ortamlarda paylaşınca görünür. 1200x630 piksel önerilir.",
+          },
+          { type: "string", name: "ogImageAlt", label: "Paylaşım Görseli Alternatif Metni" },
+          {
+            type: "string",
+            name: "titleSuffix",
+            label: "Sayfa Başlığı Eki",
+            description: "Sayfa başlıklarının sonuna eklenir. Boşsa 'Çan Tiyatrosu' kullanılır.",
+          },
+          { type: "image", name: "logo", label: "Logo (Google için)" },
+          {
+            type: "string",
+            name: "organizationDescription",
+            label: "Kuruluş Tanıtım Metni (Google için)",
+            ui: { component: "textarea" },
+          },
+          { type: "string", name: "priceRange", label: "Fiyat Aralığı", description: "Örn: ₺₺" },
+          { type: "number", name: "geoLat", label: "Enlem (Latitude)", description: "Google Haritalar'da konuma sağ tıklayıp koordinatı kopyalayın." },
+          { type: "number", name: "geoLng", label: "Boylam (Longitude)" },
+          { type: "string", name: "googleSiteVerification", label: "Google Search Console Doğrulama Kodu" },
+          { type: "string", name: "bingSiteVerification", label: "Bing Webmaster Doğrulama Kodu" },
+          { type: "string", name: "yandexVerification", label: "Yandex Doğrulama Kodu" },
+        ],
+      },
+      {
+        name: "pageSeo",
+        label: "SEO (Sayfa Bazlı)",
+        path: "content/page-seo",
+        format: "md",
+        ui: {
+          allowedActions: { create: true, delete: true },
+        },
+        fields: [
+          {
+            type: "object",
+            name: "pages",
+            label: "Sayfalar",
+            list: true,
+            ui: {
+              itemProps: (item) => ({ label: item?.path || "Yeni Sayfa" }),
+            },
+            fields: [
+              { type: "string", name: "path", label: "Sayfa Yolu", description: "Örn: /bilet veya /hizmetler/maskot-kiralama", required: true },
+              { type: "string", name: "title", label: "Tam SEO Başlığı", description: "Doldurursanız olduğu gibi kullanılır (sonuna ek getirilmez)." },
+              { type: "string", name: "description", label: "SEO Açıklaması", ui: { component: "textarea" } },
+              { type: "image", name: "image", label: "Paylaşım Görseli" },
+              { type: "boolean", name: "noindex", label: "Google'da gösterme (noindex)" },
+            ],
+          },
+        ],
+      },
+      {
+        name: "popup",
+        label: "Açılış Pop-up Reklamı",
+        path: "content/popup",
+        format: "md",
+        ui: {
+          allowedActions: { create: true, delete: true },
+        },
+        fields: [
+          { type: "boolean", name: "enabled", label: "Pop-up aktif" },
+          { type: "image", name: "image", label: "Reklam Görseli" },
+          { type: "string", name: "imageAlt", label: "Görsel Alternatif Metni" },
+          { type: "string", name: "title", label: "Reklam Başlığı" },
+          { type: "string", name: "buttonLabel", label: "Buton Metni", placeholder: "Hemen Bilet Al" },
+          { type: "string", name: "buttonHref", label: "Buton Linki", placeholder: "/bilet veya https://..." },
+          { type: "boolean", name: "openInNewTab", label: "Linki yeni sekmede aç" },
+          { type: "number", name: "autoCloseSeconds", label: "Kendiliğinden kapanma süresi (saniye)", description: "Varsayılan 5." },
+          { type: "number", name: "delaySeconds", label: "Açılmadan önce bekleme (saniye)", description: "Varsayılan 1." },
+          {
+            type: "string",
+            name: "frequency",
+            label: "Gösterim Sıklığı",
+            options: [
+              { label: "Her ziyaret oturumunda bir kez", value: "session" },
+              { label: "Günde bir kez", value: "daily" },
+              { label: "Her sayfa açılışında (test için)", value: "always" },
+            ],
+          },
         ],
       },
       {
@@ -439,12 +639,40 @@ export default defineConfig({
           { type: "string", name: "category", label: "Kategori", options: ["Çocuk Oyunu", "Yetişkin Oyunu", "Akademi Sahnesi", "Özel Gösterim"] },
           { type: "string", name: "genre", label: "Tür", placeholder: "Müzikal Komedi, Dram, Yaratıcı Drama..." },
           { type: "image", name: "coverImage", label: "Kapak Görseli / Afiş" },
-          { type: "datetime", name: "eventDate", label: "Tarih ve Saat", required: true, ui: { dateFormat: "DD.MM.YYYY", timeFormat: "HH:mm",},},
+          {
+            type: "datetime",
+            name: "eventDate",
+            label: "Tarih ve Saat",
+            required: true,
+            ui: {
+              dateFormat: "DD.MM.YYYY",
+              timeFormat: "HH:mm",
+            },
+          },
+          {
+            type: "string",
+            name: "description",
+            label: "Etkinlik Açıklaması",
+            description: "Bilet kartında etkinlik adının altında görünür.",
+            ui: { component: "textarea" },
+          },
           { type: "string", name: "venue", label: "Mekân / Sahne Adı", placeholder: "Çan Tiyatrosu Ana Sahne" },
           { type: "string", name: "locationText", label: "Açık Konum / İlçe", placeholder: "Kızılay / Ankara" },
+          {
+            type: "string",
+            name: "price",
+            label: "Bilet Fiyatı (TL, yalnızca rakam)",
+            description: "Opsiyonel. Girerseniz Google etkinlik sonuçlarında fiyat gösterilebilir. Örn: 250",
+          },
           { type: "string", name: "cast", label: "Oyuncular / Kadro (Virgülle ayırın)", placeholder: "Ahmet Y., Ayşe K." },
           { type: "string", name: "creatives", label: "Künye (Yazar, Yönetmen)", placeholder: "Yazan: ... | Yöneten: ..." },
-          {type: "string", name: "detailUrl", label: "Etkinlik Detay Sayfası (Opsiyonel)", description: "Doluysa bilet kartında 'Etkinlik Detayları' butonu çıkar.", placeholder: "/performanslar/cocuk-oyunlari/bizimkiler-uzayda", },
+          {
+            type: "string",
+            name: "detailUrl",
+            label: "Etkinlik Detay Sayfası (Opsiyonel)",
+            description: "Doldurursanız bilet kartında 'Etkinlik Detayları' butonu çıkar. Boş bırakırsanız buton görünmez.",
+            placeholder: "/performanslar/cocuk-oyunlari/bizimkiler-uzayda",
+          },
           {
             type: "object",
             name: "ticketLinks",
@@ -475,16 +703,17 @@ export default defineConfig({
       },
       {
         name: "plays",
-        label: "Oyunlar",
+        label: "Oyunlar ve Etkinlikler",
         path: "content/plays",
         ui: {
-          router: ({ document }) => `/oyunlar/${document._sys.filename}`,
+          router: ({ document }) =>
+            `/performanslar/${playCategoryRoutes[document.category] ?? "cocuk-oyunlari"}/${document._sys.filename}`,
         },
         fields: [
           {
             type: "string",
             name: "title",
-            label: "Oyun Adı",
+            label: "Oyun / Etkinlik Adı",
             required: true,
           },
           {
@@ -520,7 +749,7 @@ export default defineConfig({
           { type: "boolean", name: "featured", label: "Öne Çıkan Oyun" },
           { type: "number", name: "order", label: "Sıralama" },
           { type: "string", name: "cast", label: "Oyuncular", list: true },
-          
+
           {
             type: "object",
             name: "crew",
@@ -530,6 +759,19 @@ export default defineConfig({
               { type: "string", name: "role", label: "Görev" },
               { type: "string", name: "name", label: "İsim" },
             ],
+          },
+          {
+            type: "string",
+            name: "seoTitle",
+            label: "SEO Başlığı (opsiyonel)",
+            description: "Boşsa otomatik üretilir. İdeal uzunluk 50-60 karakter.",
+          },
+          {
+            type: "string",
+            name: "seoDescription",
+            label: "SEO Açıklaması (opsiyonel)",
+            description: "Boşsa kısa açıklama kullanılır. İdeal uzunluk 120-160 karakter.",
+            ui: { component: "textarea" },
           },
         ],
       },

@@ -5,7 +5,6 @@ import Layout from '../../layouts/Layout.astro';
 import PageHero from '../../components/PageHero.astro';
 import Container from '../../components/Container.astro';
 import Section from '../../components/Section.astro';
-import Card from '../../components/Card.astro';
 import CTA from '../../components/CTA.astro';
 
 const servicesCollection = await getCollection('services');
@@ -18,8 +17,23 @@ if (!servicesEntry) {
 }
 const servicesData = servicesEntry.data;
 
-// serviceDetails klasöründeki tüm detay dosyalarını çekiyoruz
 const detailsCollection = await getCollection('serviceDetails');
+
+const toSlug = (entry: any) => {
+  const raw = entry?.slug || entry?.id || entry?.filePath || '';
+  const filename = (raw.split('/').pop() || raw).replace(/\.mdx?$/, '');
+  return filename
+    .toLowerCase()
+    .trim()
+    .replace(/ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/ş/g, 's')
+    .replace(/ı/g, 'i')
+    .replace(/ö/g, 'o')
+    .replace(/ç/g, 'c')
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-');
+};
 ---
 
 <Layout title="Hizmetler" description="Çan Tiyatrosu'nun kurumsal gösterim, animasyon ve maskot kiralama hizmetleri.">
@@ -34,20 +48,74 @@ const detailsCollection = await getCollection('serviceDetails');
 
   <Section tone="paper">
     <Container>
-      <div class="grid md:grid-cols-3 gap-6" data-tina-field={tinaField(servicesData, 'services')}>
-        {servicesData.services.map((service, index) => {
-          // Kart sırasına göre ilgili detay dosyasının slug'ını bul, yoksa index ile eşleştir
+      <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-6">
+        <div>
+          <p class="eyebrow !text-curtain mb-2">Kurumsal & Sahne Çözümleri</p>
+          <h2 class="text-3xl md:text-4xl font-display">Sunduğumuz Hizmetler</h2>
+        </div>
+        <a
+          href="/basvurular/kurumsal-gosterim-talebi"
+          class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap"
+        >
+          Doğrudan talep formu →
+        </a>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-7" data-tina-field={tinaField(servicesData, 'services')}>
+        {servicesData.services.map((service: any, index: number) => {
           const matchedDetail = detailsCollection[index];
-          const slug = matchedDetail 
-            ? matchedDetail.id.replace(/\.md$/, '').split('/').pop() 
-            : `hizmet-${index + 1}`;
-            
+          const slug = matchedDetail ? toSlug(matchedDetail) : `hizmet-${index + 1}`;
+          const previewImage = matchedDetail?.data?.gallery?.[0];
+          const href = `/hizmetler/${slug}`;
+
           return (
-            <Card href={`/hizmetler/${slug}`}>
-              <h2 class="text-2xl mb-3 group-hover:text-curtain transition-colors">{service.title}</h2>
-              <p class="text-stone leading-relaxed mb-6">{service.description}</p>
-              <span class="text-sm font-semibold text-curtain">Detayları gör →</span>
-            </Card>
+            <article class="group flex flex-col overflow-hidden rounded-2xl border-2 border-hairline bg-paper hover:border-curtain/45 hover:shadow-lg transition-all duration-300">
+              {previewImage && (
+                <a href={href} class="block overflow-hidden bg-stone/10 aspect-[16/10] border-b border-hairline/60">
+                  <img
+                    src={previewImage}
+                    alt={service.title}
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </a>
+              )}
+
+              <div class="p-6 md:p-7 flex-1 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-3">
+                    <span class="font-mono text-xs font-bold text-curtain/80">
+                      0{index + 1}
+                    </span>
+                    <span class="text-[11px] uppercase tracking-wider font-semibold text-stone">
+                      Kurumsal Hizmet
+                    </span>
+                  </div>
+
+                  <h3 class="text-2xl font-bold text-ink mb-3 group-hover:text-curtain transition-colors">
+                    <a href={href}>{service.title}</a>
+                  </h3>
+
+                  <p class="text-stone leading-relaxed mb-6">
+                    {service.description}
+                  </p>
+                </div>
+
+                <div class="pt-4 border-t border-hairline/70 flex items-center justify-between gap-3">
+                  <a
+                    href={href}
+                    class="text-sm font-bold text-curtain hover:underline underline-offset-4"
+                  >
+                    Detayları gör →
+                  </a>
+                  <a
+                    href={`${href}#talep-formu`}
+                    class="text-xs font-bold uppercase tracking-wider text-stone hover:text-ink transition-colors"
+                  >
+                    Teklif Al
+                  </a>
+                </div>
+              </div>
+            </article>
           );
         })}
       </div>

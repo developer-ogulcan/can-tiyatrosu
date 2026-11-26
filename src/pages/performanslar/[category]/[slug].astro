@@ -1,10 +1,11 @@
 ---
-import { getEntry, render } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import Layout from "../../../layouts/Layout.astro";
 import Container from "../../../components/Container.astro";
 import Section from "../../../components/Section.astro";
 import Badge from "../../../components/Badge.astro";
 import CTA from "../../../components/CTA.astro";
+import Lightbox from "../../../components/Lightbox.astro";
 
 export const prerender = false;
 
@@ -16,11 +17,13 @@ if (!play) {
   return Astro.redirect("/performanslar");
 }
 
-const expectedCategory =
-  play.data.category === "cocuk"
-    ? "cocuk-oyunlari"
-    : "yetiskin-oyunlari"
-    + "etkinlikler";
+const categoryRoutes = {
+  cocuk: "cocuk-oyunlari",
+  yetiskin: "yetiskin-oyunlari",
+  etkinlik: "etkinlikler",
+} as const;
+
+const expectedCategory = categoryRoutes[play.data.category];
 
 if (category !== expectedCategory) {
   return Astro.redirect(`/performanslar/${expectedCategory}/${slug}`);
@@ -40,17 +43,77 @@ const statusTone = {
   arsiv: "stone",
 };
 
-const backHref =
-  play.data.category === "cocuk"
-    ? "/performanslar/cocuk-oyunlari"
-    : "/performanslar/yetiskin-oyunlari"
-    + "performanslar/etkinlikler";
+const categoryTitleLabel = {
+  cocuk: "Çocuk Oyunu",
+  yetiskin: "Yetişkin Oyunu",
+  etkinlik: "Etkinlik",
+}[play.data.category];
+
+const backHref = `/performanslar/${expectedCategory}`;
+
+const isEvent = play.data.category === "etkinlik";
+
+/* ---------- AYNI KATEGORİDEN DİĞER ÖNERİLER ---------- */
+const relatedHeading = {
+  cocuk: "Diğer Çocuk Oyunları",
+  yetiskin: "Diğer Yetişkin Oyunları",
+  etkinlik: "Diğer Etkinlikler",
+}[play.data.category];
+
+const relatedEyebrow = {
+  cocuk: "Repertuvar • Çocuk Oyunları",
+  yetiskin: "Repertuvar • Yetişkin Oyunları",
+  etkinlik: "Etkinlik Takvimi",
+}[play.data.category];
+
+const allPlays = await getCollection("plays");
+const relatedPlays = allPlays
+  .filter((item) => item.data.category === play.data.category && item.id !== play.id && item.slug !== slug)
+  .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+  .slice(0, 3);
+
+/* ---------- SEO ---------- */
+const seoLabel = {
+  cocuk: "Ankara Çocuk Tiyatrosu",
+  yetiskin: "Ankara Tiyatro Oyunu",
+  etkinlik: "Ankara Etkinliği",
+} as const;
+
+const seoTitle = play.data.seoTitle || `${play.data.title} – ${seoLabel[play.data.category]}`;
+const seoDescription = play.data.seoDescription || play.data.synopsis;
+
+const origin = (Astro.site ?? Astro.url).origin;
+const pageUrl = `${origin}/performanslar/${expectedCategory}/${slug}`;
+const imageUrl = play.data.heroImage ? new URL(play.data.heroImage, origin).href : undefined;
+
+const playLd = {
+  "@type": "Play",
+  "@id": `${pageUrl}#play`,
+  name: play.data.title,
+  description: seoDescription,
+  url: pageUrl,
+  inLanguage: "tr",
+  image: imageUrl,
+  audience: {
+    "@type": "PeopleAudience",
+    audienceType:
+      play.data.category === "cocuk"
+        ? "Çocuk ve aileler"
+        : play.data.category === "yetiskin"
+          ? "Yetişkin"
+          : "Genel izleyici",
+  },
+  actor: play.data.cast.map((name) => ({ "@type": "Person", name })),
+  productionCompany: { "@id": `${origin}/#organization` },
+};
 ---
 
 <Layout
-  title={play.data.title}
-  description={play.data.synopsis}
+  title={seoTitle}
+  description={seoDescription}
   image={play.data.heroImage}
+  imageAlt={play.data.title}
+  jsonLd={playLd}
 >
 
   <!-- HERO -->
@@ -62,68 +125,91 @@ const backHref =
           src={play.data.cover}
           alt={play.data.title}
           data-lightbox
-          class="w-full h-[60vh] object-cover cursor-zoom-in"
+          class="w-full h-[52vh] md:h-[60vh] object-cover cursor-zoom-in"
         />
       )
     }
 
     <div class="bg-paper-dim border-b border-hairline">
 
-      <Container class="py-14">
+      <Container class="py-12 md:py-16">
 
         <a
           href={backHref}
-          class="text-sm text-stone hover:text-curtain"
+          class="inline-flex items-center gap-1.5 text-sm font-semibold text-stone hover:text-curtain transition-colors"
         >
           ← Repertuvara dön
         </a>
 
-        <div class="mt-6 flex flex-wrap items-center gap-3">
+        <div class="mt-8 grid lg:grid-cols-12 gap-10 items-start">
 
-          <Badge tone={statusTone[play.data.status]}>
-            {statusLabel[play.data.status]}
-          </Badge>
+          <div class={play.data.heroImage ? "lg:col-span-8" : "lg:col-span-12"}>
 
-          {play.data.ageRange && (
-            <span class="text-sm text-stone">
-              {play.data.ageRange}
-            </span>
-          )}
+            <div class="flex flex-wrap items-center gap-3">
 
-          {play.data.duration && (
-            <span class="text-sm text-stone">
-              • {play.data.duration}
-            </span>
-          )}
+              <Badge tone={statusTone[play.data.status]}>
+                {statusLabel[play.data.status]}
+              </Badge>
+
+              <span class="text-xs font-bold uppercase tracking-wider text-curtain">
+                {categoryTitleLabel}
+              </span>
+
+              {play.data.ageRange && (
+                <span class="text-sm text-stone">
+                  • {play.data.ageRange}
+                </span>
+              )}
+
+              {play.data.duration && (
+                <span class="text-sm text-stone">
+                  • {play.data.duration}
+                </span>
+              )}
+
+            </div>
+
+            <h1 class="mt-4 text-4xl sm:text-5xl lg:text-6xl leading-tight">
+              {play.data.title}
+            </h1>
+
+            <p class="mt-6 max-w-3xl text-lg md:text-xl text-stone leading-relaxed">
+              {play.data.synopsis}
+            </p>
+
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="/bilet" class="btn-primary">
+                {isEvent ? "Etkinlik Bileti Al" : "Bilet Al"}
+              </a>
+              <a href="/basvurular/kurumsal-gosterim-talebi" class="btn-secondary">
+                Kurumsal / Okul Talebi
+              </a>
+            </div>
+
+          </div>
+
+          {
+            play.data.heroImage && (
+              <div class="lg:col-span-4">
+                <div class="max-w-xs mx-auto lg:ml-auto rounded-2xl overflow-hidden border-2 border-hairline bg-paper shadow-xl">
+                  <img
+                    src={play.data.heroImage}
+                    alt={play.data.title}
+                    data-lightbox
+                    class="w-full aspect-[2/3] object-cover object-top cursor-zoom-in transition-transform duration-300 hover:scale-[1.02]"
+                  />
+                </div>
+              </div>
+            )
+          }
 
         </div>
-
-        <h1 class="mt-5 text-5xl">
-          {play.data.title}
-        </h1>
-
-        <p class="mt-6 max-w-3xl text-lg text-stone">
-          {play.data.synopsis}
-        </p>
 
       </Container>
 
     </div>
 
   </header>
-
-  {
-    play.data.heroImage && (
-      <div class="mt-10">
-        <img
-          src={play.data.heroImage}
-          alt={play.data.title}
-          data-lightbox
-          class="w-full max-w-md rounded-2xl shadow-xl border border-hairline mx-auto cursor-zoom-in"
-        />
-      </div>
-    )
-  }
 
   <!-- GALERİ -->
 
@@ -134,7 +220,10 @@ const backHref =
 
         <Container>
 
-          <div class="grid md:grid-cols-3 gap-6">
+          <p class="eyebrow !text-curtain mb-2">Sahne Kareleri</p>
+          <h2 class="text-2xl md:text-3xl mb-6">Oyundan Görseller</h2>
+
+          <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
 
             {play.data.gallery.map((image) => (
 
@@ -142,7 +231,7 @@ const backHref =
                 src={image}
                 alt={play.data.title}
                 data-lightbox
-                class="rounded-xl object-cover w-full aspect-[4/3] cursor-zoom-in"
+                class="rounded-xl border border-hairline object-cover w-full aspect-[4/3] cursor-zoom-in hover:border-curtain/40 transition-colors"
               />
 
             ))}
@@ -162,59 +251,72 @@ const backHref =
 
     <Container>
 
-      <div class="grid md:grid-cols-12 gap-12">
+      <div class="grid lg:grid-cols-12 gap-12 items-start">
 
-        <div class="md:col-span-8 prose-editorial">
+        <div class="lg:col-span-8 prose-editorial">
 
           <Content />
 
         </div>
 
-        <aside class="md:col-span-4 space-y-10">
+        <aside class="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
 
           {
-            play.data.cast?.length > 0 && (
-              <div>
+            (play.data.cast?.length > 0 || play.data.crew?.length > 0) && (
+              <div class="rounded-2xl border border-hairline bg-paper-dim p-6 space-y-8">
 
-                <h3 class="eyebrow mb-3">
-                  Oyuncular
-                </h3>
+                {
+                  play.data.cast?.length > 0 && (
+                    <div>
 
-                <ul class="space-y-2">
+                      <h3 class="eyebrow !text-curtain mb-3">
+                        Oyuncular
+                      </h3>
 
-                  {play.data.cast.map((actor) => (
-                    <li>{actor}</li>
-                  ))}
+                      <ul class="space-y-2 text-sm text-ink">
 
-                </ul>
+                        {play.data.cast.map((actor) => (
+                          <li class="border-b border-hairline/50 pb-1.5 last:border-b-0 last:pb-0">
+                            {actor}
+                          </li>
+                        ))}
 
-              </div>
-            )
-          }
+                      </ul>
 
-          {
-            play.data.crew?.length > 0 && (
-              <div>
+                    </div>
+                  )
+                }
 
-                <h3 class="eyebrow mb-3">
-                  Künye
-                </h3>
+                {
+                  play.data.crew?.length > 0 && (
+                    <div>
 
-                <ul class="space-y-2">
+                      <h3 class="eyebrow !text-curtain mb-3">
+                        Künye
+                      </h3>
 
-                  {play.data.crew.map((item) => (
+                      <ul class="space-y-3 text-sm">
 
-                    <li>
+                        {play.data.crew.map((item) => (
 
-                      <strong>{item.role}</strong><br />
+                          <li class="border-b border-hairline/50 pb-2 last:border-b-0 last:pb-0">
 
-                      {item.name}
+                            <span class="block text-xs uppercase tracking-wider text-stone font-semibold">
+                              {item.role}
+                            </span>
+                            <span class="font-bold text-ink">
+                              {item.name}
+                            </span>
 
-                    </li>
+                          </li>
 
-                  ))}
+                        ))}
 
-                </ul>
+                      </ul>
+
+                    </div>
+                  )
+                }
 
               </div>
             )
@@ -228,8 +330,71 @@ const backHref =
 
   </Section>
 
+  <!-- AYNI KATEGORİDEN DİĞER ÖNERİLER -->
+
+  {
+    relatedPlays.length > 0 && (
+      <Section tone="dim" spacing="tight">
+        <Container>
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <p class="eyebrow !text-curtain mb-2">{relatedEyebrow}</p>
+              <h2 class="text-3xl md:text-4xl">{relatedHeading}</h2>
+            </div>
+            <a
+              href={backHref}
+              class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap"
+            >
+              Tümünü gör →
+            </a>
+          </div>
+
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedPlays.map((item) => (
+              <a
+                href={`/performanslar/${expectedCategory}/${item.id}`}
+                class="group flex flex-col overflow-hidden rounded-xl border-2 border-hairline bg-paper hover:border-curtain/40 transition-colors"
+              >
+                {item.data.heroImage && (
+                  <div class="overflow-hidden bg-stone/10 aspect-[2/3]">
+                    <img
+                      src={item.data.heroImage}
+                      alt={item.data.title}
+                      class="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
+                )}
+                <div class="p-5 flex-1 flex flex-col">
+                  <div class="mb-2 flex flex-wrap items-center gap-2">
+                    <Badge tone={statusTone[item.data.status]}>
+                      {statusLabel[item.data.status]}
+                    </Badge>
+                    {item.data.ageRange && (
+                      <span class="text-xs text-stone">{item.data.ageRange}</span>
+                    )}
+                  </div>
+                  <h3 class="text-xl font-bold mb-2 group-hover:text-curtain transition-colors">
+                    {item.data.title}
+                  </h3>
+                  {item.data.synopsis && (
+                    <p class="text-sm text-stone leading-relaxed line-clamp-3 mb-4">
+                      {item.data.synopsis}
+                    </p>
+                  )}
+                  <span class="mt-auto text-sm font-bold text-curtain">
+                    {isEvent ? "Etkinliği İncele →" : "Oyunu İncele →"}
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </Container>
+      </Section>
+    )
+  }
+
   <CTA
-    title="Bu oyuna bilet alın"
+    title={isEvent ? "Bu etkinliğe bilet alın" : "Bu oyuna bilet alın"}
     description="Gösteri takvimimiz ve bilet bilgileri için bilet sayfamızı ziyaret edin."
     primaryLabel="Bilet Al"
     primaryHref="/bilet"
@@ -237,127 +402,6 @@ const backHref =
     secondaryHref="/basvurular/kurumsal-gosterim-talebi"
   />
 
-  <!-- LIGHTBOX -->
-  <dialog
-    id="lightbox"
-    class="m-0 w-screen h-screen max-w-none max-h-none bg-transparent p-0 backdrop:bg-black/90"
-  >
-    <div
-      id="lightbox-stage"
-      class="relative flex h-full w-full items-center justify-center p-4 md:p-10"
-    >
-      <img
-        id="lightbox-img"
-        src=""
-        alt=""
-        class="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
-      />
-
-      <button
-        id="lightbox-close"
-        type="button"
-        aria-label="Kapat"
-        class="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/25"
-      >
-        ×
-      </button>
-
-      <button
-        id="lightbox-prev"
-        type="button"
-        aria-label="Önceki görsel"
-        class="absolute left-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/25"
-      >
-        ‹
-      </button>
-
-      <button
-        id="lightbox-next"
-        type="button"
-        aria-label="Sonraki görsel"
-        class="absolute right-4 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/25"
-      >
-        ›
-      </button>
-
-      <span
-        id="lightbox-counter"
-        class="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-white/80"
-      ></span>
-    </div>
-  </dialog>
-
-  <script>
-    const dialog = document.getElementById("lightbox") as HTMLDialogElement | null;
-
-    if (dialog) {
-      const stage = document.getElementById("lightbox-stage")!;
-      const imgEl = document.getElementById("lightbox-img") as HTMLImageElement;
-      const counter = document.getElementById("lightbox-counter")!;
-      const prevBtn = document.getElementById("lightbox-prev")!;
-      const nextBtn = document.getElementById("lightbox-next")!;
-      const closeBtn = document.getElementById("lightbox-close")!;
-
-      // Sayfadaki tüm tıklanabilir görseller, doküman sırasıyla
-      const sources = Array.from(
-        document.querySelectorAll<HTMLImageElement>(
-          "[data-lightbox], .prose-editorial img"
-        )
-      );
-
-      let index = 0;
-
-      const show = (i: number) => {
-        index = (i + sources.length) % sources.length;
-        const src = sources[index];
-        imgEl.src = src.currentSrc || src.src;
-        imgEl.alt = src.alt;
-        counter.textContent = `${index + 1} / ${sources.length}`;
-      };
-
-      const open = (i: number) => {
-        show(i);
-        dialog.showModal();
-        document.body.style.overflow = "hidden";
-      };
-
-      const close = () => dialog.close();
-
-      sources.forEach((img, i) => {
-        img.classList.add("cursor-zoom-in");
-        img.tabIndex = 0;
-        img.setAttribute("role", "button");
-        img.addEventListener("click", () => open(i));
-        img.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") open(i);
-        });
-      });
-
-      if (sources.length < 2) {
-        prevBtn.hidden = true;
-        nextBtn.hidden = true;
-        counter.hidden = true;
-      }
-
-      prevBtn.addEventListener("click", (e) => { e.stopPropagation(); show(index - 1); });
-      nextBtn.addEventListener("click", (e) => { e.stopPropagation(); show(index + 1); });
-      closeBtn.addEventListener("click", close);
-
-      // Boş alana tıklayınca kapat
-      stage.addEventListener("click", (e) => {
-        if (e.target === stage) close();
-      });
-
-      dialog.addEventListener("close", () => {
-        document.body.style.overflow = "";
-        imgEl.src = "";
-      });
-
-      dialog.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft") show(index - 1);
-        if (e.key === "ArrowRight") show(index + 1);
-      });
-    }
-  </script>
+  <Lightbox />
 
 </Layout>

@@ -5,7 +5,7 @@ export const SITE = {
   description:
     "1984’ten bu yana kesintisiz sahnede olan Çan Tiyatrosu; çocuk, gençlik ve yetişkin seyirci için oyunlar üreten, köklü bir tiyatro kuruluşudur.",
 
-  url: 'https://cantiyatrosu.com',
+  url: 'https://cantiyatrosu.com.tr',
 
   email: 'iletisim@cantiyatrosu.com',
 
@@ -70,6 +70,7 @@ export const NAV: NavItem[] = [
       { label: 'Tüm Oyunlar', href: '/performanslar' },
       { label: 'Çocuk Oyunları', href: '/performanslar/cocuk-oyunlari' },
       { label: 'Yetişkin Oyunları', href: '/performanslar/yetiskin-oyunlari' },
+      { label: 'Etkinlikler', href: '/performanslar/etkinlikler' },
     ],
   },
   { label: 'Bilet', href: '/bilet' },
@@ -120,6 +121,7 @@ export const FOOTER_LINKS = {
     { label: 'Bilet Al', href: '/bilet' },
     { label: 'Çocuk Oyunları', href: '/performanslar/cocuk-oyunlari' },
     { label: 'Yetişkin Oyunları', href: '/performanslar/yetiskin-oyunlari' },
+    { label: 'Etkinlikler', href: '/performanslar/etkinlikler' },
   ],
   katil: [
     { label: 'Ekip Başvurusu', href: '/basvurular/ekip-basvurusu' },
@@ -134,7 +136,7 @@ export const FOOTER_LINKS = {
     { label: 'Haberler ve Duyurular', href: '/basin/basinda-biz' },
     { label: 'Mobil Uygulama', href: '/mobil-uygulama' },
   ],
-  
+
   hizmet: [
     { label: 'Kurumsal Gösterimler', href: '/hizmetler/kurumsal-gosterimler' },
     { label: 'Animasyon ve Etkinlik', href: '/hizmetler/animasyon-ve-etkinlik' },

@@ -8,145 +8,285 @@ import FormField from '../components/FormField.astro';
 import Button from '../components/Button.astro';
 
 // TinaCMS content/tickets koleksiyonunu çekiyoruz
-let tickets = [];
+let tickets: any[] = [];
 try {
   const ticketCollection = await getCollection('tickets');
-  tickets = ticketCollection.map((entry) => entry.data);
+  tickets = ticketCollection
+    .map((entry) => entry.data)
+    .sort((a, b) => new Date(a.eventDate || 0).getTime() - new Date(b.eventDate || 0).getTime());
 } catch (e) {
   tickets = [];
 }
+
+type TicketBucketKey = 'cocuk' | 'yetiskin' | 'etkinlik' | 'atolye';
+
+const detectBucket = (item: any): TicketBucketKey => {
+  const raw = `${item?.category || ''} ${item?.genre || ''} ${item?.title || ''}`.toLowerCase();
+  if (raw.includes('atölye') || raw.includes('atolye') || raw.includes('workshop') || raw.includes('kamp')) {
+    return 'atolye';
+  }
+  if (raw.includes('çocuk') || raw.includes('cocuk') || raw.includes('akademi')) {
+    return 'cocuk';
+  }
+  if (raw.includes('yetişkin') || raw.includes('yetiskin')) {
+    return 'yetiskin';
+  }
+  return 'etkinlik';
+};
+
+const sectionsMeta: { key: TicketBucketKey; id: string; eyebrow: string; title: string }[] = [
+  { key: 'cocuk', id: 'cocuk-oyunlari', eyebrow: 'Çocuk & Genç', title: 'Çocuk Oyunları' },
+  { key: 'yetiskin', id: 'yetiskin-oyunlari', eyebrow: 'Sahne Repertuvarı', title: 'Yetişkin Oyunları' },
+  { key: 'etkinlik', id: 'etkinlikler', eyebrow: 'Özel Gösterimler & Geceler', title: 'Etkinlikler' },
+  { key: 'atolye', id: 'atolyeler', eyebrow: 'Uygulamalı Programlar', title: 'Atölyeler' },
+];
+
+const groupedTickets: Record<TicketBucketKey, any[]> = {
+  cocuk: [],
+  yetiskin: [],
+  etkinlik: [],
+  atolye: [],
+};
+
+for (const item of tickets) {
+  groupedTickets[detectBucket(item)].push(item);
+}
+
+// Google etkinlik sonuçları için Event şeması
+const origin = (Astro.site ?? Astro.url).origin;
+const abs = (p?: string) => (p ? new URL(p, origin).href : undefined);
+
+const eventsLd = tickets
+  .filter((t) => t.eventDate)
+  .map((t) => {
+    const links = (t.ticketLinks || []).filter((l: any) => l.href);
+    const priceText = t.price ? String(t.price).trim() : '';
+    const priceOk = /^\d+([.,]\d+)?$/.test(priceText);
+    const image = abs(t.coverImage);
+    const performers = t.cast
+      ? String(t.cast)
+          .split(',')
+          .map((n: string) => n.trim())
+          .filter(Boolean)
+          .map((name: string) => ({ '@type': 'Person', name }))
+      : undefined;
+
+    return {
+      '@type': 'Event',
+      name: t.title,
+      description: t.description || undefined,
+      startDate: new Date(t.eventDate).toISOString(),
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      location: {
+        '@type': 'Place',
+        name: t.venue || 'Çan Tiyatrosu Ana Sahne',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: t.locationText || undefined,
+          addressLocality: 'Ankara',
+          addressCountry: 'TR',
+        },
+      },
+      image: image ? [image] : undefined,
+      performer: performers,
+      organizer: { '@type': 'Organization', name: 'Çan Tiyatrosu', url: origin },
+      offers: links.map((l: any) => ({
+        '@type': 'Offer',
+        url: l.href,
+        availability: 'https://schema.org/InStock',
+        ...(priceOk ? { price: priceText.replace(',', '.'), priceCurrency: 'TRY' } : {}),
+      })),
+    };
+  });
 ---
 
 <Layout 
   title="Bilet Al | Çan Tiyatrosu Sahne Etkinlikleri" 
-  description="Çan Tiyatrosu repertuvarındaki oyunlar, çocuk tiyatroları ve gösterimler için online bilet satın alın, toplu bilet talebi oluşturun."
+  description="Çan Tiyatrosu repertuvarındaki çocuk oyunları, yetişkin oyunları, etkinlikler ve atölyeler için online bilet satın alın, toplu bilet talebi oluşturun."
+  jsonLd={eventsLd}
 >
   <PageHero
     eyebrow="GÖSTERİM TAKVİMİ & BİLET"
     title="Sahneye Davetlisiniz"
-    lede="Repertuvarımızdaki yetişkin ve çocuk oyunları için dilediğiniz platformdan biletinizi alın veya toplu gösterim avantajlarından yararlanın."
+    lede="Çocuk oyunları, yetişkin oyunları, etkinlikler ve atölyeler için dilediğiniz kategoriyi seçin ve biletinizi kolayca alın."
   />
 
   <Section tone="paper">
     <Container>
-      <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-6">
+      <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hairline pb-6">
         <div>
-          <span class="eyebrow !text-curtain mb-2 block">Satıştaki Etkinlikler</span>
-          <h2 class="text-3xl md:text-4xl font-display">Güncel Oyun & Gösterim Takvimi</h2>
+          <span class="eyebrow !text-curtain mb-2 block">Satıştaki İçerikler</span>
+          <h2 class="text-3xl md:text-4xl font-display">Kategorilere Göre Bilet Takvimi</h2>
         </div>
         <p class="text-stone text-sm max-w-md">
-          Biletlerinizi aşağıdaki anlaşmalı satış platformlarından güvenle temin edebilirsiniz.
+          İstediğiniz kategoriye geçerek satıştaki oyun, etkinlik veya atölye biletlerini görüntüleyebilirsiniz.
         </p>
       </div>
 
       {tickets.length > 0 ? (
-        <div class="grid gap-10">
-          {tickets.map((item) => {
-            const dateObj = item.eventDate ? new Date(item.eventDate) : null;
-            const formattedDate = dateObj 
-              ? dateObj.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' })
-              : 'Tarih Belirtilmedi';
-            const formattedTime = dateObj 
-              ? dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-              : '';
+        <>
+          <!-- Kategori Hızlı Erişim & Filtre Barı -->
+          <div class="mb-12 flex flex-wrap items-center gap-2.5" id="kategori-filtreleri" role="tablist" aria-label="Bilet kategorileri">
+            <button
+              type="button"
+              data-filter="all"
+              class="ticket-filter-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border border-curtain bg-curtain text-paper transition-colors cursor-pointer"
+            >
+              Tümü ({tickets.length})
+            </button>
+            {sectionsMeta.map((sec) => {
+              const count = groupedTickets[sec.key].length;
+              return (
+                <button
+                  type="button"
+                  data-filter={sec.key}
+                  data-target={sec.id}
+                  class="ticket-filter-btn px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider border border-hairline bg-paper text-ink hover:border-curtain hover:text-curtain transition-colors cursor-pointer"
+                >
+                  {sec.title} ({count})
+                </button>
+              );
+            })}
+          </div>
 
-            return (
-              <div class="rounded-2xl border border-hairline bg-paper shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden grid md:grid-cols-12 gap-0">
-                {/* Sol: Afiş / Görsel */}
-                <div class="md:col-span-4 relative bg-ink min-h-[260px] md:min-h-full overflow-hidden flex items-center justify-center">
-                  {item.coverImage ? (
-                    <img src={item.coverImage} alt={item.title} class="w-full h-full object-cover" />
-                  ) : (
-                    <div class="p-8 text-center">
-                      <span class="text-paper/40 text-xs font-mono uppercase tracking-widest block border border-paper/20 rounded px-3 py-1">
-                        Çan Tiyatrosu
-                      </span>
+          <div class="space-y-16">
+            {sectionsMeta.map((sec) => {
+              const list = groupedTickets[sec.key];
+              if (!list || list.length === 0) return null;
+
+              return (
+                <div id={sec.id} data-ticket-section={sec.key} class="scroll-mt-28">
+                  <div class="mb-6 flex items-baseline justify-between border-b border-hairline/80 pb-3">
+                    <div>
+                      <span class="eyebrow !text-curtain text-xs block mb-1">{sec.eyebrow}</span>
+                      <h3 class="text-2xl md:text-3xl font-display text-ink">{sec.title}</h3>
                     </div>
-                  )}
-                  {item.category && (
-                    <span class="absolute top-4 left-4 bg-curtain text-paper text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                      {item.category}
-                    </span>
-                  )}
-                </div>
-
-                {/* Sağ: İçerik */}
-                <div class="md:col-span-8 p-6 md:p-8 flex flex-col justify-between">
-                  <div>
-                    {/* Tarih ve Tür Bilgisi (Vektör Takvim İkonu İle) */}
-                    <div class="flex flex-wrap items-center gap-2 text-sm text-curtain font-semibold mb-3">
-                      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <span>{formattedDate} {formattedTime && `• ${formattedTime}`}</span>
-                      {item.genre && <span class="text-stone/50 font-normal">| {item.genre}</span>}
-                    </div>
-
-                    <h3 class="text-2xl md:text-3xl font-bold text-ink mb-3">{item.title}</h3>
-
-                    {/* Mekân Bilgisi (Vektör Konum İkonu İle) */}
-                    <div class="flex items-center gap-2 text-stone text-sm mb-4 bg-dim p-3 rounded-lg border border-hairline/50">
-                      <svg class="w-4 h-4 text-curtain shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      <span class="font-bold text-ink">Mekân:</span>
-                      <span>{item.venue || 'Çan Tiyatrosu Ana Sahne'}</span>
-                      {item.locationText && <span class="text-stone/60">({item.locationText})</span>}
-                    </div>
-
-                    {/* Kadro & Künye */}
-                    {(item.creatives || item.cast) && (
-                      <div class="text-xs text-stone/80 space-y-1 mb-6 border-l-2 border-curtain/40 pl-3">
-                        {item.creatives && <p><strong class="text-ink">Künye:</strong> {item.creatives}</p>}
-                        {item.cast && <p><strong class="text-ink">Oyuncular:</strong> {item.cast}</p>}
-                      </div>
-                    )}
+                    <span class="text-xs font-bold text-stone">{list.length} içerik</span>
                   </div>
 
-                  {/* Bilet Butonları */}
-                  <div class="pt-4 border-t border-hairline">
-                    <p class="text-xs uppercase tracking-widest font-bold text-stone mb-3">Bilet Satış Platformları</p>
-                    <div class="flex flex-wrap items-center gap-3">
-                     {item.detailUrl && (
-  <a
-    href={item.detailUrl}
-    class="px-5 py-2.5 rounded-lg font-bold text-sm border border-hairline text-ink hover:border-curtain hover:text-curtain transition-colors"
-  >
-    Etkinlik Detayları
-  </a>
-)}
-                      {item.ticketLinks && item.ticketLinks.length > 0 ? (
-                        item.ticketLinks.map((link) => (
-                          <a
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              backgroundColor: link.bgColor || '#991b1b',
-                              color: link.textColor || '#ffffff',
-                            }}
-                            class="px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm hover:opacity-95 hover:scale-[1.02] transition-all flex items-center gap-2"
-                          >
-                            <span>{link.platformName || 'Bilet Al'}</span>
-                            <svg class="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                          </a>
-                          
-                        ))
-                      ) : (
-                        <a href="/iletisim" class="btn-primary !py-2 !text-xs">Gişe / Rezerve Et</a>
-                      )}
-                    </div>
+                  <div class="grid gap-8">
+                    {list.map((item) => {
+                      const dateObj = item.eventDate ? new Date(item.eventDate) : null;
+                      const formattedDate = dateObj
+                        ? dateObj.toLocaleDateString('tr-TR', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            weekday: 'long',
+                            timeZone: 'Europe/Istanbul',
+                          })
+                        : 'Tarih Belirtilmedi';
+                      const formattedTime = dateObj
+                        ? dateObj.toLocaleTimeString('tr-TR', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            timeZone: 'Europe/Istanbul',
+                          })
+                        : '';
+
+                      return (
+                        <article class="rounded-2xl border border-hairline bg-paper shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden grid md:grid-cols-12 gap-0">
+                          {/* Sol: Afiş / Görsel */}
+                          <div class="md:col-span-4 relative bg-ink min-h-[260px] md:min-h-full overflow-hidden flex items-center justify-center">
+                            {item.coverImage ? (
+                              <img src={item.coverImage} alt={item.title} class="w-full h-full object-cover" />
+                            ) : (
+                              <div class="p-8 text-center">
+                                <span class="text-paper/40 text-xs font-mono uppercase tracking-widest block border border-paper/20 rounded px-3 py-1">
+                                  Çan Tiyatrosu
+                                </span>
+                              </div>
+                            )}
+                            {item.category && (
+                              <span class="absolute top-4 left-4 bg-curtain text-paper text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                                {item.category}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Sağ: İçerik */}
+                          <div class="md:col-span-8 p-6 md:p-8 flex flex-col justify-between">
+                            <div>
+                              <div class="flex flex-wrap items-center gap-2 text-sm text-curtain font-semibold mb-3">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>{formattedDate} {formattedTime && `• ${formattedTime}`}</span>
+                                {item.genre && <span class="text-stone/50 font-normal">| {item.genre}</span>}
+                              </div>
+
+                              <h4 class="text-2xl md:text-3xl font-bold text-ink mb-3">{item.title}</h4>
+
+                              {item.description && (
+                                <p class="text-stone leading-relaxed mb-5 whitespace-pre-line">{item.description}</p>
+                              )}
+
+                              <div class="flex items-center gap-2 text-stone text-sm mb-4 bg-dim p-3 rounded-lg border border-hairline/50">
+                                <svg class="w-4 h-4 text-curtain shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                <span class="font-bold text-ink">Mekân:</span>
+                                <span>{item.venue || 'Çan Tiyatrosu Ana Sahne'}</span>
+                                {item.locationText && <span class="text-stone/60">({item.locationText})</span>}
+                              </div>
+
+                              {(item.creatives || item.cast) && (
+                                <div class="text-xs text-stone/80 space-y-1 mb-6 border-l-2 border-curtain/40 pl-3">
+                                  {item.creatives && <p><strong class="text-ink">Künye:</strong> {item.creatives}</p>}
+                                  {item.cast && <p><strong class="text-ink">Oyuncular:</strong> {item.cast}</p>}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Bilet Butonları */}
+                            <div class="pt-4 border-t border-hairline">
+                              <p class="text-xs uppercase tracking-widest font-bold text-stone mb-3">Bilet Satış Platformları</p>
+                              <div class="flex flex-wrap items-center gap-3">
+                                {item.ticketLinks && item.ticketLinks.length > 0 ? (
+                                  item.ticketLinks.map((link: any) => (
+                                    <a
+                                      href={link.href}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{
+                                        backgroundColor: link.bgColor || '#991b1b',
+                                        color: link.textColor || '#ffffff',
+                                      }}
+                                      class="px-5 py-2.5 rounded-lg font-bold text-sm shadow-sm hover:opacity-95 hover:scale-[1.02] transition-all flex items-center gap-2"
+                                    >
+                                      <span>{link.platformName || 'Bilet Al'}</span>
+                                      <svg class="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                      </svg>
+                                    </a>
+                                  ))
+                                ) : (
+                                  <a href="/iletisim" class="btn-primary !py-2 !text-xs">Gişe / Rezerve Et</a>
+                                )}
+
+                                {item.detailUrl && (
+                                  <a
+                                    href={item.detailUrl}
+                                    class="px-5 py-2.5 rounded-lg font-bold text-sm border border-hairline text-ink hover:border-curtain hover:text-curtain transition-colors"
+                                  >
+                                    Etkinlik Detayları
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </>
       ) : (
-        /* Etkinlik Yoksa Minimalist Boş Durum Görünümü */
         <div class="rounded-2xl border border-hairline bg-dim p-8 md:p-12 text-center max-w-2xl mx-auto">
           <h3 class="text-2xl font-bold mb-2">Yakında Yeni Sezon Biletleri Satışta</h3>
           <p class="text-stone leading-relaxed mb-6">
@@ -213,6 +353,46 @@ try {
 </Layout>
 
 <script>
+  const filterButtons = Array.from(document.querySelectorAll('.ticket-filter-btn')) as HTMLButtonElement[];
+  const sections = Array.from(document.querySelectorAll('[data-ticket-section]')) as HTMLElement[];
+
+  const setActiveFilter = (selected: string, shouldScroll = false) => {
+    const valid = ['all', 'cocuk', 'yetiskin', 'etkinlik', 'atolye'].includes(selected) ? selected : 'all';
+
+    filterButtons.forEach((btn) => {
+      const isCurrent = btn.dataset.filter === valid;
+      btn.classList.toggle('bg-curtain', isCurrent);
+      btn.classList.toggle('text-paper', isCurrent);
+      btn.classList.toggle('border-curtain', isCurrent);
+      btn.classList.toggle('bg-paper', !isCurrent);
+      btn.classList.toggle('text-ink', !isCurrent);
+      btn.classList.toggle('border-hairline', !isCurrent);
+    });
+
+    sections.forEach((sec) => {
+      const key = sec.dataset.ticketSection;
+      sec.classList.toggle('hidden', valid !== 'all' && key !== valid);
+    });
+
+    if (shouldScroll && valid !== 'all') {
+      const target = document.querySelector(`[data-ticket-section="${valid}"]`);
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter || 'all';
+      setActiveFilter(filter, true);
+    });
+  });
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialCategory = urlParams.get('kategori');
+  if (initialCategory) {
+    setActiveFilter(initialCategory, false);
+  }
+
   const form = document.getElementById('bilet-talep-form') as HTMLFormElement;
   const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5yMnGbYQP6ICDzPlwNOgBFBG5T60unE3HTUxgA_oJ9nUQx20yNWk_VUW5CtTOLSJnqg/exec';
 

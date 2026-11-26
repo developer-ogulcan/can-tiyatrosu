@@ -8,6 +8,7 @@ import Section from '../../components/Section.astro';
 import Accordion from '../../components/Accordion.astro';
 import FormField from '../../components/FormField.astro';
 import Button from '../../components/Button.astro';
+import Lightbox from '../../components/Lightbox.astro';
 
 function getCleanSlug(entry: any) {
   if (!entry) return '';
@@ -50,12 +51,18 @@ const currentItem =
   details.find((d) => (d.id || '').includes(slug || ''));
 
 if (!currentItem) {
-  console.error('Mevcut serviceDetails slug listesi:', details.map(d => ({ id: d.id, clean: getCleanSlug(d) })));
+  console.error('Mevcut serviceDetails slug listesi:', details.map((d) => ({ id: d.id, clean: getCleanSlug(d) })));
   console.error('Aranan slug:', slug, 'Normalize:', normalizedParamSlug);
   throw new Error(`Service detail not found for slug: ${slug}`);
 }
 
 const data = currentItem.data;
+const otherServices = details
+  .filter((d) => getCleanSlug(d) !== getCleanSlug(currentItem))
+  .map((d) => ({
+    title: d.data.title,
+    href: `/hizmetler/${getCleanSlug(d)}`,
+  }));
 ---
 
 <Layout title={data.title} description={data.lede}>
@@ -68,15 +75,64 @@ const data = currentItem.data;
     ledeField={tinaField(data, 'lede')}
   />
 
+  <!-- Üst Hızlı Gezinme ve Teklif Kısayolu -->
+  <div class="bg-paper border-b border-hairline">
+    <Container class="py-4 flex flex-wrap items-center justify-between gap-4">
+      <a
+        href="/hizmetler"
+        class="text-sm font-semibold text-stone hover:text-curtain transition-colors"
+      >
+        ← Tüm hizmetlere dön
+      </a>
+
+      <div class="flex flex-wrap items-center gap-3">
+        {otherServices.map((other) => (
+          <a
+            href={other.href}
+            class="hidden sm:inline-block text-xs font-semibold text-stone hover:text-curtain px-2.5 py-1 rounded border border-hairline/70 hover:border-curtain/40 transition-colors"
+          >
+            {other.title}
+          </a>
+        ))}
+        <a href="#talep-formu" class="btn-primary !py-2 !px-4 !text-xs">
+          Hemen Teklif / Talep Al
+        </a>
+      </div>
+    </Container>
+  </div>
+
   {data.benefits && data.benefits.length > 0 && (
     <Section tone="paper">
       <Container>
-        <p class="eyebrow mb-5">Neden Bizimle Çalışmalısınız</p>
-        <div class="grid md:grid-cols-3 gap-8" data-tina-field={tinaField(data, 'benefits')}>
-          {data.benefits.map((b: any) => (
-            <div class="border-t-2 border-gold-deep pt-5">
-              <h3 class="text-xl mb-2">{b.title}</h3>
-              <p class="text-stone leading-relaxed">{b.description}</p>
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+          <div>
+            <p class="eyebrow !text-curtain mb-2">Neden Bizimle Çalışmalısınız</p>
+            <h2 class="text-3xl md:text-4xl font-display">Kurumunuza Sağladığımız Değer</h2>
+          </div>
+          <a
+            href="#talep-formu"
+            class="text-sm font-bold text-curtain hover:underline underline-offset-4 whitespace-nowrap"
+          >
+            Programa özel teklif iste →
+          </a>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-7" data-tina-field={tinaField(data, 'benefits')}>
+          {data.benefits.map((b: any, index: number) => (
+            <div class="group rounded-2xl border-2 border-hairline bg-paper p-6 md:p-7 hover:border-curtain/45 hover:shadow-lg transition-all duration-300 border-t-4 border-t-gold-deep flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="font-mono text-xs font-bold px-2.5 py-1 rounded bg-paper-dim text-curtain border border-hairline">
+                    0{index + 1}
+                  </span>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold text-ink mb-3 group-hover:text-curtain transition-colors">
+                  {b.title}
+                </h3>
+                <p class="text-stone leading-relaxed">
+                  {b.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -88,14 +144,22 @@ const data = currentItem.data;
     <Section tone="dim" spacing="tight">
       <Container>
         <div data-tina-field={tinaField(data, 'gallery')}>
-          <p class="eyebrow mb-6">Galeri & Görseller</p>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-6">
+            <div>
+              <p class="eyebrow !text-curtain mb-1">Galeri & Görseller</p>
+              <h2 class="text-2xl md:text-3xl font-display">Sahne ve Uygulama Kareleri</h2>
+            </div>
+            <span class="text-xs text-stone">Büyütmek için görsele tıklayın</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
             {data.gallery.map((imgUrl: string, index: number) => (
-              <div class="overflow-hidden rounded-xl bg-stone/10 aspect-[4/3]">
+              <div class="group overflow-hidden rounded-2xl border-2 border-hairline bg-paper aspect-[4/3] shadow-sm hover:border-curtain/40 hover:shadow-lg transition-all duration-300">
                 <img
                   src={imgUrl}
                   alt={`${data.title} - Görsel ${index + 1}`}
-                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  data-lightbox
+                  class="w-full h-full object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
             ))}
@@ -107,8 +171,9 @@ const data = currentItem.data;
 
   {data.faq && data.faq.length > 0 && (
     <Section tone="paper">
-      <Container>
-        <p class="eyebrow mb-5">Sıkça Sorulan Sorular</p>
+      <Container narrow>
+        <p class="eyebrow !text-curtain mb-2">Merak Edilenler</p>
+        <h2 class="text-3xl md:text-4xl font-display mb-8">Sıkça Sorulan Sorular</h2>
         <div data-tina-field={tinaField(data, 'faq')}>
           <Accordion items={data.faq} />
         </div>
@@ -116,39 +181,83 @@ const data = currentItem.data;
     </Section>
   )}
 
-  <Section tone="dim">
-    <Container narrow>
-      <p class="eyebrow mb-5">Talep Formu</p>
-      <h2 class="text-3xl md:text-4xl mb-8" data-tina-field={tinaField(data, 'formConfig')}>
-        {data.formConfig?.formTitle || `${data.title} Talebinizi İletin`}
-      </h2>
-      
-      <form id="service-form" class="grid gap-6">
-        <input type="hidden" name="hizmet" value={data.title} />
-        <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Kurum / Kişi Adı" name="ad" required />
-          <FormField label="Yetkili Kişi / Detay" name="yetkili" />
+  <Section tone="dim" id="talep-formu">
+    <Container>
+      <div class="grid lg:grid-cols-12 gap-10 items-start">
+        <!-- Sol: Müşteri Güven ve Süreç Özeti -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="rounded-2xl border-2 border-hairline bg-paper p-7 shadow-sm">
+            <p class="eyebrow !text-curtain mb-2">Nasıl İlerliyoruz?</p>
+            <h2 class="text-2xl md:text-3xl font-display mb-4">
+              Kurumunuza Özel Planlama
+            </h2>
+            <p class="text-stone text-sm leading-relaxed mb-6">
+              Okul, kreş, belediye, marka veya özel organizasyonlarınız için tarih, yaş grubu/katılımcı sayısı ve mekân koşullarına göre hızlıca dönüş sağlıyoruz.
+            </p>
+
+            <div class="space-y-4 border-t border-hairline pt-5 text-sm">
+              <div class="flex gap-3">
+                <span class="font-mono font-bold text-curtain">01</span>
+                <div>
+                  <p class="font-bold text-ink">İhtiyaç ve Tarih Analizi</p>
+                  <p class="text-stone text-xs leading-relaxed">Formdaki tarih, katılımcı sayısı ve notlara göre uygun kadro ve programı netleştiriyoruz.</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <span class="font-mono font-bold text-curtain">02</span>
+                <div>
+                  <p class="font-bold text-ink">Şeffaf Teklif & Akış</p>
+                  <p class="text-stone text-xs leading-relaxed">Sahne/alan düzeni, süre ve ücretlendirme detaylarını sizinle paylaşıyoruz.</p>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <span class="font-mono font-bold text-curtain">03</span>
+                <div>
+                  <p class="font-bold text-ink">Sorunsuz Uygulama</p>
+                  <p class="text-stone text-xs leading-relaxed">Deneyimli tiyatro ve sahne ekibimizle etkinliği zamanında ve eksiksiz gerçekleştiriyoruz.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="E-posta" name="email" type="email" required />
-          <FormField label="Telefon" name="telefon" type="tel" required />
+
+        <!-- Sağ: Talep Formu -->
+        <div class="lg:col-span-7 rounded-2xl border-2 border-hairline bg-paper p-7 sm:p-10 shadow-lg">
+          <p class="eyebrow !text-curtain mb-2">Talep Formu</p>
+          <h2 class="text-3xl md:text-4xl font-display mb-8" data-tina-field={tinaField(data, 'formConfig')}>
+            {data.formConfig?.formTitle || `${data.title} Talebinizi İletin`}
+          </h2>
+
+          <form id="service-form" class="grid gap-6">
+            <input type="hidden" name="hizmet" value={data.title} />
+            <div class="grid md:grid-cols-2 gap-6">
+              <FormField label="Kurum / Kişi Adı" name="ad" required />
+              <FormField label="Yetkili Kişi / Detay" name="yetkili" />
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <FormField label="E-posta" name="email" type="email" required />
+              <FormField label="Telefon" name="telefon" type="tel" required />
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <FormField label="Tercih Edilen Tarih" name="tarih" type="date" />
+              <FormField label="Tahmini Katılımcı / Seyirci Sayısı" name="seyirci-sayisi" />
+            </div>
+            <FormField label="Notlarınız" name="mesaj" type="textarea" placeholder="Talep detayları ve notlarınız" />
+
+            <div class="pt-2">
+              <Button id="submit-btn" type="submit" variant="primary" class="w-full sm:w-auto justify-center">
+                {data.formConfig?.submitButtonText || 'Talebi Gönder'}
+              </Button>
+            </div>
+
+            <p id="form-status" class="hidden text-sm font-medium mt-2"></p>
+          </form>
         </div>
-        <div class="grid md:grid-cols-2 gap-6">
-          <FormField label="Tercih Edilen Tarih" name="tarih" type="date" />
-          <FormField label="Tahmini Katılımcı / Seyirci Sayısı" name="seyirci-sayisi" />
-        </div>
-        <FormField label="Notlarınız" name="mesaj" type="textarea" placeholder="Talep detayları ve notlarınız" />
-        
-        <div>
-          <Button id="submit-btn" type="submit" variant="primary">
-            {data.formConfig?.submitButtonText || 'Talebi Gönder'}
-          </Button>
-        </div>
-        
-        <p id="form-status" class="hidden text-sm font-medium mt-2"></p>
-      </form>
+      </div>
     </Container>
   </Section>
+
+  <Lightbox />
 </Layout>
 
 <script>
@@ -164,7 +273,7 @@ const data = currentItem.data;
     if (submitBtn) submitBtn.disabled = true;
     if (statusMsg) {
       statusMsg.textContent = "Talebiniz iletiliyor...";
-      statusMsg.className = "text-sm font-medium mt-2 text-paper/70 block";
+      statusMsg.className = "text-sm font-medium mt-2 text-stone block";
     }
 
     const formData = new FormData(form);
@@ -190,13 +299,13 @@ const data = currentItem.data;
 
       if (statusMsg) {
         statusMsg.textContent = "✓ Talebiniz başarıyla alındı. En kısa sürede dönüş yapacağız.";
-        statusMsg.className = "text-sm font-medium mt-2 text-emerald-400 block";
+        statusMsg.className = "text-sm font-medium mt-2 text-emerald-700 block";
       }
       form.reset();
     } catch (error) {
       if (statusMsg) {
         statusMsg.textContent = "Gönderim sırasında bir hata oluştu. Lütfen tekrar deneyin.";
-        statusMsg.className = "text-sm font-medium mt-2 text-red-400 block";
+        statusMsg.className = "text-sm font-medium mt-2 text-red-700 block";
       }
     } finally {
       if (submitBtn) submitBtn.disabled = false;

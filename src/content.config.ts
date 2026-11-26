@@ -171,6 +171,36 @@ const workshops = defineCollection({
     }),
 });
 
+// Dönemlik atölyeler için detay sayfaları (/atolyeler/[slug])
+const workshopPages = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/workshop-pages' }),
+  schema: () =>
+    z.object({
+      title: z.string(),
+      status: z.enum(['acik', 'yakinda', 'dolu', 'tamamlandi']).default('acik'),
+      synopsis: z.string(),
+      ageRange: z.string().optional(),
+      duration: z.string().optional(),
+      startDate: z.date().or(z.string().transform((val) => new Date(val))).optional(),
+      schedule: z.string().optional(),
+      price: z.string().optional(),
+      quota: z.string().optional(),
+      venue: z.string().optional(),
+      locationText: z.string().optional(),
+      instructors: z.array(z.string()).default([]),
+      details: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+      cover: z.string().optional(),
+      heroImage: z.string().optional(),
+      gallery: z.array(z.string()).default([]),
+      applyLabel: z.string().optional(),
+      applyUrl: z.string().optional(),
+      order: z.number().default(0),
+      featured: z.boolean().default(false),
+      seoTitle: z.string().optional(),
+      seoDescription: z.string().optional(),
+    }),
+});
+
 const services = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './content/services' }),
   schema: () =>
@@ -212,6 +242,53 @@ const seo = defineCollection({
       defaultTitle: z.string(),
       defaultDescription: z.string(),
       defaultOgImage: z.string(),
+      titleSuffix: z.string().nullish(),
+      ogImageAlt: z.string().nullish(),
+      logo: z.string().nullish(),
+      organizationDescription: z.string().nullish(),
+      priceRange: z.string().nullish(),
+      geoLat: z.number().nullish(),
+      geoLng: z.number().nullish(),
+      googleSiteVerification: z.string().nullish(),
+      bingSiteVerification: z.string().nullish(),
+      yandexVerification: z.string().nullish(),
+    }),
+});
+
+// Sayfa bazlı SEO: yol (path) eşleşen sayfanın başlık/açıklama/görselini ezer
+const pageSeo = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/page-seo' }),
+  schema: () =>
+    z.object({
+      pages: z
+        .array(
+          z.object({
+            path: z.string(),
+            title: z.string().nullish(),
+            description: z.string().nullish(),
+            image: z.string().nullish(),
+            noindex: z.boolean().nullish(),
+          })
+        )
+        .default([]),
+    }),
+});
+
+// Açılış pop-up reklamı
+const popup = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/popup' }),
+  schema: () =>
+    z.object({
+      enabled: z.boolean().default(false),
+      image: z.string().nullish(),
+      imageAlt: z.string().nullish(),
+      title: z.string().nullish(),
+      buttonLabel: z.string().nullish(),
+      buttonHref: z.string().nullish(),
+      openInNewTab: z.boolean().nullish(),
+      autoCloseSeconds: z.number().default(5),
+      delaySeconds: z.number().default(1),
+      frequency: z.enum(['session', 'daily', 'always']).default('session'),
     }),
 });
 
@@ -226,9 +303,11 @@ const tickets = defineCollection({
       eventDate: z.date().or(z.string().transform((val) => new Date(val))),
       venue: z.string().optional(),
       locationText: z.string().optional(),
+      description: z.string().optional(),
+      price: z.string().optional(),
       cast: z.string().optional(),
       creatives: z.string().optional(),
-      detailUrl: z.string().optional(), // Doğru yere taşındı
+      detailUrl: z.string().optional(),
       ticketLinks: z
         .array(
           z.object({
@@ -258,6 +337,8 @@ const plays = defineCollection({
       gallery: z.array(z.string()).default([]),
       order: z.number().default(0),
       featured: z.boolean().default(false),
+      seoTitle: z.string().optional(),
+      seoDescription: z.string().optional(),
     }),
 });
 
@@ -295,11 +376,14 @@ export const collections = {
   founders,
   academy,
   workshops,
+  workshopPages,
   services,
   serviceDetails,
   contact,
   footer,
   seo,
+  pageSeo,
+  popup,
   tickets,
   plays,
   announcements,

@@ -2,23 +2,32 @@
 import SEO from '../components/SEO.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import PopupAd from '../components/PopupAd.astro';
 import '../styles/global.css';
 
 interface Props {
   title: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  publishedTime?: string | Date;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  breadcrumbs?: { name: string; href: string }[];
 }
 
-const { 
-  title, 
-  description = "Çan Tiyatrosu - Repertuvarımızdaki yetişkin ve çocuk oyunları, gösterim takvimi ve bilet bilgileri.", 
-  image = "/og-image.jpg"
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  noindex = false,
+  type = 'website',
+  publishedTime,
+  jsonLd,
+  breadcrumbs,
 } = Astro.props;
-
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || Astro.url.origin);
-// Görsel yolunun mutlak (absolute) URL olduğundan emin oluyoruz
-const socialImageURL = new URL(image, Astro.site || Astro.url.origin).href;
 ---
 <!doctype html>
 <html lang="tr">
@@ -58,11 +67,16 @@ const socialImageURL = new URL(image, Astro.site || Astro.url.origin).href;
     { import.meta.env.PROD && <script src="/src/pwa.ts"></script> }
     { import.meta.env.PROD && <script is:inline src="/registerSW.js"></script> }
 
-    <SEO 
-      title={title} 
-      description={description} 
-      image={socialImageURL} 
-      canonicalURL={canonicalURL.href}
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      noindex={noindex}
+      type={type}
+      publishedTime={publishedTime}
+      jsonLd={jsonLd}
+      breadcrumbs={breadcrumbs}
     />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2266387783305462"
      crossorigin="anonymous"></script>
@@ -91,6 +105,9 @@ const socialImageURL = new URL(image, Astro.site || Astro.url.origin).href;
     </div>
 
     <Footer />
+
+    <!-- Açılış pop-up reklamı (Tina > Açılış Pop-up Reklamı) -->
+    <PopupAd />
 
     <script>
       let deferredPrompt: any;

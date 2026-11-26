@@ -1,0 +1,163 @@
+---
+import { getCollection } from 'astro:content';
+
+let popup: any = null;
+try {
+  const entries = await getCollection('popup');
+  popup = entries[0]?.data ?? null;
+} catch (e) {
+  popup = null;
+}
+
+const show = !!popup?.enabled && !!(popup?.title || popup?.image);
+
+// Reklam değiştiğinde (başlık, görsel veya link) ziyaretçilere yeniden gösterilsin diye imza üretiyoruz
+const signature = [popup?.title, popup?.image, popup?.buttonHref].join('|');
+let hash = 0;
+for (const ch of signature) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+const adKey = hash.toString(36);
+
+const seconds = Math.min(Math.max(Number(popup?.autoCloseSeconds ?? 5), 2), 60);
+const delay = Math.min(Math.max(Number(popup?.delaySeconds ?? 1), 0), 10);
+const frequency = popup?.frequency ?? 'session';
+
+const href: string = popup?.buttonHref ?? '';
+const isExternal = /^https?:\/\//i.test(href);
+const newTab = isExternal || !!popup?.openInNewTab;
+---
+
+{show && (
+  <div
+    id="popup-ad"
+    class="fixed inset-0 z-[60] hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300"
+    role="dialog"
+    aria-label={popup.title ?? 'Duyuru'}
+    data-key={adKey}
+    data-seconds={seconds}
+    data-delay={delay}
+    data-frequency={frequency}
+  >
+    <div data-popup-backdrop class="absolute inset-0 bg-ink/60 backdrop-blur-[2px]"></div>
+
+    <div class="relative w-full max-w-sm sm:max-w-md rounded-2xl bg-paper p-2 shadow-2xl ring-1 ring-ink/10">
+      <div class="relative overflow-hidden rounded-xl border-2 border-gold/60 bg-paper">
+
+        <button
+          type="button"
+          data-popup-close
+          aria-label="Kapat"
+          class="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-ink/70 text-paper text-sm font-bold hover:bg-curtain transition-colors"
+        >
+          ✕
+        </button>
+
+        {popup.image && (
+          <img
+            src={popup.image}
+            alt={popup.imageAlt || popup.title || 'Duyuru görseli'}
+            class="w-full aspect-[4/3] object-cover"
+            decoding="async"
+          />
+        )}
+
+        <div class="px-6 py-6 text-center">
+          {popup.title && (
+            <h2 class="text-2xl font-display font-bold text-ink leading-tight">{popup.title}</h2>
+          )}
+
+          {popup.buttonLabel && href && (
+            <a
+              href={href}
+              target={newTab ? '_blank' : undefined}
+              rel={newTab ? 'noopener noreferrer' : undefined}
+              class="btn-primary mt-5 inline-block !px-8"
+            >
+              {popup.buttonLabel}
+            </a>
+          )}
+        </div>
+
+        <!-- Otomatik kapanma çubuğu -->
+        <div class="h-1 w-full bg-hairline">
+          <div data-popup-bar class="h-full w-full bg-curtain"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  const el = document.getElementById('popup-ad');
+
+  if (el && !window.location.pathname.startsWith('/admin')) {
+    const key = `can-popup:${el.dataset.key}`;
+    const frequency = el.dataset.frequency || 'session';
+    const seconds = Number(el.dataset.seconds || 5);
+    const delay = Number(el.dataset.delay || 1);
+    const bar = el.querySelector<HTMLElement>('[data-popup-bar]');
+
+    const alreadySeen = () => {
+      try {
+        if (frequency === 'always') return false;
+        if (frequency === 'daily') {
+          const last = Number(localStorage.getItem(key) || 0);
+          return last > 0 && Date.now() - last < 24 * 60 * 60 * 1000;
+        }
+        return sessionStorage.getItem(key) === '1';
+      } catch {
+        return false;
+      }
+    };
+
+    const markSeen = () => {
+      try {
+        if (frequency === 'daily') localStorage.setItem(key, String(Date.now()));
+        else if (frequency === 'session') sessionStorage.setItem(key, '1');
+      } catch {
+        /* depolama kapalıysa sessizce geç */
+      }
+    };
+
+    let timer: number | undefined;
+
+    const close = () => {
+      if (timer) window.clearTimeout(timer);
+      document.removeEventListener('keydown', onKey);
+      el.classList.add('opacity-0');
+      window.setTimeout(() => {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+      }, 300);
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+
+    const open = () => {
+      markSeen();
+      el.classList.remove('hidden');
+      el.classList.add('flex');
+
+      requestAnimationFrame(() => {
+        el.classList.remove('opacity-0');
+        if (bar) {
+          bar.style.transition = `width ${seconds}s linear`;
+          requestAnimationFrame(() => {
+            bar.style.width = '0%';
+          });
+        }
+      });
+
+      timer = window.setTimeout(close, seconds * 1000);
+      document.addEventListener('keydown', onKey);
+    };
+
+    el.querySelector('[data-popup-close]')?.addEventListener('click', close);
+    el.querySelector('[data-popup-backdrop]')?.addEventListener('click', close);
+
+    if (!alreadySeen()) {
+      window.setTimeout(open, delay * 1000);
+    }
+  }
+</script>

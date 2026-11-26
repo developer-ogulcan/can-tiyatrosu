@@ -25,10 +25,18 @@ const statusTone: Record<string, 'gold' | 'curtain' | 'stone'> = {
   yakinda: 'gold',
   arsiv: 'stone',
 };
+
+const categoryRoutes: Record<string, string> = {
+  cocuk: 'cocuk-oyunlari',
+  yetiskin: 'yetiskin-oyunlari',
+  etkinlik: 'etkinlikler',
+};
+
+const href = `/performanslar/${categoryRoutes[category]}/${slug}`;
 ---
 
 <a
-  href={`/performanslar/${category === 'cocuk' ? 'cocuk-oyunlari' : 'yetiskin-oyunlari' + 'etkinlikler'}/${slug}`}
+  href={href}
   class="group grid md:grid-cols-12 gap-6 border-t border-hairline py-8 md:py-10 first:border-t-0 items-center"
 >
   {heroImage && (

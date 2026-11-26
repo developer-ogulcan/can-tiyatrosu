@@ -6,6 +6,7 @@ import PageHero from '../components/PageHero.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Accordion from '../components/Accordion.astro';
+import Badge from '../components/Badge.astro';
 import WorkshopModal from '../components/WorkshopModal.astro';
 
 const workshopsCollection = await getCollection('workshops');
@@ -17,6 +18,44 @@ if (!workshopsEntry) {
   throw new Error('Workshops page content not found');
 }
 const workshopsData = workshopsEntry.data;
+
+// Dönemlik atölye detay sayfaları
+let periodWorkshops: any[] = [];
+try {
+  const rank = (s: string) => (s === 'tamamlandi' ? 1 : 0);
+  periodWorkshops = (await getCollection('workshopPages')).sort(
+    (a, b) => rank(a.data.status) - rank(b.data.status) || (a.data.order ?? 0) - (b.data.order ?? 0),
+  );
+} catch (e) {
+  periodWorkshops = [];
+}
+
+const statusLabel: Record<string, string> = {
+  acik: 'Kayıtlar Açık',
+  yakinda: 'Yakında',
+  dolu: 'Kontenjan Doldu',
+  tamamlandi: 'Tamamlandı',
+};
+
+const statusTone: Record<string, 'gold' | 'curtain' | 'stone'> = {
+  acik: 'curtain',
+  yakinda: 'gold',
+  dolu: 'stone',
+  tamamlandi: 'stone',
+};
+
+// Başvuru formundaki atölye listesine detay sayfası olan atölyeleri de ekle
+const modalWorkshops = [
+  ...workshopsData.workshops,
+  ...periodWorkshops
+    .filter((p) => p.data.status === 'acik' || p.data.status === 'yakinda')
+    .map((p) => ({
+      title: p.data.title,
+      age: p.data.ageRange ?? '',
+      duration: p.data.duration ?? '',
+      description: p.data.synopsis,
+    })),
+];
 ---
 
 <Layout title={workshopsData.title} description={workshopsData.description || 'Çocuklar ve gençler için dönemsel oyunculuk, yaratıcı drama ve sahne atölyeleri.'}>
@@ -29,22 +68,69 @@ const workshopsData = workshopsEntry.data;
     ledeField={tinaField(workshopsData, 'lede')}
   />
 
-  <Section tone="paper">
+  {periodWorkshops.length > 0 && (
+    <Section tone="paper">
+      <Container>
+        <p class="text-stone text-lg max-w-2xl mb-10 leading-relaxed" data-tina-field={tinaField(workshopsData, 'description')}>
+          {workshopsData.description}
+        </p>
+
+        <p class="eyebrow !text-curtain mb-2">Dönem Atölyeleri</p>
+        <h2 class="text-3xl md:text-4xl mb-10">Bu Dönem Açılan Atölyeler</h2>
+
+        <div class="grid md:grid-cols-3 gap-6">
+          {periodWorkshops.map((p) => (
+            <a
+              href={`/atolyeler/${p.id}`}
+              class="group flex flex-col overflow-hidden rounded-xl border-2 border-hairline bg-paper hover:border-curtain/30 transition-colors"
+            >
+              {p.data.heroImage && (
+                <div class="overflow-hidden bg-stone/5 aspect-[4/3]">
+                  <img
+                    src={p.data.heroImage}
+                    alt={p.data.title}
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+              )}
+              <div class="flex flex-1 flex-col p-6">
+                <div class="mb-3 flex flex-wrap items-center gap-2">
+                  <Badge tone={statusTone[p.data.status]}>{statusLabel[p.data.status]}</Badge>
+                  {p.data.ageRange && <span class="text-sm text-stone">{p.data.ageRange}</span>}
+                </div>
+                <h3 class="text-2xl mb-2 group-hover:text-curtain transition-colors font-bold">{p.data.title}</h3>
+                <p class="text-stone leading-relaxed mb-4">{p.data.synopsis}</p>
+                {p.data.schedule && <p class="text-sm font-bold text-curtain mb-4">{p.data.schedule}</p>}
+                <span class="mt-auto text-sm font-bold text-curtain">Detayları Gör →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </Container>
+    </Section>
+  )}
+
+  <Section tone="dim">
     <Container>
-      <p class="text-stone text-lg max-w-2xl mb-12 leading-relaxed" data-tina-field={tinaField(workshopsData, 'description')}>
-        {workshopsData.description}
-      </p>
+      {periodWorkshops.length === 0 && (
+        <p class="text-stone text-lg max-w-2xl mb-10 leading-relaxed" data-tina-field={tinaField(workshopsData, 'description')}>
+          {workshopsData.description}
+        </p>
+      )}
+      <p class="eyebrow !text-curtain mb-2">Genel Programlar</p>
+      <h2 class="text-3xl md:text-4xl mb-10">Sürekli Atölyeler</h2>
+
       <div class="grid md:grid-cols-3 gap-6" data-tina-field={tinaField(workshopsData, 'workshops')}>
         {workshopsData.workshops.map((w) => (
           <article class="rounded-xl border-2 border-hairline bg-paper p-6 hover:border-curtain/30 transition-colors flex flex-col justify-between">
             <div>
               <p class="eyebrow mb-3">{w.age}</p>
-              <h2 class="text-2xl mb-3">{w.title}</h2>
+              <h3 class="text-2xl mb-3">{w.title}</h3>
               <p class="text-sm font-bold text-curtain mb-4">{w.duration}</p>
               <p class="text-stone leading-relaxed mb-6">{w.description}</p>
             </div>
             <button
-              onclick={`window.openWorkshopModal('${w.title}')`}
+              onclick={`window.openWorkshopModal(${JSON.stringify(w.title)})`}
               class="w-full py-2.5 px-4 rounded-[2px] border border-curtain text-curtain font-bold text-sm hover:bg-curtain hover:text-paper transition-colors cursor-pointer"
             >
               Başvuru Yap
@@ -55,7 +141,7 @@ const workshopsData = workshopsEntry.data;
     </Container>
   </Section>
 
-  <Section tone="dim" spacing="tight">
+  <Section tone="paper" spacing="tight">
     <Container narrow>
       <h2 class="text-3xl mb-8">Sık Sorulan Sorular</h2>
       <Accordion items={workshopsData.faqs} />
@@ -81,5 +167,5 @@ const workshopsData = workshopsEntry.data;
   </Section>
 
   <!-- Modal Entegrasyonu -->
-  <WorkshopModal workshops={workshopsData.workshops} />
+  <WorkshopModal workshops={modalWorkshops} />
 </Layout>
