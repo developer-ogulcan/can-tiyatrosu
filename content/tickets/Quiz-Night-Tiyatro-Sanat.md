@@ -3,7 +3,7 @@ title: Fikir Fikir
 category: Özel Gösterim
 genre: Gece Etkinliği
 coverImage: /images/Events/Fikir-Fikir.png
-eventDate: 2026-11-14T18:00:25.384Z
+eventDate: 2026-11-14T16:00:25.384Z
 description: |-
   Ankara'nın En Eğlenceli Bilgi Yarışması 'Fikir Fikir' sizlerle!
 
